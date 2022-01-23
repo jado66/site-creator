@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/raesite/static/css/main.f6567867.chunk.css",
-    "main.js": "/raesite/static/js/main.42500311.chunk.js",
-    "main.js.map": "/raesite/static/js/main.42500311.chunk.js.map",
-    "runtime-main.js": "/raesite/static/js/runtime-main.06f97178.js",
-    "runtime-main.js.map": "/raesite/static/js/runtime-main.06f97178.js.map",
-    "static/css/2.5f323ea5.chunk.css": "/raesite/static/css/2.5f323ea5.chunk.css",
-    "static/js/2.84a5f013.chunk.js": "/raesite/static/js/2.84a5f013.chunk.js",
-    "static/js/2.84a5f013.chunk.js.map": "/raesite/static/js/2.84a5f013.chunk.js.map",
-    "static/js/3.80cff230.chunk.js": "/raesite/static/js/3.80cff230.chunk.js",
-    "static/js/3.80cff230.chunk.js.map": "/raesite/static/js/3.80cff230.chunk.js.map",
-    "index.html": "/raesite/index.html",
-    "static/css/2.5f323ea5.chunk.css.map": "/raesite/static/css/2.5f323ea5.chunk.css.map",
-    "static/css/main.f6567867.chunk.css.map": "/raesite/static/css/main.f6567867.chunk.css.map",
-    "static/js/2.84a5f013.chunk.js.LICENSE.txt": "/raesite/static/js/2.84a5f013.chunk.js.LICENSE.txt"
+    "main.css": "/site-creator/static/css/main.f6567867.chunk.css",
+    "main.js": "/site-creator/static/js/main.49587762.chunk.js",
+    "main.js.map": "/site-creator/static/js/main.49587762.chunk.js.map",
+    "runtime-main.js": "/site-creator/static/js/runtime-main.83a888dc.js",
+    "runtime-main.js.map": "/site-creator/static/js/runtime-main.83a888dc.js.map",
+    "static/css/2.5f323ea5.chunk.css": "/site-creator/static/css/2.5f323ea5.chunk.css",
+    "static/js/2.996a4eed.chunk.js": "/site-creator/static/js/2.996a4eed.chunk.js",
+    "static/js/2.996a4eed.chunk.js.map": "/site-creator/static/js/2.996a4eed.chunk.js.map",
+    "static/js/3.b15886a6.chunk.js": "/site-creator/static/js/3.b15886a6.chunk.js",
+    "static/js/3.b15886a6.chunk.js.map": "/site-creator/static/js/3.b15886a6.chunk.js.map",
+    "index.html": "/site-creator/index.html",
+    "static/css/2.5f323ea5.chunk.css.map": "/site-creator/static/css/2.5f323ea5.chunk.css.map",
+    "static/css/main.f6567867.chunk.css.map": "/site-creator/static/css/main.f6567867.chunk.css.map",
+    "static/js/2.996a4eed.chunk.js.LICENSE.txt": "/site-creator/static/js/2.996a4eed.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.06f97178.js",
+    "static/js/runtime-main.83a888dc.js",
     "static/css/2.5f323ea5.chunk.css",
-    "static/js/2.84a5f013.chunk.js",
+    "static/js/2.996a4eed.chunk.js",
     "static/css/main.f6567867.chunk.css",
-    "static/js/main.42500311.chunk.js"
+    "static/js/main.49587762.chunk.js"
   ]
 }
