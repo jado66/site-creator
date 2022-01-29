@@ -51,66 +51,7 @@ export default class WebsiteStyleEditor extends React.Component {
     }
 
 
-    // componentDidMount(){
-
-    //   // var tooltip = new Tooltip(tooltipRef.current, {
-    //   //   title: "This is the tooltip content!",
-    //   //   placement: 'right',
-    //   //   trigger: 'hover'
-    //   // })
-
-    //   let newState = {}
-    //   let stored_lightShade  = localStorage.getItem("webStyle-lightShade");
-    //   if (stored_lightShade){
-    //     newState.lightShade = stored_lightShade
-    //   }
-
-    //   let stored_lightAccent = localStorage.getItem("webStyle-lightAccent");
-    //   if (stored_lightAccent){
-    //     newState.lightAccent = stored_lightAccent
-    //   }
-    //   let stored_mainBrandColor = localStorage.getItem("webStyle-mainBrandColor");
-    //   if (stored_mainBrandColor){
-        
-    //     newState.mainBrandColor = stored_mainBrandColor
-
-    //   }
-    //   let stored_darkAccent = localStorage.getItem("webStyle-darkAccent");
-    //   if (stored_darkAccent){
-        
-    //     newState.darkAccent = stored_darkAccent
-
-    //   }
-    //   let stored_darkShade = localStorage.getItem("webStyle-darkShade");
-    //   if (stored_darkShade){
-        
-    //     newState.darkShade = stored_darkShade
-
-    //   }
-    //   // widths
-    //   let stored_centerWidth = localStorage.getItem("webStyle-centerWidth");
-    //   if (stored_centerWidth){
-        
-    //     newState.centerWidth = stored_centerWidth
-
-    //   }
-    //   let stored_secondCenterWidth = localStorage.getItem("webStyle-secondCenterWidth");
-    //   if (stored_secondCenterWidth){
-    //     newState.secondCenterWidth = stored_secondCenterWidth
-
-    //   }
-
-    //   let stored_isEditMode = localStorage.getItem("webStyle-isEditMode");
-    //   if (stored_isEditMode){
-    //     newState.isEditMode = stored_isEditMode === "true"
-
-    //   }
-
-
-    //   this.setState(newState)
-
-    //   this.props.updateWebStyles(newState)
-    // }
+ 
 
     handleFontChange = (name,font) =>{
       localStorage.setItem('webStyle-'+name,font.family);
@@ -244,7 +185,7 @@ export default class WebsiteStyleEditor extends React.Component {
 
         return (
           
-          <div className={"nav nav-fill container-fluid border-bottom border-dark"+showRibbonClass+(this.props.isAdminPage?"":" bg-light") + (this.props.webStyle.isMobile?"":"p-5")} style={{position: "sticky",top: 0, alignSelf: "flex-start",zIndex:999,...this.props.style}} >
+          <div className={"nav nav-fill container-fluid border-bottom border-dark g-0"+showRibbonClass} style={{position: "sticky",top: 0, alignSelf: "flex-start",zIndex:999,...this.props.style}} >
             {/* <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle"}><FontAwesomeIcon   icon={faFont} /></MenuButton>} transition>
                 <MenuHeader>Text</MenuHeader>
                 <MenuDivider />
@@ -267,69 +208,71 @@ export default class WebsiteStyleEditor extends React.Component {
                 
                 <MenuItem>Font Base Size</MenuItem>
             </Menu> */}
-            <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon   icon={faPalette} /></MenuButton>} transition>
-                <MenuHeader>Colors</MenuHeader>
-                <MenuDivider />
-                <FocusableItem><input type={"color"} value ={this.state.lightShade} name = {"lightShade"} onChange = {this.handleInputChange}
-                 style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} />-  Background Color</FocusableItem>
-                <FocusableItem><input type={"color"} value ={this.state.lightAccent} onChange = {this.handleInputChange} name = {"lightAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Primary Accent</FocusableItem>
-                <FocusableItem><input type={"color"} value ={this.state.mainBrandColor} onChange = {this.handleInputChange} name = {"mainBrandColor"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Main Brand Color</FocusableItem>
-                <FocusableItem><input type={"color"} value ={this.state.darkAccent} onChange = {this.handleInputChange} name = {"darkAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secoondary Accent</FocusableItem>
-                <FocusableItem><input type={"color"} value ={this.state.darkShade} onChange = {this.handleInputChange} name = {"darkShade"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secondary Shade (Font) </FocusableItem>
-                <FocusableItem><button onClick={this.invertColors}>Invert Color Scheme</button> </FocusableItem>
+            <div className={"row m-auto w-100 "+(this.props.isAdminPage?"":" bg-light")} style={{zIndex:2}}>
+              <div className={"col text-center "+(this.props.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+                <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon   icon={faPalette} /></MenuButton>} transition>
+                  <MenuHeader>Colors</MenuHeader>
+                  <MenuDivider />
+                  <FocusableItem><input type={"color"} value ={this.state.lightShade} name = {"lightShade"} onChange = {this.handleInputChange}
+                  style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} />-  Background Color</FocusableItem>
+                  <FocusableItem><input type={"color"} value ={this.state.lightAccent} onChange = {this.handleInputChange} name = {"lightAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Primary Accent</FocusableItem>
+                  <FocusableItem><input type={"color"} value ={this.state.mainBrandColor} onChange = {this.handleInputChange} name = {"mainBrandColor"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Main Brand Color</FocusableItem>
+                  <FocusableItem><input type={"color"} value ={this.state.darkAccent} onChange = {this.handleInputChange} name = {"darkAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secoondary Accent</FocusableItem>
+                  <FocusableItem><input type={"color"} value ={this.state.darkShade} onChange = {this.handleInputChange} name = {"darkShade"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secondary Shade (Font) </FocusableItem>
+                  <FocusableItem><button onClick={this.invertColors}>Invert Color Scheme</button> </FocusableItem>
 
-            </Menu>
-           
+                </Menu>
+              </div>
+              <div className={"col text-center "+(this.props.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+                 {/* Admin Menu */}
+                <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faUserCog} /></MenuButton>} transition>
+                  <FocusableItem className="form-check">
+                  <input className="form-check-input me-2" type={"checkbox"} checked = {this.props.webStyle.isEditMode} onClick={(evt)=>{this.handleCheckBox(evt,"isEditMode")}} />
+                  <label className="form-check-label" >Admin Edit Mode</label> 
+                  </FocusableItem>
+                  <FocusableItem className="form-check">
+                  <input className="form-check-input me-2" type={"checkbox"} checked = {this.props.webStyle.isShowEditor} onClick={(evt)=>{this.handleCheckBox(evt,"isShowEditor")}} />
+                  <label className="form-check-label" >Show Admin Editor</label> 
+                  </FocusableItem>
+                  <MenuItem><Link to={"/admin"}>Visit Admin Page</Link></MenuItem>
+                </Menu>
+              </div>
             
-            {/* Admin Menu */}
-            <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faUserCog} /></MenuButton>} transition>
-              <FocusableItem className="form-check">
-                <input className="form-check-input me-2" type={"checkbox"} checked = {this.props.webStyle.isEditMode} onClick={(evt)=>{this.handleCheckBox(evt,"isEditMode")}} />
-                <label className="form-check-label" >Admin Edit Mode</label> 
-              </FocusableItem>
-              <FocusableItem className="form-check">
-                <input className="form-check-input me-2" type={"checkbox"} checked = {this.props.webStyle.isShowEditor} onClick={(evt)=>{this.handleCheckBox(evt,"isShowEditor")}} />
-                <label className="form-check-label" >Show Admin Editor</label> 
-              </FocusableItem>
-              <MenuItem><Link to={"/admin"}>Visit Admin Page</Link></MenuItem>
-            </Menu>
+              <div className={"col text-center "+(this.props.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+                {/* Pages Menu */}
+                <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faFile} /></MenuButton>} transition>
+                  <MenuHeader>Your Website Pages</MenuHeader>
+                  {pages}
+                  <MenuButton className={"styleEditorSubmenuIcon "} onClick = {()=>this.props.pageCallbacks.addPage()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
+                  <MenuDivider />
+                  <SubMenu label={"Checkout Page"}>
+                    <MenuItem><Link to={"/checkout"}>Visit Page</Link></MenuItem>
+                  </SubMenu>
+                  <SubMenu label={"Admin Page"}>
+                    <MenuItem><Link to={"/admin"}>Visit Admin Page</Link></MenuItem>
+                  </SubMenu>
 
-            {/* Pages Menu */}
-            <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faFile} /></MenuButton>} transition>
-              <MenuHeader>Your Website Pages</MenuHeader>
-              {pages}
-              <MenuButton className={"styleEditorSubmenuIcon "} onClick = {()=>this.props.pageCallbacks.addPage()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
-              <MenuDivider />
-              <SubMenu label={"Checkout Page"}>
-                  <MenuItem><Link to={"/checkout"}>Visit Page</Link></MenuItem>
-              </SubMenu>
-            </Menu>
-
-            {/* Shop Page */}
-            <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faShoppingBag} /></MenuButton>} transition>
-              <SubMenu label={"Promo Codes"}>
-                {promoCodes}
-                <MenuItem className = "justify-content-center"><a onClick={()=>{alert("Add Promo Code")}}><FontAwesomeIcon icon={faPlus}/></a></MenuItem>
-              </SubMenu>
-            </Menu>
-
-            {/* Socials Pages */}
-            <Menu className="nav-item dropdown " menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faTwitter} /></MenuButton>} transition>
-              <MenuHeader>Your Social Media Links</MenuHeader>
-              {socialMediaLinks}
-              <MenuButton className={"styleEditorSubmenuIcon"} onClick = {()=>this.props.socialMediaCallbacks.addSocialMedia()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
-            </Menu>
-
-            
-
-            {/* <MenuButton className={"nav-item styleEditorIcon"} onClick={()=>{alert("save");this.props.closeStyleEditor()}}><FontAwesomeIcon  icon={faSave} /></MenuButton> */}
-            {/* <MenuButton className={"nav-item styleEditorIcon"} onClick={()=>{alert("hide");this.props.minimizeStyleEditor()}}><FontAwesomeIcon  icon={faSortUp} /></MenuButton> */}
-
-            {/* <MenuButton className={"nav-item styleEditorIcon"} onClick={()=>{this.props.closeStyleEditor()}}><FontAwesomeIcon  icon={faTimes} /></MenuButton> */}
- 
-              {/* <FontAwesomeIcon className={"styleEditorIcon dropdown-toggle"}  icon={faPalette} />
-              <FontAwesomeIcon className={"styleEditorIcon dropdown-toggle"}  icon={faArrowsAltH} /> */}
-            
+                </Menu>
+              </div>
+              <div className={"col text-center "+(this.props.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+                 {/* Shop Page */}
+                <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faShoppingBag} /></MenuButton>} transition>
+                  <SubMenu label={"Promo Codes"}>
+                  {promoCodes}
+                  <MenuItem className = "justify-content-center"><a onClick={()=>{alert("Add Promo Code")}}><FontAwesomeIcon icon={faPlus}/></a></MenuItem>
+                  </SubMenu>
+                </Menu>
+              </div>
+              <div className={"col text-center "+(this.props.webStyle.isMobile?"mx- g-0":"mx-4")}>
+                {/* Socials Pages */}
+                <Menu className="nav-item dropdown " menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faTwitter} /></MenuButton>} transition>
+                  <MenuHeader>Your Social Media Links</MenuHeader>
+                  {socialMediaLinks}
+                  <MenuButton className={"styleEditorSubmenuIcon"} onClick = {()=>this.props.socialMediaCallbacks.addSocialMedia()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
+                </Menu>
+              </div>
+            </div>
+          
           </div>
           
         );
@@ -366,3 +309,4 @@ function FontPickerDropDown(props){
         </div>
   )
 }
+

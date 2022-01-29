@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import ContentEditable from 'react-contenteditable'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck,faPencilAlt} from '@fortawesome/free-solid-svg-icons'
+import QuillComponent from "./quillComponent"
 
 export default class PlanComparison extends React.Component {
   constructor(props) {
@@ -161,7 +162,8 @@ export default class PlanComparison extends React.Component {
 
 
     return(
-        <div className="table-responsive boxShadow p-3" style={{backgroundColor:this.props.webStyle.lightShade}}>
+        <div className="mb-5 px-5" >
+            <div className='table-responsive boxShadow px-3 pt-2' style={{backgroundColor:this.props.webStyle.lightShade}}>
                 <ContentEditable
                 className='text-center'
                     spellCheck = "false"
@@ -214,6 +216,7 @@ export default class PlanComparison extends React.Component {
                 </thead>
                     {groups}
                 </table>
+            </div>
         </div>
     )
   }

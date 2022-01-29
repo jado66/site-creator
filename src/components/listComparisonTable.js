@@ -77,7 +77,7 @@ function PackagePlan(props){
                 <ListItemEditable webStyle = {props.webStyle} id = {props.id+"listItem"}/>
             
                 </ul>
-                <ButtonEditable webStyle = {props.webStyle} className={"w-100 btn btn-lg "} style = {{backgroundColor:props.webStyle.darkAccent, color: props.webStyle.lightShade}} callback = {()=>{alert("hi")}}/>
+                <ButtonEditable webStyle = {props.webStyle} className={"w-100 btn btn-lg "} style = {{backgroundColor:props.webStyle.darkAccent, color: props.webStyle.lightShade}} callback = {()=>{alert("he he")}}/>
                
                 {/* <button type="button" className="w-100 btn btn-lg btn-outline-dark">Sign Up</button> */}
             </div>

@@ -27,7 +27,7 @@ import React from 'react'
 import ContentEditable from 'react-contenteditable'
 import QuillComponent from "./quillComponent"
 
-export default class Paragraph extends React.Component {
+export default class ParagraphBacked extends React.Component {
   constructor(props) {
     super(props)
     this.contentEditable = React.createRef();
@@ -75,6 +75,8 @@ export default class Paragraph extends React.Component {
 
     return(
       <div className='mb-5 px-5' >
+        <div className="row boxShadow g-0 p-5" style={{backgroundColor:this.props.webStyle.lightShade}}>
+
           <QuillComponent  webStyle = {this.props.webStyle} id ={this.props.id} content = {this.props.content} />
 
           {/* <ContentEditable 
@@ -86,6 +88,8 @@ export default class Paragraph extends React.Component {
             tagName='p'
             /> */}
         </div>
+        </div>
+
             )
   };
 };

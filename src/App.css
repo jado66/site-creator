@@ -91,6 +91,27 @@ textarea {
   border: none !important;
   background: none !important;
 }
+.relative-b {
+  position: absolute;
+  width: 100%;
+  bottom: 0.5em;
+  right: 0;
+  display: flex;
+}
+.relative-t {
+  position: absolute;
+  width: 100%;
+  top: -2em;
+  right: 0;
+  display: flex;
+}
+.relative-m {
+  position: absolute;
+  width: 100%;
+  bottom: 50%;
+  right: 0;
+  display: flex;
+}
 
 .relative-r {
   position: absolute;
@@ -144,10 +165,6 @@ textarea {
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
 }
 
 .blog-banner {
@@ -377,4 +394,15 @@ input::placeholder {
 
 .StripeElement.PaymentRequestButton {
   height: 40px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

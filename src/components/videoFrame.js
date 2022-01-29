@@ -40,8 +40,8 @@ export default function VideoFrame(props){
     
 
     return(
-        <div className="row" style = {{marginBottom:"40px"}} onMouseEnter={()=>{setButtonsVisible(true)}} onMouseLeave={()=>{setButtonsVisible(false)}}>
-            <div  style = {{ position: "relative", margin:"auto", marginBottom:"20px",marginTop:"20px",minHeight:"100px",minWidth:"100px"}}  > 
+        <div className="row px-5 mb-5 relative-div" onMouseEnter={()=>{setButtonsVisible(true)}} onMouseLeave={()=>{setButtonsVisible(false)}}>
+            <div style = {{minHeight:"100px",minWidth:"100px"}}  > 
             {videoSource ? 
                 <div className="video-responsive boxShadow">
                     <iframe
@@ -55,11 +55,11 @@ export default function VideoFrame(props){
                     />
                 </div>
                 :
-                <div className="boxShadow" style={{width:"90%",minHeight:"300px",backgroundColor:props.webStyle.darkShade,margin:"auto"}}></div>
+                <div className="boxShadow" style={{minHeight:"300px",backgroundColor:props.webStyle.darkShade,margin:"auto"}}></div>
             }
             {
                 areButtonsVisible &&
-                <div style={{ position: "absolute",top: "0", left: "0",display:"flex",flexDirection:"row"}}>
+                <div style={{ position: "absolute",top: "0", left: "75px",display:"flex",flexDirection:"row"}}>
                     <div style={{flexDirection:"row",justifyContent:'center',width:"100%",marginBottom:"10px",alignSelf:"flex-end"}}> 
                         {!videoSource ?
                             <div className="row">

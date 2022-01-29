@@ -229,12 +229,12 @@ export default class Navbar extends React.Component {
           let isExternalMenuItem = this.isPathExternal(menuItem.path) 
 
           let newMenuItem = (isExternalMenuItem ?
-                      <Link className = {"navMenu apply-font-primary"+ (this.props.webStyle.isMobile?" pb-3":"")} to={{ pathname: menuItem.path}} target="_blank" style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem.name}</Link>
+                      <Link className = {"navMenu apply-font-primary"+ (this.props.webStyle.isMobile?" pb-3 text-start":"")} to={{ pathname: menuItem.path}} target="_blank" style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem.name}</Link>
                         :
-                        <Link className = {"navMenu apply-font-primary"+ (this.props.webStyle.isMobile?" pb-3":"")} to={menuItem.path} style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem.name}</Link>
+                        <Link className = {"navMenu apply-font-primary"+ (this.props.webStyle.isMobile?" pb-3 text-start":"")} to={menuItem.path} style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem.name}</Link>
                       )
           menuItems.push(
-            <AdminMenuItemWrapper key={menuItem.name+menuItem.path+"-admin"} adminProps = {this.props.adminProps} webStyle = {this.props.webStyle} isMenu = {false} isMobile = {this.props.isMobile}
+            <AdminMenuItemWrapper key={menuItem.name+menuItem.path+"-admin"} adminProps = {this.props.adminProps} webStyle = {this.props.webStyle} isMenu = {false} isMobile = {this.props.webStyle.isMobile}
                                 index = {index} callbacks = {callbacks} mode = {this.state.mode} menuItem = {menuItem} menuItemCount = {this.state.menuItems.length}>
               {newMenuItem}
             </AdminMenuItemWrapper>)
@@ -255,7 +255,7 @@ export default class Navbar extends React.Component {
           // <Link className="link" to={menuItem[1].path} style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem[0]}</Link>
             
           menuItems.push(
-          <AdminMenuItemWrapper key={menuItem[0].name+menuItem[1].path+"-admin"} adminProps = {this.props.adminProps} webStyle = {this.props.webStyle} isMenu = {true} isMobile = {this.props.isMobile}
+          <AdminMenuItemWrapper key={menuItem[0].name+menuItem[1].path+"-admin"} adminProps = {this.props.adminProps} webStyle = {this.props.webStyle} isMenu = {true} isMobile = {this.props.webStyle.isMobile}
                                 index = {index} callbacks = {callbacks} mode = {this.state.mode} menuItem = {menuItem[1]} menuItemCount = {this.state.menuItems.length}>
           {newMenu}
           </AdminMenuItemWrapper>
@@ -303,20 +303,20 @@ export default class Navbar extends React.Component {
 
               <nav className="navbar navbar-expand-lg navbar-dark px-5 mb-5  " style={{marginLeft:(this.props.webStyle.isMobile?"1em":"-3em"),marginRight:(this.props.webStyle.isMobile?"1em":"-3em"),backgroundColor:this.props.webStyle.darkAccent}}>
                 <Link className="navbar-brand" style={{color:this.props.webStyle.lightShade}}to={"/"} >React Site Creator</Link>
-                {/* {this.props.isMobile?<span>M</span>:<span>D</span>} */}
+                {/* {this.props.webStyle.isMobile?<span>M</span>:<span>D</span>} */}
                 <button className="navbar-toggler" type="button" onClick={ this.toggleMenu.bind(this) }>
                   <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className={"collapse navbar-collapse " + show}>
-                  <div className={"navbar-nav justify-content-evenly ms-0"+ (this.props.webStyle.isMobile?" pb-3":"")} style={{flexGrow:1}}>
+                  <div className={"navbar-nav justify-content-around ms-0"+ (this.props.webStyle.isMobile?" pb-3":"")} style={{flexGrow:1}}>
                     {menuItems}
-                    {this.props.isMobile &&
-                      <Link className="link" className = {"navMenu apply-font-primary text-left"} target="_blank" style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} 
+                    {this.props.webStyle.isMobile &&
+                      <Link className="link" className = {"navMenu apply-font-primary text-start ms-4"} target="_blank" style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} 
                             onClick = {()=>{this.props.addMenuItemAtIndex(this.state.menuItems.length)}}>+</Link>
                     }
                   </div>
                   <div style={{right:"0"}}>
-                  <ul className="navbar-nav sm-icons justify-content-center" >
+                  <ul className="navbar-nav sm-icons justify-content-start" >
                     {socialLinks}
                     {
 
@@ -371,7 +371,6 @@ class AdminMenuItemWrapper extends React.Component {
     if (this.state.menuItemPath == this.props.menuItem.path && this.state.menuItemHtml == `<a>${this.props.menuItem.name}</a>`){
       this.props.callbacks.returnToNormalState();
       this.setButtonsVisibility(false)
-      // alert("hi")
       return
     }
 
@@ -401,18 +400,22 @@ class AdminMenuItemWrapper extends React.Component {
 
     let buttonClass = this.state.areButtonsVisible && this.props.webStyle.isEditMode ? "" :"hidden"
 
+    if (this.props.webStyle.isMobile){
+      buttonClass = ""
+    }
+
     // buttonClass = "hidden"-3
 
     return ( 
-      <div className={"relative-div flex-grow-1 "+(this.props.isMobile?"":"text-center")} onMouseEnter={() => this.setButtonsVisibility(true)} onMouseLeave={() => {this.setButtonsVisibility(false)}}>
+      <div className={"relative-div flex-grow-1 "+(this.props.webStyle.isMobile?"":"text-center")} onMouseEnter={() => this.setButtonsVisibility(true)} onMouseLeave={() => {this.setButtonsVisibility(false)}}>
         {/* Add/Move Mode: Arrows and pluses */}
         {mode == "add/move" &&
           <div className={buttonClass}>
-            {this.props.isMobile ?
+            {this.props.webStyle.isMobile ?
             <div>
               {/* Mobile */}
               <div className="relative-r" style={{color:this.props.webStyle.lightShade,right:".5em"}}>
-                {this.props.index != 0 && <FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleUp} onClick = {()=>{this.props.callbacks.moveMenuItemLeft(this.props.index)}}/>}
+                {this.props.index != 1 && <FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleUp} onClick = {()=>{this.props.callbacks.moveMenuItemLeft(this.props.index)}}/>}
               </div>
               <div className={"relative-r"} style={{color:this.props.webStyle.lightShade,right:"1.5em"}}>
                 {this.props.index != this.props.menuItemCount-1 &&<FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleDown} onClick = {()=>{this.props.callbacks.moveMenuItemRight(this.props.index)}}/>}
@@ -429,7 +432,7 @@ class AdminMenuItemWrapper extends React.Component {
                 </div>
 
                 <div className="relative-l" style={{color:this.props.webStyle.lightShade,left:"0em"}}>
-                  {this.props.index != 0 && <FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleLeft} onClick = {()=>{this.props.callbacks.moveMenuItemLeft(this.props.index)}}/>}
+                  {this.props.index != 1 && <FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleLeft} onClick = {()=>{this.props.callbacks.moveMenuItemLeft(this.props.index)}}/>}
                 </div>
                 <div className={"relative-r"} style={{color:this.props.webStyle.lightShade,right:"0em"}}>
                   {this.props.index != this.props.menuItemCount-1 &&<FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleRight} onClick = {()=>{this.props.callbacks.moveMenuItemRight(this.props.index)}}/>}
@@ -442,7 +445,7 @@ class AdminMenuItemWrapper extends React.Component {
         {/* Edit/Delete: Pencil and Trashcan */}
         {mode == "edit/delete" &&
           <div className={buttonClass}>
-            {this.props.isMobile ?
+            {this.props.webStyle.isMobile ?
             <div>
               {/* Mobile */}
               <div className="relative-r" style={{color:this.props.webStyle.lightShade,right:".5em"}}>

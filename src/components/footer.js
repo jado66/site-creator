@@ -43,7 +43,7 @@ export default class SocialLinks extends React.Component {
       }
       return true;
     }).map(({link,location}) =>
-      <Link className='col' key = {location} to={{ pathname: link}} target={"_blank"} key={location} style={{color:this.props.webStyle.darkShade}}><FontAwesomeIcon className={"socialMediaLink m-auto"} icon={this.componentMapping[location]} /></Link>
+      <Link className='col text-center' key = {location} to={{ pathname: link}} target={"_blank"} key={location} style={{color:this.props.webStyle.darkShade}}><FontAwesomeIcon className={"socialMediaLink m-auto"} icon={this.componentMapping[location]} /></Link>
     );
 
     return(

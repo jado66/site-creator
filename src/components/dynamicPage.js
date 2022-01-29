@@ -6,7 +6,7 @@ import React from "react";
 import DynamicForm from "./dynamicForm";
 import CardPaymentBlock from "./cardPaymentBlock";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSortUp, faSortDown, faThList, faCaretDown, faPlus, faAngleDoubleUp, faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons'
+import { faSortUp, faSortDown, faThList, faCaretDown, faPlus, faAngleDoubleUp, faAngleDoubleDown, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import Mosaic from "./mosaic";
 import WebsiteStyleEditor from "./styleEditor";
 import Footer from "./footer";
@@ -18,21 +18,14 @@ import Paragraph from "./paragraph";
 import ListComparisonTable from "./listComparisonTable";
 import PlanComparison from "./planComparison";
 import { faCaretSquareDown, faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+import WalkThrough from "./walkthrough";
+import ParagraphBacked from "./paragraphBacked";
 
 
 export default class DynamicPage extends React.Component {
     constructor(props) {
         super(props);
- 
-        // alert(JSON.stringify(props.webStyle))
-
-
-        this.adminProps = {
-            webStyle: props.webStyle,
-            userIsAdmin: true,//props.userIsAdmin,
-            viewAsNormalUser: props.viewAsNormalUser,
-        }
-
+    
         this.componentMapping = {
             Header:Header,
             // Subheader,
@@ -48,8 +41,10 @@ export default class DynamicPage extends React.Component {
             PictureFrame:PictureFrame,
             QuickLink:QuickLink,
             Paragraph:Paragraph,
+            ParagraphBacked:ParagraphBacked,
             ListComparisonTable:ListComparisonTable,
             PlanComparison:PlanComparison,
+            WalkThrough:WalkThrough
             // Gallery,
             // NewsletterSignup,
             // BlogFeedAppointments,
@@ -76,10 +71,17 @@ export default class DynamicPage extends React.Component {
         // this.generateKey = this.generateKey.bind(this)
 
         this.swapComponents = this.swapComponents.bind(this)
- 
+        
+        let components = []
+
+        // if (this.props.template){
+        //     alert(JSON.stringify(this.props.template))
+        // }
+
+        
         this.state = {
             pageName: this.pageType,
-            components : [],
+            components : components,
             isStyleEditorMinimized: false,
             showStyleEditor: false,
         };
@@ -98,14 +100,32 @@ export default class DynamicPage extends React.Component {
     //     }
     //   }
     componentDidMount(){
-        const components = JSON.parse(localStorage.getItem(this.props.pageName+'-componentList'))
+        // let components = null// JSON.parse(localStorage.getItem(this.props.pageName+'-componentList'))
     
-        if (components){
+        // if (components){
+        //     this.setState({components: components})
+        // }
+        // else{
+        if(this.props.template){
+            const components = this.props.template;
+            // else{
+            //     components = []
+            //     for (var i = 0; i < this.props.defaultComponentList.length; i++){
+            //         components.push(
+            //             {
+            //                 name: this.props.defaultComponentList[i],
+            //                 id: this.generateKey(this.props.defaultComponentList[i],i)
+            //             })
+            //     }
+            // } 
+
+           
             this.setState({components: components})
+        
         }
         else{
-            let components = [];
-
+            
+            let components = []
             for (var i = 0; i < this.props.defaultComponentList.length; i++){
                 components.push(
                     {
@@ -115,8 +135,9 @@ export default class DynamicPage extends React.Component {
             }
             this.setState({components: components})
 
-            localStorage.setItem(this.props.pageName+'-componentList',JSON.stringify(components));
         }
+            // localStorage.setItem(this.props.pageName+'-componentList',JSON.stringify(components));
+        
       }
  
     minimizeStyleEditor(){
@@ -141,13 +162,15 @@ export default class DynamicPage extends React.Component {
     }
  
     deleteComponent(index){
-        alert(`Delete component at index ${JSON.stringify(index)}`)
+        if (window.confirm(`Are you sure you want to delete this ${this.state.components[index].name.toLowerCase()} component?`)){
+            let newComponentList = [...this.state.components.slice(0,index),...this.state.components.slice(index+1)]
 
-        let newComponentList = [...this.state.components.slice(0,index),...this.state.components.slice(index+1)]
+            this.setState({components:newComponentList});
+    
+            localStorage.setItem(this.props.pageName+'-componentList',JSON.stringify(newComponentList));
+        }
 
-        this.setState({components:newComponentList});
-
-        localStorage.setItem(this.props.pageName+'-componentList',JSON.stringify(newComponentList));
+       
     }
  
     moveComponentUp(index){
@@ -204,12 +227,20 @@ export default class DynamicPage extends React.Component {
 
         this.state.components.forEach((component, index) => {
            
+            let content = null
+            try{
+                content = this.props.template[index].content
+            }
+            catch{
+
+            }
+
         
             const Component = this.componentMapping[component.name];
             let newComponent = <AdminComponentWrapper key ={component.id+"-admin"} index = {index} componentCount = {this.state.components.length} webStyle = {this.props.webStyle}
-                                                      callbacks = {callbacks} componentOptions = {this.props.componentOptions} adminProps = {this.adminProps} >
+                                                      callbacks = {callbacks} componentOptions = {this.props.componentOptions} isNavbar = {component.name == "Navbar"}>
                                          <Component cart = {this.props.cart} cartCallbacks = {this.props.cartCallbacks} webStyle = {this.props.webStyle} key={component.id} id = {component.id} pages = {this.props.pages} pageCallbacks = {this.props.pageCallbacks} isMobile = {this.props.isMobile}
-                                                   index = {index} pageName = {this.props.pageName} adminProps = {this.adminProps} socialMedias = {this.props.socialMedias} socialMediaCallbacks = {this.props.socialMediaCallbacks}/>
+                                                   index = {index} pageName = {this.props.pageName} socialMedias = {this.props.socialMedias} socialMediaCallbacks = {this.props.socialMediaCallbacks} content = {content}/>
                                 </AdminComponentWrapper>
             pageComponents.push(newComponent)
         });
@@ -217,11 +248,11 @@ export default class DynamicPage extends React.Component {
         // alert(JSON.stringify(pageComponents))
  
         return (
-            <div className="h-100" style={{backgroundColor:this.props.webStyle.lightShade}}>    
+            <div  style={{backgroundColor:this.props.webStyle.lightShade}}>    
     
                 
                     
-                <div id = "outerSection" className="container h-100">
+                <div id = "outerSection" className="container">
                     <div id = "innerSection" className="col justify-items-baseline boxShadow h-100 py-4" style={{backgroundColor:this.props.webStyle.lightAccent}}>
 
                     {/* <div id = "mainSection" style={{width:this.props.isMobile?"100%":`${this.props.webStyle.secondCenterWidth}%`,margin:"auto"}}> Includes everything inside the margin */}
@@ -242,6 +273,8 @@ class AdminComponentWrapper extends React.Component {
         this.setButtonsVisibility = this.setButtonsVisibility.bind(this);
         this.openAddComponentAbove = this.openAddComponentAbove.bind(this)
         this.openAddComponentBelow = this.openAddComponentBelow.bind(this)
+        this.addNewComponent = this.addNewComponent.bind(this)
+        this.scroll = this.scroll.bind(this)
 
         this.state = {
             areButtonsVisible: false,
@@ -251,18 +284,37 @@ class AdminComponentWrapper extends React.Component {
             callbacks: props.callbacks,
             componentOptions: props.componentOptions,
             height: 100,
+            optionsXPos: 0
         };
 
         this.domRef = React.createRef()
-
+        this.optionsRef = React.createRef()
         this.adminProps = props.adminProps
+
+        this.t = undefined
+        this.start = 100
+        this.repeatLeftScroll = this.repeatLeftScroll.bind(this)
+        this.repeatRightScroll = this.repeatRightScroll.bind(this)
+        this.onMouseUp = this.onMouseUp.bind(this)
+        this.onMouseDown = this.onMouseDown.bind(this)
+        
 
       }
 
-    
+    onMouseDown(rightScroll) {
+        if (rightScroll)
+           this.repeatRightScroll()
+        else   
+            this.repeatLeftScroll()
+ 
+    }
+    onMouseUp() {
+        clearTimeout(this.t)
+        this.start = 100
+      }
 
     setButtonsVisibility(showButtons){
-        if (this.adminProps.userIsAdmin)
+        if (this.props.webStyle.isAdmin)
             this.setState({areButtonsVisible: showButtons})
     }
     openAddComponentAbove(){
@@ -287,6 +339,8 @@ class AdminComponentWrapper extends React.Component {
             areAboveOptionsVisible: false,
             areBelowOptionsVisible: false,
             newComponentIndex:-1})
+        this.onMouseUp();
+
     }  
 
     componentDidMount(){
@@ -298,6 +352,33 @@ class AdminComponentWrapper extends React.Component {
         }
     }
        
+    repeatLeftScroll() {
+        this.scroll(false)
+        this.t = setTimeout(this.repeatLeftScroll, this.start)
+        this.start = this.start / 2
+      }
+
+
+    repeatRightScroll() {
+        this.scroll(true)
+        this.t = setTimeout(this.repeatRightScroll, this.start)
+        this.start = this.start / 2
+      }
+
+    scroll(scrollRight){
+
+        if(!this.optionsRef.current) {
+            alert("no ref")
+            return
+        }
+        else{
+            const scrollLeft = this.optionsRef.current.scrollLeft
+            this.optionsRef.current.scrollLeft = scrollLeft + (scrollRight?-3:3)
+
+        }
+
+        // window.scrollTo(bcr.left - bcr.width/2, bcr.top - bcr.height/2);// this.optionsRef.current.scrollLeft = this.optionsRef.scrollLeft+(scrollRight?10:-10); 
+    }
 
     render() {
 
@@ -305,43 +386,105 @@ class AdminComponentWrapper extends React.Component {
  
         // buttonClass = "hidden"
         let options = this.state.componentOptions.map((option) => (
-            <button key ={option} onClick = {()=>{this.addNewComponent(option)}}>{option}</button>
+            <button className="btn btn-light btn-outline-secondary my-1 col" key ={option} onClick = {()=>{this.addNewComponent(option)}}>{option}</button>
             ))
 
-        options.push(
-            <button key ={"deleteButton"} onClick = {()=>{this.closeAddComponents()}}>X</button>
-        )
+        // options.push(
+        //     <button c key ={"deleteButton"} onClick = {()=>{this.closeAddComponents()}}>X</button>
+        // )
+
+        const buttonStyle = {backgroundColor:this.props.webStyle.lightShade,color:this.props.webStyle.darkShade}
+
+        const optionButtons = <div ref={this.optionsRef} style={{width:"85%", whiteSpace:"nowrap"}} className="py-0 g-0 overflow-auto no-scroll">
+                                {options}    
+                            </div>
 
     if (this.props.webStyle.isEditMode){
         return ( 
-            <div ref={this.domRef} className="adminWrapper relative-div" style={{marginLeft:"-3em",paddingLeft:"3em",marginRight:"-3em",paddingRight:"3em"}} onMouseEnter={() => this.setButtonsVisibility(true)} onMouseLeave={() => {this.setButtonsVisibility(false);this.closeAddComponents()}}>
+            <div ref={this.domRef} className="adminWrapper relative-div" style={{marginLeft:"-3em",marginBottom:"-.1em",paddingBottom:".1em",paddingLeft:"3em",marginRight:"-3em",paddingRight:"3em"}} 
+                 onMouseEnter={() => this.setButtonsVisibility(true)} onMouseLeave={() => {this.setButtonsVisibility(false)}} > 
+                 {/* onBlur={(e) => {this.closeAddComponents()}} */}
                 {/* Above component */}
                 {/* <span>{this.state.height}</span> */}
-                {this.children}
-                <div className={"relative-r text-centered " + buttonClass} >
-                    {/* If the component is large height wise */}
-                    {this.state.height>100 &&
-                    <div className="col" style={{width:"5em"}}>
-                        {/* <span>{this.props.webStyle.isMobile?"M":"D"}</span> */}
-                        <div className={this.props.webStyle.isMobile?"btn-group-vertical":"btn-group"} role="group" >
-                            <button type="button" className="btn btn-outline-dark btn-light text-nowrap rounded-0"  onClick = {this.openAddComponentAbove}>
-                                +<FontAwesomeIcon className="align-middle " icon={faCaretDown} rotation={180}/>
-                            </button>
-                            <button type="button" className="btn btn-outline-dark btn-light" onClick = {()=>{this.state.callbacks.moveComponentUp(this.props.index)}}><FontAwesomeIcon  icon={faAngleDoubleUp}/></button>
-                            {/* <button type="button" className="btn btn-secondary">Right</button> */}
+                {this.state.areAboveOptionsVisible && 
+                    <div className = {"relative-t row"} >
+                        <div className="row g-0 w-75 mx-auto" style={{zIndex:2}}>
+                            <div style={{display:"flex", flexDirection:"row"}} >
+                                <button style={{width:"5%"}} className="btn btn-light btn-outline-secondary my-1 g-0" onClick={()=>{this.closeAddComponents()}}>{"X"}</button>
+                                <button style={{width:"5%"}} className="btn btn-light btn-outline-secondary my-1 g-0" onMouseUp={()=>{this.onMouseUp()}} onMouseDown={()=>{this.onMouseDown(true)}}>{"<"}</button>
+                                {optionButtons}
+                                <button style={{width:"5%"}} className="btn btn-light btn-outline-secondary my-1 g-0" onMouseUp={()=>{this.onMouseUp()}} onMouseDown={()=>{this.onMouseDown(false)}}>{">"}</button>
+                            </div>
                         </div>
-                        <div className={this.props.webStyle.isMobile?"btn-group-vertical":"btn-group"} style={{position:"absolute",bottom:0}} role="group" >
-                            <button type="button" className="btn btn-outline-dark btn-light text-nowrap rounded-0" onClick = {this.openAddComponentBelow}>
-                                +<FontAwesomeIcon className="align-middle " icon={faCaretDown}/>
-                            </button>
-                            <button type="button" className="btn btn-outline-dark btn-light" onClick = {()=>{this.state.callbacks.moveComponentDown(this.props.index)}}>
-                                <FontAwesomeIcon  icon={faAngleDoubleDown}/></button>
-                            {/* <button type="button" className="btn btn-secondary">Right</button> */}
+                    </div> 
+                }
+                {this.children}
+                {this.state.areBelowOptionsVisible && 
+                <div className = {"relative-b row"} >
+                    <div className="row g-0 w-75 mx-auto" style={{zIndex:2}}>
+                        <div style={{display:"flex", flexDirection:"row"}} >
+                            <button style={{width:"5%"}} className="btn btn-light btn-outline-secondary my-1 g-0" onClick={()=>{this.closeAddComponents()}}>{"X"}</button>
+                            <button style={{width:"5%"}} className="btn btn-light btn-outline-secondary my-1 g-0" onMouseUp={()=>{this.onMouseUp()}} onMouseDown={()=>{this.onMouseDown(true)}}>{"<"}</button>
+                            {optionButtons}
+                            <button style={{width:"5%"}} className="btn btn-light btn-outline-secondary my-1 g-0" onMouseUp={()=>{this.onMouseUp()}} onMouseDown={()=>{this.onMouseDown(false)}}>{">"}</button>
                         </div>
                     </div>
-                    }
+                </div> 
+                }
+
+                {this.state.height>150 ?
+                    <div className={"adminStuff relative-r text-centered " + buttonClass} >
+                        {/* If the component is large height wise */}
                     
-                </div>
+                        <div className="col px-2" style={{width:"5em"}}>
+                            {/* <span>{this.props.webStyle.isMobile?"M":"D"}</span> */}
+                            <div className={this.props.webStyle.isMobile?"btn-group-vertical boxShadow":"btn-group boxShadow"} role="group" >
+                                <button type="button" className="btn text-nowrap rounded-0" style={buttonStyle}  onClick = {this.openAddComponentAbove}>
+                                    +<FontAwesomeIcon className="align-middle " style={buttonStyle} icon={faCaretDown} rotation={180}/>
+                                </button>
+                                <button type="button" className="btn " style={buttonStyle} onClick = {()=>{this.state.callbacks.moveComponentUp(this.props.index)}}><FontAwesomeIcon  icon={faAngleDoubleUp}/></button>
+                                {/* <button type="button" className="btn btn-secondary">Right</button> */}
+                            </div>
+                            <div className="boxShadow " style={{position:"absolute",top:"4em"}}>
+                                <button type="button " style={buttonStyle} className="btn text-nowrap rounded-0"  onClick = {()=>{this.state.callbacks.deleteComponent(this.props.index)}}>
+                                    <FontAwesomeIcon className="align-middle "  icon={faTrashAlt}/>
+                                </button>
+                            </div>
+                            
+                            <div className={this.props.webStyle.isMobile?"btn-group-vertical boxShadow":"btn-group boxShadow"} style={{position:"absolute",bottom:"2em"}} role="group" >
+                                <button type="button" style={buttonStyle} className="btn text-nowrap rounded-0"  onClick = {this.openAddComponentBelow}>
+                                    +<FontAwesomeIcon className="align-middle "  icon={faCaretDown}/>
+                                </button>
+                                <button type="button" className="btn"  style={buttonStyle} onClick = {()=>{this.state.callbacks.moveComponentDown(this.props.index)}}>
+                                    <FontAwesomeIcon  icon={faAngleDoubleDown}/></button>
+                                {/* <button type="button" className="btn btn-secondary">Right</button> */}
+                            </div>
+                        </div>
+                    </div>
+                    :
+                    <div className={"adminStuff w-80 " + buttonClass + (this.props.isNavbar?" relative-b":" relative-b")}>
+                        <div className = "justify-content-between w-100 row g-0"  onClick={()=>{"admin"}}>
+                            {/* <span>{this.props.webStyle.isMobile?"M":"D"}</span> */}
+                            <div className="btn-group boxShadow" role="group" style={{width:"5em", zIndex:999}}  onClick={()=>{"admin"}}>
+                                {this.props.index != 0 &&<button type="button" className="btn " style={buttonStyle} onClick = {()=>{this.state.callbacks.moveComponentUp(this.props.index)}}><FontAwesomeIcon  icon={faAngleDoubleUp}/></button>}
+                                <button type="button" className="btn text-nowrap " style={buttonStyle}  onClick = {this.openAddComponentAbove}>
+                                    +<FontAwesomeIcon className="align-middle " style={buttonStyle} icon={faCaretDown} rotation={180}/>
+                                </button>
+                                {/* <button type="button" className="btn btn-secondary">Right</button> */}
+                            </div>
+                            <div className="btn-group boxShadow" style={{width:"5em"}} role="group"  onClick={()=>{"admin"}}>
+                                <button type="button" style={buttonStyle} className="btn text-nowrap"  onClick = {()=>{this.state.callbacks.deleteComponent(this.props.index)}}>
+                                    <FontAwesomeIcon className="align-middle "  icon={faTrashAlt}/>
+                                </button>
+                                <button type="button" style={buttonStyle} className="btn text-nowrap"  onClick = {this.openAddComponentBelow}>
+                                    +<FontAwesomeIcon className="align-middle "  icon={faCaretDown}/>
+                                </button>
+                                <button type="button" className="btn"  style={buttonStyle} onClick = {()=>{this.state.callbacks.moveComponentDown(this.props.index)}}>
+                                    <FontAwesomeIcon  icon={faAngleDoubleDown}/></button>
+                                {/* <button type="button" className="btn btn-secondary">Right</button> */}
+                            </div>
+                        </div>    
+                    </div>}
 
                 <div className={"relative-l col text-centered"  + buttonClass}>
                     {/* <div className="row">

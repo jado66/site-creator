@@ -5,7 +5,7 @@ export default class Header extends React.Component {
   constructor(props) {
     super(props)
     this.contentEditable = React.createRef();
-    this.state = {htmlHeader1: `Header`};
+    this.state = {html: `Header`};
     
     
   };

@@ -74,7 +74,7 @@ body {
   color: white;
   background: none;
   white-space: nowrap;
-  font-size: x-large;
+  font-size: 1.2em;
   margin: auto;
   /* color: #f2f2f2; */
   text-align: center;
@@ -87,7 +87,7 @@ body {
   color: white;
   /* background: black; */
   white-space: nowrap;
-  font-size: x-large;
+  font-size: 1.2em;
   /* margin: auto; */
   /* color: #f2f2f2; */
   text-align: center;
@@ -214,6 +214,9 @@ ul.topnav {
 }
 
 @media only screen and (max-width: 575px) {
+  .dropdown-toggle::after {
+    display: none !important;
+  }
   th.font-shrink {
     font-size: small !important;
   }
