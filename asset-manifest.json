@@ -1,25 +1,27 @@
 {
   "files": {
     "main.css": "/site-creator/static/css/main.fbcb56f2.chunk.css",
-    "main.js": "/site-creator/static/js/main.e16aec4b.chunk.js",
-    "main.js.map": "/site-creator/static/js/main.e16aec4b.chunk.js.map",
-    "runtime-main.js": "/site-creator/static/js/runtime-main.347227d1.js",
-    "runtime-main.js.map": "/site-creator/static/js/runtime-main.347227d1.js.map",
+    "main.js": "/site-creator/static/js/main.e91c000d.chunk.js",
+    "main.js.map": "/site-creator/static/js/main.e91c000d.chunk.js.map",
+    "runtime-main.js": "/site-creator/static/js/runtime-main.881532a0.js",
+    "runtime-main.js.map": "/site-creator/static/js/runtime-main.881532a0.js.map",
     "static/css/2.2200f8f5.chunk.css": "/site-creator/static/css/2.2200f8f5.chunk.css",
-    "static/js/2.e39d6f46.chunk.js": "/site-creator/static/js/2.e39d6f46.chunk.js",
-    "static/js/2.e39d6f46.chunk.js.map": "/site-creator/static/js/2.e39d6f46.chunk.js.map",
-    "static/js/3.f0f2c47c.chunk.js": "/site-creator/static/js/3.f0f2c47c.chunk.js",
-    "static/js/3.f0f2c47c.chunk.js.map": "/site-creator/static/js/3.f0f2c47c.chunk.js.map",
+    "static/js/2.a6a5ed71.chunk.js": "/site-creator/static/js/2.a6a5ed71.chunk.js",
+    "static/js/2.a6a5ed71.chunk.js.map": "/site-creator/static/js/2.a6a5ed71.chunk.js.map",
+    "static/js/3.a14213e2.chunk.js": "/site-creator/static/js/3.a14213e2.chunk.js",
+    "static/js/3.a14213e2.chunk.js.map": "/site-creator/static/js/3.a14213e2.chunk.js.map",
     "index.html": "/site-creator/index.html",
     "static/css/2.2200f8f5.chunk.css.map": "/site-creator/static/css/2.2200f8f5.chunk.css.map",
     "static/css/main.fbcb56f2.chunk.css.map": "/site-creator/static/css/main.fbcb56f2.chunk.css.map",
-    "static/js/2.e39d6f46.chunk.js.LICENSE.txt": "/site-creator/static/js/2.e39d6f46.chunk.js.LICENSE.txt"
+    "static/js/2.a6a5ed71.chunk.js.LICENSE.txt": "/site-creator/static/js/2.a6a5ed71.chunk.js.LICENSE.txt",
+    "static/media/test.png": "/site-creator/static/media/test.ecfb3923.png",
+    "static/media/test2.png": "/site-creator/static/media/test2.3610e2f2.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.347227d1.js",
+    "static/js/runtime-main.881532a0.js",
     "static/css/2.2200f8f5.chunk.css",
-    "static/js/2.e39d6f46.chunk.js",
+    "static/js/2.a6a5ed71.chunk.js",
     "static/css/main.fbcb56f2.chunk.css",
-    "static/js/main.e16aec4b.chunk.js"
+    "static/js/main.e91c000d.chunk.js"
   ]
 }
