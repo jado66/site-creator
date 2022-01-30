@@ -63,6 +63,13 @@ export default class EditableLink extends React.Component {
   }
 
   componentDidMount(){
+    if (this.props.content){
+      this.setState({ linkText: this.props.content.txt,
+                      tempLinkText:this.props.content.txt,
+                      href:this.props.content.href,
+                      tempHref:this.props.content.href})
+    }
+
     const storedLinkText = localStorage.getItem(this.props.id+"-linkText");
     const storedLinkHref = localStorage.getItem(this.props.id+"-href");
 

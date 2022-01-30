@@ -45,7 +45,7 @@ export const formats = [
 ];
 
 export default function QuillComponent(props){
-    const [html, setHtml] = useState({ value: 'Text..' });
+    const [html, setHtml] = useState("Here goes some txt");
     const [edit, setEdit] = useState(false);
     const [isShowButtons, showButtons] = useState(false)
 
@@ -55,27 +55,34 @@ export default function QuillComponent(props){
       // alert(storedState)
       if (props.content){
         // alert(JSON.stringify(props.content.html))
-        setHtml({ value: props.content.html})
+        setHtml(props.content.html)
       }
       else if (storedState){
-        setHtml({ value: storedState })
+        setHtml(storedState )
       }
 
     }, []);
 
+    const copyToClipboard =() =>{
+      let htmlString = html
+      htmlString = htmlString.replace(/></g,`>\n<`)
+      navigator.clipboard.writeText(htmlString)
+      alert("Copied contents to clipboard")
+    }
+
     const handleChange = value => {
-      setHtml({ value });
-      localStorage.setItem(props.id+"-quill",JSON.stringify(value));
+      setHtml(value);
+      localStorage.setItem(props.id+"-quill",value);
     };
     return (
       <div className="text-editor mb-5 " onMouseEnter={() => {showButtons(true)}} onMouseLeave={() => {showButtons(false)}}>
         {edit?
         <div >
-          <QuillToolbar check checkCallback = {()=>{setEdit(false)}} clipboardCallback = {() => {navigator.clipboard.writeText(html.value)}}/>
+          <QuillToolbar check checkCallback = {()=>{setEdit(false)}} clipboardCallback = {() => {copyToClipboard()}}/>
           <ReactQuill
             className="px-3"
             theme="snow"
-            value={html.value}
+            value={html}
             onChange={handleChange}
             placeholder={"Write something awesome..."}
             modules={modules}
@@ -86,7 +93,7 @@ export default function QuillComponent(props){
           {true&& <div className="relative-r">
             <FontAwesomeIcon icon = {faPencilAlt} onClick={()=>{setEdit(true)}}/>
           </div>}
-          <div>{ ReactHtmlParser (html.value) } </div>
+          <div>{ ReactHtmlParser (html) } </div>
           
         </div>}
       </div>

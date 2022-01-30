@@ -40,12 +40,14 @@ export default class Paragraph extends React.Component {
   //     alert("background color change")
   //   }
   // }
-  
+    
 
   handleChange = evt => {
     this.setState({html: evt.target.value});
     localStorage.setItem(this.props.id,evt.target.value);
   };
+
+    
 
   componentDidMount(){
 

@@ -248,12 +248,12 @@ export default class DynamicPage extends React.Component {
         // alert(JSON.stringify(pageComponents))
  
         return (
-            <div  style={{backgroundColor:this.props.webStyle.lightShade}}>    
+            <div className="min-vh-100" style={{backgroundColor:this.props.webStyle.lightShade}}>    
     
                 
                     
-                <div id = "outerSection" className="container">
-                    <div id = "innerSection" className="col justify-items-baseline boxShadow h-100 py-4" style={{backgroundColor:this.props.webStyle.lightAccent}}>
+                <div id = "outerSection" className="container min-vh-100">
+                    <div id = "innerSection" className="col justify-items-baseline boxShadow min-vh-100 py-4" style={{backgroundColor:this.props.webStyle.lightAccent}}>
 
                     {/* <div id = "mainSection" style={{width:this.props.isMobile?"100%":`${this.props.webStyle.secondCenterWidth}%`,margin:"auto"}}> Includes everything inside the margin */}
                         {pageComponents}

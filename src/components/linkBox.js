@@ -36,22 +36,30 @@ export default class LinkBox extends React.Component {
   };
 
   componentDidMount(){
+   
+    if (this.props.content){
+      this.setState({h2: this.props.content.title,h3: this.props.content.subTitle})
+    }
+
     const storedH2 = localStorage.getItem(this.props.id+'-h2');
     const storedH3 = localStorage.getItem(this.props.id+'-h3');
     
-    if (storedH2){
-      this.setState({h2: storedH2})
-    }
-    else{
-      this.setState({h2: `<h2>Title</h2>`})
-    }
+    // if (storedH2){
+    //   this.setState({h2: storedH2})
+    // }
+    // else{
+    //   this.setState({h2: `<h2>Title</h2>`})
+    // }
     
-    if (storedH3){
-      this.setState({h3: storedH3})
-    }
-    else{
-      this.setState({h3: `<h3>Subtitle</h3>`})
-    }
+    // if (storedH3){
+    //   this.setState({h3: storedH3})
+    // }
+    // else{
+    //   this.setState({h3: `<h3>Subtitle</h3>`})
+    // }
+
+    
+
   }
 
   render = () => {
@@ -75,7 +83,7 @@ export default class LinkBox extends React.Component {
                     onChange={this.handleChangeH3} // handle innerHTML change
                     tagName='h3' // Use a custom HTML tag (uses a div by default)
                     />
-            <EditableLink webStyle = {this.props.webStyle} id = {this.props.id+"-link"} adminProps = {this.props.adminProps}/>
+            <EditableLink webStyle = {this.props.webStyle} content ={this.props.content.linkTxtContent} id = {this.props.id+"-link"} adminProps = {this.props.adminProps}/>
             </div>)
   };
 };

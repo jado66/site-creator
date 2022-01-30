@@ -1,26 +1,50 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import { compress, decompress } from "lz-string"
+// const images = require.context('../../public/images', true);
+
 
 export default function PictureFrame(props){
     const [imageUrl, setImageUrl] = useState("")
     const [areButtonsVisible, setButtonsVisible] = useState(null)
     const inputFile = useRef(null) 
-
+    
 
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
+        const images = require.context('../../public/images', true);
+
+        // setImageUrl(images(`./test.png`).default)
+        
+          // alert(storedState)
+        if (props.content){
+            if (props.content.src){
+                try{
+                    let path = `./${props.content.src}`
+                    setImageUrl(images(path).default)
+                }
+                catch{
+
+                }
+            }
+            // alert(JSON.stringify(props.content.html))
+            // setHtml(props.content.html, ()=>{
+            
+            // })
+            
+        }
+
 
         // Update the document title using the browser API
-        const storedUrlData = localStorage.getItem(props.id);
+        // const storedUrlData = localStorage.getItem(props.id);
         
-        if (storedUrlData){
-            const decompressedData = decompress(storedUrlData)
-            setImageUrl(decompressedData)
-        }
-        else{
-          setImageUrl("")
-        }
+        // if (storedUrlData){
+        //     const decompressedData = decompress(storedUrlData)
+        //     setImageUrl(decompressedData)
+        // }
+        // else{
+        //   setImageUrl("")
+        // }
     
     }, []);
 
@@ -148,7 +172,10 @@ export default function PictureFrame(props){
         <div className={"relative-div "+props.className+(props.isNested?"":" px-5")} onMouseEnter={()=>{setButtonsVisible(true)}} onMouseLeave={()=>{setButtonsVisible(false)}} style={{flex: "1"}}>
             {/* {props.webStyle.isEditMode?<span>Edit Mode</span>:<span>No Edit Mode</span>} */}
             {imageUrl ? 
-                <img className={borderStyle+"w-100"} src={imageUrl} />
+                <div style={{backgroundColor:props.webStyle.darkAccent}}>
+                    <img className={borderStyle+"w-100"} src={imageUrl} />
+                </div>
+                
                 :
                 <div className={borderStyle+"blankDiv w-100"} style={{minHeight:"300px",backgroundColor:props.webStyle.darkAccent}}></div>
             }

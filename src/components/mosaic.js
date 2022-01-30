@@ -13,15 +13,15 @@ export default function Mosaic(props){
             <div className="col">
                 <div className = {"row mb-5"}>
                     <div className="row g-0 mb-5">
-                        <PictureFrame  webStyle = {props.webStyle} key = {leftPictureFrameID} id = {leftPictureFrameID} isNested/>
+                        <PictureFrame  webStyle = {props.webStyle} content = {props.content.lPicContent} key = {leftPictureFrameID} id = {leftPictureFrameID} isNested/>
                     </div>
-                        <LinkBox key = {leftLinkBoxID} id = {leftLinkBoxID} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
+                        <LinkBox key = {leftLinkBoxID} id = {leftLinkBoxID} content = {props.content.lLinkBoxContent} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
                 </div>
                 <div className = {"row mb-5"}>
                     <div className="row g-0 mb-5">
-                        <PictureFrame webStyle = {props.webStyle} key = {rightPictureFrameID} id = {rightPictureFrameID} isNested/>
+                        <PictureFrame webStyle = {props.webStyle} content = {props.content.rPicContent} key = {rightPictureFrameID} id = {rightPictureFrameID} isNested/>
                     </div>
-                    <LinkBox key = {rightLinkBoxID} id = {rightLinkBoxID} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
+                    <LinkBox key = {rightLinkBoxID} id = {rightLinkBoxID} content = {props.content.rLinkBoxContent} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
                 </div>
             </div>
         </div>)
@@ -31,15 +31,15 @@ export default function Mosaic(props){
             <div className = {"row mb-5 g-0 px-5"} >
                 <div className = {"col me-3"}>
                     <div className="row g-0 mb-5 w-100">
-                        <PictureFrame  webStyle = {props.webStyle} key = {leftPictureFrameID} id = {leftPictureFrameID} isNested/>
+                        <PictureFrame  webStyle = {props.webStyle}  content = {props.content.lPicContent} key = {leftPictureFrameID} id = {leftPictureFrameID} isNested/>
                     </div>
-                        <LinkBox key = {leftLinkBoxID} id = {leftLinkBoxID} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
+                        <LinkBox key = {leftLinkBoxID} id = {leftLinkBoxID} content = {props.content.lLinkBoxContent} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
                 </div>
                 <div className = {"col ms-3"}>
                     <div className="row g-0 mb-5">
-                        <LinkBox key = {rightLinkBoxID} id = {rightLinkBoxID} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
+                        <LinkBox key = {rightLinkBoxID} id = {rightLinkBoxID} content = {props.content.rLinkBoxContent} webStyle = {props.webStyle} adminProps = {props.adminProps}/>
                     </div>
-                        <PictureFrame webStyle = {props.webStyle} key = {rightPictureFrameID} id = {rightPictureFrameID} isNested/>
+                        <PictureFrame webStyle = {props.webStyle} content = {props.content.rPicContent} key = {rightPictureFrameID} id = {rightPictureFrameID} isNested/>
                 </div>
             </div>
         )

@@ -28,7 +28,6 @@ import TestPage from "./pages/testPage";
 import Navbar from "./components/navbar";
 import CheckoutPage from "./pages/checkoutPage";
 
-import { PieChart } from 'react-minimal-pie-chart';
 import EditableLineGraph from "./components/editableLineGraph";
 import Product from "./components/product";
 
@@ -41,6 +40,10 @@ const site_tempate = {
           {
             name:"How It Works",
             path:"/how-it-works"
+          }, 
+          {
+            name:"Need Help",
+            path:"/need-help"
           },
           {
             name:"Getting Started",
@@ -53,45 +56,59 @@ const site_tempate = {
         ],
   ["Site Creator"]: [
       { 
-        // Header:Header,
-        // // Subheader,
-        // Footer:Footer,
-        // Mosaic:Mosaic,
-        // Navbar:Navbar,
-        // VideoFrame:VideoFrame,
-        // CardPaymentBlock:CardPaymentBlock,
-        // DynamicForm:DynamicForm,
-        // BlogPreview:BlogPreview,
-        // CaptionedPicture,CaptionedPicture,
-        // SlideShow:SlideShow,
-        // PictureFrame:PictureFrame,
-        // QuickLink:QuickLink,
-        // Paragraph:Paragraph,
-        // ListComparisonTable:ListComparisonTable,
-        // PlanComparison:PlanComparison,
-
         name: "Header",
-        id: `Site Creator-Header-0-${ String(new Date().getTime()).slice(-3) }`,
+        id: `Site Creator-Header-0-589`,
         content: { headerHtml: "React Site Creator" }
       },
       {
         name: "Navbar",
-        id: `Site Creator-Navbar-1-${ String(new Date().getTime()).slice(-3) }`,
+        id: `Site Creator-Navbar-1-469 `,
         content: {}
       },
       {
-        name: "VideoFrame",
-        id: `Site Creator-VideoFrame-2-${ String(new Date().getTime()).slice(-3) }`,
-        content: { url: "test123" }
+        name: "Paragraph",
+        id: `Site Creator-Paragraph-2-381`,
+        content: { html: `<h2>This website creator is a <strong>FREE</strong> tool built just for you! Create your own website complete with all the necessary components to build a successful blog, portfolio, or business site.</h2>
+                          <h2>
+                          <br>
+                          </h2>
+                          <h2>You can use this website creator for <strong>FREE </strong>for personal or commercial use.* You only have to buy a domain name for your site and pay for hosting service, and unfortunately we can't provide you with either.</h2>
+                          <h2>
+                          <br>
+                          </h2>
+                          <h2>If you would like help getting your website up and running with a domain name, business email, and this software, we are more than willing to help. Go to the <a href="need-help" rel="noopener noreferrer"  style="color: rgb(29, 146, 178);">Need Help</a>
+                          <span style="color: rgb(255, 255, 255);"> </span>page to get some professional assistance.</h2>
+                          <br>`
+                  
+                      },
       },
       {
-        name: "Paragraph",
-        id: `Site Creator-Paragraph-3-${ String(new Date().getTime()).slice(-3) }`,
-        content: { html: "The react..." }
+        name: "Mosaic",
+        id: `Site Creator-Mosiac-3-387`,
+        content: {
+          lPicContent: {src:"test.png"},
+          lLinkBoxContent:{
+            title:"Get Your Own Site",
+            subTitle:"Pay Us Nothing",
+            linkTxtContent:{
+              txt:"These are the steps",
+              href:"getting-started"
+            }
+          },
+          rPicContent: {src:"test2.png"},
+          rLinkBoxContent:{
+            title:"Everything Is Editable",
+            subTitle:"Try editing this website",
+            linkTxtContent:{
+              txt:"This tutorial explains how.",
+              href:"how-it-works"
+            }
+          }
+        }
       },
       {
         name: "PlanComparison",
-        id: `Site Creator-PlanComparison-4-${ String(new Date().getTime()).slice(-3) }`,
+        id: `Site Creator-PlanComparison-4-984`,
         content: {
           colCount: 3,
           tablesHeaders: [
