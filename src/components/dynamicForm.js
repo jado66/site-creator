@@ -1,133 +1,628 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useState } from "react";
+import ReactQuill from 'react-quill';
+import '../quill.css';
+import { modules, formats } from "./quillComponent";
+import QuillToolbarMini from "./quillToolbarMini";
 
-import ContentEditable from 'react-contenteditable'
+import sendMailEmailJsDotEnv from "../functions/browserEmail";
 
-export default class DynamicForm extends React.Component {
-  constructor(props) {
-    super(props)
-    this.contentEditableTitle = React.createRef();
-    this.contentEditableSubtitle = React.createRef();
-    this.contentEditables = [React.createRef(),React.createRef()];
+// TODO validate forms
 
-    this.state = {title: `Title`,
-                  subtitle: `Subtitle`,
-                  inputCount: 2};
+export default function DynamicForm(props) {
+  const [edit, setEdit] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
+  const [emailBodyTemplate, setEmailBodyTemplate] = useState("")
+  const [emailRecipient, setEmailRecipient] = useState("self")
+  const [emailSubject, setEmailSubject] = useState("")
+  const [bodyVariables, setBodyVariables] = useState([])
+  const [inputs, setInputs] = useState([
+    {
+      varName: "Name",
+      type: "Text",
+      placeholder: "John Doe",
+      value: "",
+      required: true,
+      misc: {}
+    },
+    {
+      varName: "Mobile Number",
+      type: "Phone",
+      value: "",
+      placeholder: "(123) - 456 -7890",
+      required: true,
+      misc: {}
+    },
+    {
+      varName: "Additional Notes",
+      type: "Text Area",
+      value: "",
+      placeholder:
+        "Hi, please note I will have to leave 5 minutes early from my appt.",
+      required: false,
+      misc: {}
+    }
+  ]);
+
+  const setContent = (content) =>{
+    //const \[(.+), .+ use.+
+    // set$1(content.$1)
+    setEmailBodyTemplate(content.emailBodyTemplate)
+    setEmailRecipient(content.emailRecipient)
+    setEmailSubject(content.emailSubject)
+    setBodyVariables(content.bodyVariables)
+    setInputs(content.inputs)
+  } 
+
+  const getContent = () =>{
+    //const \[(.+), .+ use.+
+    //content.$1 = $1
+    let content = {}
+    content.emailBodyTemplate = emailBodyTemplate
+    content.emailRecipient = emailRecipient
+    content.emailSubject = emailSubject
+    content.bodyVariables = bodyVariables
+    content.inputs = inputs
+    return (content)
+  }
+
+  const sendEmail = () =>{
     
-  };
+    // alert(JSON.stringify(inputs))
+    
+    let emailTo = ""
 
-  handleTitleChange = (evt) => {
-    this.setState({title: evt.target.value});
-    localStorage.setItem(this.props.id+'-title',evt.target.value);
-  };
-  handleSubtitleChange = (evt) => {
-    this.setState({subtitle: evt.target.value});
-    localStorage.setItem(this.props.id+'-subtitle',evt.target.value);
-  };
-
-  addInputForm(){
-    this.setState({inputCount:this.state.inputCount+1}, function(){
-      localStorage.setItem(this.props.id+'-labelCount',this.state.inputCount);
+    let inputDict = {}
+    
+    inputs.forEach(input=>{
+        inputDict[input.varName] = input.value
     })
 
+    let emailBodySplit = emailBodyTemplate.split(/\{|\}/g)
+
+    if (emailBodySplit.length === 0){
+        return
+    }
+
+    emailBodySplit = emailBodySplit.filter(val => val != "")
+    emailBodySplit = emailBodySplit.map(val => val in inputDict?inputDict[val]:val)
+
+    let emailBody = emailBodySplit.join("")
+
+    switch (emailRecipient){
+        case "self":
+            emailTo = ["Self"]
+            break;
+        case "user":
+            emailTo = [inputDict["Email"]]
+            break;
+        case "both":
+            emailTo = [inputDict["Email"], "Self"]
+            break;
+    }
+
+    const emailParams = {
+        Subject:emailSubject,
+        Body:"<body>"+emailBody+"</body>",
+        Recipient:emailTo
+    }
+
+    sendMailEmailJsDotEnv(emailParams)
+    // alert("Test Email\n"+testEmail)
   }
 
-  componentDidMount(){
-    const storedTitle = localStorage.getItem(this.props.id+'-title');
-    const storedSubtitle = localStorage.getItem(this.props.id+'-subtitle');
-    const storedLabelCount = localStorage.getItem(this.props.id+'-labelCount');
+  const validateEmailVariables = () =>{
 
-
-    if (storedTitle){
-      this.setState({title: storedTitle})
+    if (!emailBodyTemplate){
+        alert("Email doesn't have a body!")
+        return false
     }
+
+    let formVariables = inputs.map(input => input.varName);
+
+    // Get all matches of {{}} and then map to get the inner content
+    let bodyVariableMatches = emailBodyTemplate.match(/\{\{(\w|\s)+\}\}/g)
+
+    let variablesInBody = [...(bodyVariableMatches?bodyVariableMatches:[])].map(val => val.slice(2,-2))
+    setBodyVariables(variablesInBody)
+
+    let unusedFormVariables = formVariables.filter(varName => !variablesInBody.includes(varName));
+    let unmatchedBodyVariables = variablesInBody.filter(varName => !formVariables.includes(varName));
+
+    // If we are sending to the user we don't need to include the email in the body
+    if (emailRecipient !== "self" && !unusedFormVariables.includes("Email")){
+        alert(`The form doesn't ask for the user's email address, yet "Send To ${emailRecipient[0].toUpperCase()+emailRecipient.slice(1)}" is selected.`+
+              `\n\nEither change the intended recipient or include an Email input in the form.`)
+        return false
+    }
+    else{
+        unusedFormVariables = unusedFormVariables.filter(el => el !== 'Email'); // will return ['A', 'C']
+    }
+
+    // We don't have any variables in the form that don't appear in the body. Unincluding the email
+    if (!unmatchedBodyVariables.length > 0){
+
+        // Do we have variables in the form that don't appear in the body? We can proceed if so, but it probably isn't intended
+        if (unusedFormVariables.length > 1){
+            if (window.confirm(`The following variables are used in the email: ${JSON.stringify(unusedFormVariables)}. Would you like to continue?`)){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+        else{
+            return true
+        }
+    }
+    else{
+        alert(`There are variables in the email template body that aren't in the form :${JSON.stringify(unmatchedBodyVariables)}`)
+        return false
+    }
+  }
+
+  const sendTestEmail = () =>{
+
+    if (!validateEmailVariables()){
+        return false
+    }
+
+    let emailTo = ""
+
+    let inputDict = {}
     
-    if (storedSubtitle){
-      this.setState({subtitle: storedSubtitle})
+    inputs.forEach(input=>{
+        inputDict[input.varName] = input.placeholder
+    })
+
+    if (emailBodyTemplate.trim() === ""){
+        alert("Email needs a body")
+        return false
     }
 
-    if (storedLabelCount){
-      this.setState({inputCount:parseInt(storedLabelCount)})
+    let emailBodySplit = emailBodyTemplate.split(/\{|\}/g)
+
+    if (emailBodySplit.length === 0){
+        return
     }
+
+    emailBodySplit = emailBodySplit.filter(val => val != "")
+    emailBodySplit = emailBodySplit.map(val => val in inputDict?inputDict[val]:val)
+
+    let emailBody = emailBodySplit.join("")
+
+    switch (emailRecipient){
+        case "self":
+            emailTo = "Self"
+            break;
+        case "user":
+            emailTo = inputDict["Email"]
+            break;
+        case "both":
+            emailTo = inputDict["Email"] + ", user"
+            break;
+    }
+
+    const testEmail = `To: ${emailTo}\n`+
+                      `Subject: ${emailSubject}\n`+
+                      `Body: ${"<body>"+emailBody+"</body>"}`
+
+    alert(JSON.stringify(testEmail))
     
   }
 
-  render = () => {
+  const editStateValue = (index, key, value) => {
+    let newInputs = [...inputs];
 
-    return(
-      <div className={"mb-5 px-5"} >
-          <div className={"link-box boxShadow p-5"} style={{backgroundColor:this.props.webStyle.lightShade}}>
-            <ContentEditable
-                    className='apply-font-primary'
-                    style={{color:this.props.webStyle.darkShade}}
-                    innerRef={this.contentEditableTitle}
-                    html={this.state.title} // innerHTML of the editable div
-                    disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
-                    onChange={this.handleTitleChange} // handle innerHTML change
-                    tagName='h1' // Use a custom HTML tag (uses a div by default)
-                    />
-            <ContentEditable
-                    className='apply-font-secondary'
-                    style={{color:this.props.webStyle.darkShade}}
-                    innerRef={this.contentEditableSubtitle}
-                    html={this.state.subtitle} // innerHTML of the editable div
-                    disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
-                    onChange={this.handleSubtitleChange} // handle innerHTML change
-                    tagName='h4' // Use a custom HTML tag (uses a div by default)
-                    />
-            
-            <form className='py-3'>
-              {[...Array(this.state.inputCount)].map((x, i) =>
-                 <EditableFormInput webStyle = {this.props.webStyle} key ={`${this.props.id}-${i}`} id = {`${this.props.id}-${i}`}/>
-              )}
-             
-              {/* <EditableFormInput/>
-              <EditableFormInput/> */}
-              {this.props.webStyle.isEditMode &&
-                <div className = "mb-3">
-                  <button type="button"  className = "form-label btn" onClick={this.addInputForm.bind(this)} >+</button>
-                </div>
-              }
-              
-              <button type="submit" className = "btn " style={{color:this.props.webStyle.lightShade,backgroundColor:this.props.webStyle.darkAccent}}>Submit</button>
-            </form>
-            
-            </div>
-          </div>)
+    newInputs[index][key] = value;
+
+    setInputs(newInputs);
   };
-};
 
+  const editStateValueMisc = (index, key, value) => {
+    let newInputs = [...inputs];
 
-function EditableFormInput(props){
-  const [label, setLabel] = useState("Input Label")
+    newInputs[index].misc[key] = value;
 
-  const contentEditable = useRef();
+    setInputs(newInputs);
+  };
 
-  useEffect(() => {
-    const storedLabel = localStorage.getItem(props.id+'-label');
-    
-    if (storedLabel){
-      setLabel(storedLabel)
+  const deleteInput = (index) => {
+    let newInputs = [...inputs];
+    setInputs([...newInputs.slice(0, index - 1), ...newInputs.slice(index)]);
+  };
+
+  const addInput = () => {
+    setInputs([
+      ...inputs,
+      {
+        varName: "New Input",
+        type: "Text",
+        placeholder: "Placeholder",
+        required: true,
+        misc: {}
+      }
+    ]);
+  };
+
+  const readOnlyFormInputs = [];
+  const editFormInputs = [];
+
+  inputs.forEach((inputData, i) => {
+    let readOnlyInput = null;
+    let editInput = null;
+
+    switch (inputData.type) {
+      case "Text Area":
+        readOnlyInput = (
+          <textarea
+            className="form-control"
+            style={{ minHeight: "90px" }}
+            placeholder={inputData.placeholder}
+            value={inputData.value}
+            onChange={(evt) => {
+                editStateValue(i, "value", evt.target.value);
+              }}
+          ></textarea>
+        );
+        editInput = (
+          <textarea
+            className="form-control"
+            style={{ minHeight: "90px" }}
+            value={inputData.placeholder}
+            onChange={(evt) => {
+              editStateValue(i, "placeholder", evt.target.value);
+            }}
+          ></textarea>
+        );
+        break;
+      case "Checkbox": // Checkboxes must include their own inline label
+        readOnlyInput = (
+          <div classname="form-check">
+            <input
+                classname="form-check-input"
+                type="checkbox"
+                defaultChecked={inputData.placeholder}
+                value={inputData.value}
+                onClick={(evt) => {
+                    editStateValue(i, "value", !inputData.value);
+                }}
+            />
+            <label classname="form-check-label ms-2" for="flexCheckDefault">
+              {inputData.varName}
+            </label>
+          </div>
+        );
+        editInput = (
+          <div classname="input-group-text ">
+            <input
+              classname="form-check-input mt-0 "
+              type="checkbox"
+              checked={inputData.placeholder}
+              onClick={(evt) => {
+                editStateValue(i, "placeholder", !inputData.placeholder);
+              }}
+            />
+          </div>
+        );
+        break;
+      case "Radio":
+        break;
+      case "Select":
+        break;
+      case "Number":
+        let minNum = Object.keys(inputData.misc).includes("min")
+          ? inputData.misc.min
+          : "";
+        let maxNum = Object.keys(inputData.misc).includes("max")
+          ? inputData.misc.max
+          : "";
+
+        readOnlyInput = [
+          <input
+            type={inputData.type}
+            className="form-control"
+            placeholder={inputData.placeholder}
+            value={inputData.value}
+            onChange={(evt) => {
+              editStateValue(i, "value", evt.target.value);
+            }}
+            min={minNum}
+            max={maxNum}
+          />
+        ];
+
+        editInput = [
+          <input
+            classname="form-control "
+            type="number"
+            value={inputData.placeholder}
+            onChange={(evt) => {
+              editStateValue(i, "placeholder", evt.target.value);
+            }}
+          />,
+          <span classname="input-group-text" id="basic-addon2">
+            {inputData.type !== "Checkbox" ? "Min/Max" : "Default State"}
+          </span>,
+          <input
+            classname="form-control flex-grow-0"
+            style={{ minWidth: "4em" }}
+            type="number"
+            value={minNum}
+            placeholder="-"
+            onChange={(evt) => {
+              editStateValueMisc(i, "min", evt.target.value);
+            }}
+          />,
+          <input
+            // Hide wheels
+            classname="form-control flex-grow-0"
+            type="number"
+            style={{ minWidth: "4em" }}
+            placeholder="-"
+            value={maxNum}
+            onChange={(evt) => {
+              editStateValueMisc(i, "max", evt.target.value);
+            }}
+          />
+        ];
+        break;
+      case "Range":
+        let min = Object.keys(inputData.misc).includes("min")
+          ? inputData.misc.min
+          : "";
+        let max = Object.keys(inputData.misc).includes("max")
+          ? inputData.misc.max
+          : "";
+
+        readOnlyInput = (
+          <div classname="input-group border">
+            {/* <input
+              type={inputData.type}
+              className="form-range"
+              placeholder={inputData.placeholder}
+              min={min}
+              max={max}
+            /> */}
+            <input
+                type="number"
+                className="form-control border-0 flex-grow-0"
+                style={{ minWidth: "4em" }}
+                value={inputData.value}
+                onChange={(evt) => {
+                    editStateValue(i, "value", evt.target.value);
+                    }}
+            />
+            <input
+              type="range"
+              className="form-range w-auto my-auto px-3 flex-grow-1"
+              value={inputData.value}
+              min={min}
+              max={max}
+              onChange={(evt) => {
+                editStateValue(i, "value", evt.target.value);
+              }}
+            />
+          </div>
+        );
+
+        editInput = [
+          <input
+            classname="form-control "
+            type="number"
+            value={inputData.value}
+            onChange={(evt) => {
+              editStateValue(i, "placeholder", evt.target.value);
+              editStateValue(i, "value", evt.target.value);
+            }}
+          />,
+          <span classname="input-group-text" id="basic-addon2">
+            {inputData.type !== "Checkbox" ? "Min/Max" : "Default State"}
+          </span>,
+          <input
+            classname="form-control flex-grow-0"
+            style={{ minWidth: "4em" }}
+            type="number"
+            value={min}
+            placeholder="-"
+            onChange={(evt) => {
+              editStateValueMisc(i, "min", evt.target.value);
+            }}
+          />,
+          <input
+            // Hide wheels
+            classname="form-control flex-grow-0"
+            type="number"
+            style={{ minWidth: "4em" }}
+            placeholder="-"
+            value={max}
+            onChange={(evt) => {
+              editStateValueMisc(i, "max", evt.target.value);
+            }}
+          />
+        ];
+        break;
+
+      default:
+        readOnlyInput = (
+          <input
+            type={inputData.type}
+            className="form-control"
+            placeholder={inputData.placeholder}
+            value={inputData.value}
+            onChange={(evt) => {
+                editStateValue(i, "value", evt.target.value);
+                }}
+          />
+        );
+        editInput = (
+          <input
+            type={inputData.type}
+            className="form-control"
+            value={inputData.placeholder}
+            onChange={(evt) => {
+              editStateValue(i, "placeholder", evt.target.value);
+            }}
+          />
+        );
+        break;
     }
-  }, []);
 
-  const handleLabelChange = (value) => {
-    setLabel(value);
-    localStorage.setItem(props.id+'-label',value);
-  };
+    readOnlyFormInputs.push(
+      <div className="form-group mb-3">
+        {inputData.type !== "Checkbox" && (
+          <label classname="form-label">{inputData.varName}</label>
+        )}
+        {readOnlyInput}
+      </div>
+    );
 
-  return(
-    <div className = "mb-3">
-      <ContentEditable
-        className="form-label"
-        spellCheck = "false"
-        innerRef={contentEditable}
-        html={label} // innerHTML of the editable div
-        disabled={!props.webStyle.isEditMode}       // use true to disable editing
-        onChange={(evt)=>{handleLabelChange(evt.target.value)}} // handle innerHTML change
-        tagName='label' // Use a custom HTML tag (uses a div by default)
+    editFormInputs.push(
+      <div className="form-group mb-3">
+        {/* inputData.type !== "Checkbox" && ( */}
+
+        <input
+          type="text"
+          classname="form-label border-0 p-0 bg-transparent"
+          value={inputData.varName}
+          onChange={(evt) => {
+            editStateValue(i, "varName", evt.target.value);
+          }}
         />
-      <input type="input" className = "form-control"/>
-      {/* <div id="emailHelp" className = "form-text">We'll never share your email with anyone else.</div> */}
+        <div classname="input-group mb-3">
+          <span classname="input-group-text" id="basic-addon2">
+            {inputData.type !== "Checkbox" ? "Placeholder" : "Default State"}
+          </span>
+          {editInput}
+          {inputData.type === "Checkbox" && <div classname="col border"></div>}
+
+          <select
+            classname="btn border-dark text-start"
+            value={inputData.type}
+            onChange={(evt) => {
+              editStateValue(i, "type", evt.target.value);
+            }}
+          >
+            <option>Checkbox</option>
+            <option>Date</option>
+            <option>Datetime-local</option>
+            <option>Email</option>
+            <option>Month</option>
+            <option>Number</option>
+            <option>Phone</option>
+            <option>Radio</option>
+            <option>Range</option>
+            <option>Text</option>
+            <option>Text Area</option>
+            <option>Select</option>
+            <option>Week</option>
+          </select>
+          <button
+            type="button"
+            className="btn btn-outline-dark"
+            onClick={() => {
+              deleteInput(i);
+            }}
+          >
+            D
+          </button>
+        </div>
+      </div>
+    );
+  });
+
+  //  {/* <select classname="form-select" value={input.type}>
+
+  //             </select> */}
+
+  return (
+    <div
+      className="mb-4 p-3 mt-3 text-start relative-div"
+      onMouseEnter={() => {
+        setShowButtons(true);
+      }}
+      onMouseLeave={() => {
+        setShowButtons(false);
+      }}
+    >
+      {edit ? (
+        <form>
+          {editFormInputs}
+          <div >
+            <button
+              type="button"
+              classname="btn btn-light btn-outline-dark align-self-middle"
+              onClick={() => {
+                addInput();
+              }}
+            >
+              Add
+            </button>
+          </div>
+
+          {props.emailSendor && 
+            <div className="mt-3">
+                <hr/>
+                <h4 className="text-center">Email Template</h4>
+                <label classname="form-label">Recipient:</label>
+                <div className="input-group form-control mb-3">
+                    <input className="my-auto" type="radio" name="recipient" value="self" defaultChecked checked = {emailRecipient === "self"} onClick={()=>{setEmailRecipient("self")}}/>
+                    <label className="ms-2" for="recipient">Send To Me</label><br/>
+                    <input className="my-auto ms-3" type="radio" name="recipient" value="user" checked = {emailRecipient === "user"} onClick={()=>{setEmailRecipient("user")}}/>
+                    <label className="ms-2" for="recipient">Send To User</label><br/> 
+                    <input className="my-auto ms-3" type="radio" name="recipient" value="both" checked = {emailRecipient === "both"} onClick={()=>{setEmailRecipient("both")}}/>
+                    <label className="ms-2" for="recipient">Send To Both</label><br/>  
+                </div>
+                <label classname="form-label">Email Subject:</label>
+                <input className="form-control mb-3" type="text" value = {emailSubject} onChange={(evt)=>{setEmailSubject(evt.target.value)}} placeholder="Appointment Confirmation: No Reply"/>
+                <label classname="form-label">Email Body:</label>
+                <div className="form-control mb-3">
+                    <QuillToolbarMini className = "mb-3 border-0" />
+                    <ReactQuill
+                        className={"text-left px-3 "+ props.className}
+                        theme="snow"
+                        value={emailBodyTemplate}
+                        onChange={setEmailBodyTemplate}
+                        placeholder={"Dear {{Name}}"}
+                        modules={modules}
+                        formats={formats}
+                    />
+                </div>
+                <button className="btn btn-light btn-outline-dark" type="button" onClick={()=>{
+                    sendTestEmail()
+                }}>Test Email</button>
+            </div> }
+        </form>
+      ) : (
+        <div>
+          <form>
+            {readOnlyFormInputs}
+            <button className="btn btn-light btn-outline-dark" type="button" onClick={()=>{
+                    sendEmail()
+                }}>Send Email</button>
+          </form>
+        </div>
+      )}
+
+      {showButtons && (
+        <div className="position-absolute top-0 end-0 pt-2 pe-2">
+          <button
+            className="btn mb-3 "
+            onClick={() => {
+                if (props.emailSendor && edit){
+                    if (validateEmailVariables()){
+                        setEdit(!edit);
+                    }
+                }
+                else{
+                    setEdit(!edit);
+
+                }
+            }}
+          >
+            {edit ? "Back" : "Edit"}
+          </button>
+        </div>
+      )}
     </div>
-  )
+  );
 }

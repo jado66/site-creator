@@ -1,129 +1,136 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useContext } from 'react'
 
 import ContentEditable from 'react-contenteditable'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck,faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import QuillComponent from "./quillComponent"
 
-export default class PlanComparison extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-        admin:false,
-        edit:false,
-        header: "Header",
-        colNameHtmls : ["Package 1","Package 2","Package 3"],
-        captionHtml: "* Here is a table caption",
-        colCount: 3,
-        tempColCount: 3,
-        rowGroupCount: 2,
-        tempRowGroupCount: 2,
-        rowGroups: [3,4],
-        tempRowGroups: [3,4]
-    }
-    this.contentEditables = [React.createRef(),React.createRef(),React.createRef(),React.createRef()]
-    this.headerEditable = React.createRef()
+import {WebContext} from "../App"
 
-    this.captionEditable = React.createRef()
-  };
+export default function PlanComparison (props){
+    const [admin, setAdmin] = useState(false)
+    const [edit, setEdit] = useState(false)
+    const [header, setHeader] = useState("Header")
+    const [colNameHtmls, setColNameHtmls] = useState(["Package 1","Package 2","Package 3"])
+    const [captionHtml, setCaptionHtml] = useState("* Here is a table caption")
+    const [colCount, setColCount] = useState(3)
+    const [tempColCount, setTempColCount] = useState(3)
+    const [rowGroupCount, setRowGroupCount] = useState(2)
+    const [tempRowGroupCount, setTempRowGroupCount] = useState(2)
+    const [rowGroups, setRowGroups] = useState([3,4])
+    const [tempRowGroups, setTempRowGroups] = useState([3,4])
+    
+    const contentEditables = [React.createRef(),React.createRef(),React.createRef(),React.createRef()]
+    const headerEditable = React.createRef()
 
-  editColHeader(evt,colIndex){
-    const newColHeaders = Object.assign([...this.state.colNameHtmls], {
+    const webContext = useContext(WebContext);
+
+    const captionEditable = React.createRef()
+  
+
+  const editColHeader = (evt,colIndex) => {
+    const newColHeaders = Object.assign([...colNameHtmls], {
         [colIndex]: evt.target.value
     });
-    this.setState({ colNameHtmls: newColHeaders });
-    localStorage.setItem(this.props.id+'-colNames',JSON.stringify(newColHeaders));
-
+    setColNameHtmls(newColHeaders);
+    // localStorage.setItem(this.props.id+'-colNames',JSON.stringify(newColHeaders));
   }
 
-  componentDidMount(){
-    const storedColNames = JSON.parse(localStorage.getItem(this.props.id+'-colNames'))
-    const storedColCount = localStorage.getItem(this.props.id+'-colCount')
-    const storedRowGroupCount = localStorage.getItem(this.props.id+'-rowGroupCount')
-    const storedRowGroups = JSON.parse(localStorage.getItem(this.props.id+'-rowGroups'))
+   useEffect(() => {
+    if (props.content){
+        setColNameHtmls(props.content.colNameHtmls)
+        setCaptionHtml(props.content.captionHtml)
+        setHeader(props.content.header)
+        setColCount(props.content.colCount)
+        setTempColCount(props.content.colCount)
+        setRowGroupCount(props.content.rowGroupCount)
+        setTempRowGroupCount(props.content.rowGroupCount)
+        setRowGroups(props.content.rowGroups)
+        setTempRowGroups(props.content.rowGroups)
+        }
+      
 
-    if (storedColNames){
-        this.setState({colNameHtmls: storedColNames})
-    }
-    if (storedColCount){
-        this.setState({colCount: parseInt(storedColCount)})
-    }
-    if (storedRowGroupCount){
-        this.setState({rowGroupCount: parseInt(storedRowGroupCount)})
-    }
-    if (storedRowGroups){
-        this.setState({rowGroups: storedRowGroups})
-    }
 
-    // Set header to page name on new render
-    
-   
-  }
+    // const storedColNames = JSON.parse(localStorage.getItem(this.props.id+'-colNames'))
+    // const storedColCount = localStorage.getItem(this.props.id+'-colCount')
+    // const storedRowGroupCount = localStorage.getItem(this.props.id+'-rowGroupCount')
+    // const storedRowGroups = JSON.parse(localStorage.getItem(this.props.id+'-rowGroups'))
 
-  saveTableDimensions(){
+    // if (storedColNames){
+    //     setColNameHtmls(storedColNames)
+    // }
+    // if (storedColCount){
+    //     setColCount(parseInt(storedColCount))
+    // }
+    // if (storedRowGroupCount){
+    //     setRowGroupCount(parseInt(storedRowGroupCount))
+    // }
+    // if (storedRowGroups){
+    //     setRowGroups(storedRowGroups)
+    // }
+
+  }, []);
+
+  const saveTableDimensions = () =>{
 
     // Check Columns
-    let newColNames = [...this.state.colNameHtmls]
+    let newColNames = [...colNameHtmls]
 
-    if (this.state.tempColCount > this.state.colNameHtmls.length){
-        for (var i = 0; i < this.state.tempColCount - this.state.colNameHtmls.length; i++){
+    if (tempColCount > colNameHtmls.length){
+        for (var i = 0; i < tempColCount - colNameHtmls.length; i++){
             newColNames.push("New Col")
-            this.contentEditables.push(React.createRef())
+            contentEditables.push(React.createRef())
         }
     }
-    else if (this.state.tempColCount < this.state.colNameHtmls.length){
-        for (var i = 0; i < this.state.colNameHtmls.length - this.state.tempColCount; i++){
+    else if (tempColCount < colNameHtmls.length){
+        for (var i = 0; i < colNameHtmls.length - tempColCount; i++){
             newColNames.pop()
-            this.contentEditables.pop()
+            contentEditables.pop()
         }
     }
     
     // Check Row Groups
-    let newRowGroups = [...this.state.rowGroups]
+    let newRowGroups = [...rowGroups]
 
-    if (this.state.tempRowGroups > this.state.rowGroupCount){
-        for (var i = 0; i < this.state.tempColCount - this.state.colNameHtmls.length; i++){
+    if (tempRowGroups > rowGroupCount){
+        for (var i = 0; i < tempColCount - colNameHtmls.length; i++){
             newColNames.push("New Col")
-            this.contentEditables.push(React.createRef())
+            contentEditables.push(React.createRef())
         }
     }
-    else if (this.state.tempColCount < this.state.colNameHtmls.length){
-        for (var i = 0; i < this.state.colNameHtmls.length - this.state.tempColCount; i++){
+    else if (tempColCount < colNameHtmls.length){
+        for (var i = 0; i < colNameHtmls.length - tempColCount; i++){
             newColNames.pop()
-            this.contentEditables.pop()
+            contentEditables.pop()
         }
     }
 
-    this.setState((state)=>(
-        {
-            colNameHtmls:newColNames,
-            colCount:state.tempColCount,
-            rowGroupCount:state.tempRowGroupCount,
-            rowGroups:state.tempRowGroups,
-        }
-    ),()=>{
-        localStorage.setItem(this.props.id+'-colNames',JSON.stringify(newColNames));
-        localStorage.setItem(this.props.id+'-colCount',this.state.colCount);
-        localStorage.setItem(this.props.id+'-rowGroupCount',this.state.rowGroupCount);
-        localStorage.setItem(this.props.id+'-rowGroups', JSON.stringify(this.state.rowGroups))
-    })
+    setColNameHtmls(newColNames)
+    setColCount(tempColCount)
+    setRowGroupCount(tempRowGroupCount)
+    setRowGroups(tempRowGroups)
+        
+    
+        // localStorage.setItem(this.props.id+'-colNames',JSON.stringify(newColNames));
+        // localStorage.setItem(this.props.id+'-colCount',colCount);
+        // localStorage.setItem(this.props.id+'-rowGroupCount',rowGroupCount);
+        // localStorage.setItem(this.props.id+'-rowGroups', JSON.stringify(rowGroups))
   }
   
 
-  render(){
 
     let tableHeaders = []
     
-    this.state.colNameHtmls.forEach((value,i)=>{
+    colNameHtmls.forEach((value,i)=>{
         tableHeaders.push(
             <ContentEditable
                 style={{width: "18%"}}
                 className="text-center font-shrink"
                 spellCheck = "false"
-                innerRef={this.contentEditables[i]}
+                innerRef={contentEditables[i]}
                 html={value} // innerHTML of the editable div
-                disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
-                onChange={(evt)=>{this.editColHeader(evt,i)}} // handle innerHTML change
+                disabled={!webContext.webStyle.isEditMode}       // use true to disable editing
+                onChange={(evt)=>{editColHeader(evt,i)}} // handle innerHTML change
                 tagName='th'/>
         // <th style={{width: "18%"}}>{value}</th>
         )
@@ -131,15 +138,17 @@ export default class PlanComparison extends React.Component {
 
     let groups = []
 
-    for (var i = 0; i < this.state.rowGroupCount; i++){
+    let k = 0
+    for (var i = 0; i < rowGroupCount; i++){
         
         let groupRows = [];
 
-        for (var j = 0; j < this.state.rowGroups[i]; j++){
-            let newID = this.props.id+`-g${i},r${j}`
+        for (var j = 0; j < rowGroups[i]; j++){
+            let newID = props.id+`-g${i},r${j}`
             groupRows.push(
-                <PlanComparisonRow webStyle = {this.props.webStyle} colCount ={this.state.colCount} id = {newID} key = {newID}/>
+                <PlanComparisonRow webStyle = {webContext.webStyle} content = {props.content.comparisonRowContent[k]} colCount ={colCount} id = {newID} key = {newID}/>
             )
+            k++;
         }
         
         groups.push(
@@ -147,13 +156,14 @@ export default class PlanComparison extends React.Component {
                 {groupRows}
             </tbody>
         )
+        k++;
     }
 
     let adminGroupRowInputs = []
 
-    for (var i = 0; i < this.state.rowGroupCount; i++){ 
+    for (var i = 0; i < rowGroupCount; i++){ 
         adminGroupRowInputs.push(
-            <input className='form-control' value={this.state.rowGroups[i]}/>
+            <input className='form-control' value={rowGroups[i]}/>
         )
     }
 
@@ -162,24 +172,24 @@ export default class PlanComparison extends React.Component {
 
 
     return(
-        <div className="mb-5 px-5" >
-            <div className='table-responsive boxShadow px-3 pt-2' style={{backgroundColor:this.props.webStyle.lightShade}}>
+        <div className={(webContext.webStyle.isMobile?" px-2 ":" px-5")} >
+            <div className={' boxShadow pt-2 ' } style={{backgroundColor:webContext.webStyle.lightShade}}>
                 <ContentEditable
                 className='text-center'
                     spellCheck = "false"
-                    innerRef={this.headerEditable}
-                    html={this.state.header} // innerHTML of the editable div
-                    disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
+                    innerRef={headerEditable}
+                    html={header} // innerHTML of the editable div
+                    disabled={!webContext.webStyle.isEditMode}       // use true to disable editing
                     onChange={(evt)=>{this.setState({header:evt.target.value})}} // handle innerHTML change
                     tagName='h1'/>
-                <div className={this.state.edit?"row mb-3":"hidden"}>
+                <div className={edit?"row mb-3":"hidden"}>
                     <div className="col-5">
                         <div className="input-group">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id=""> Cols & Groups :</span>
                             </div>
-                            <input className='form-control' value={this.state.tempColCount} onChange={(evt)=>{this.setState({tempColCount:evt.target.value})}}/>
-                            <input className='form-control' value={this.state.tempRowGroupCount} onChange={(evt)=>{this.setState({tempRowGroupCount:evt.target.value})}}/>
+                            <input className='form-control' value={tempColCount} onChange={(evt)=>{setTempColCount(evt.target.value)}}/>
+                            <input className='form-control' value={tempRowGroupCount} onChange={(evt)=>{setTempRowGroupCount(evt.target.value)}}/>
                         </div>
                     </div>
                     <div className="col-7">
@@ -189,29 +199,30 @@ export default class PlanComparison extends React.Component {
                             </div>
                             {adminGroupRowInputs}
                             <div className='input-group-append'>
-                                <button onClick={this.saveTableDimensions.bind(this)} className='btn btn-light btn-outline-secondary' >Update</button>
+                                <button onClick={saveTableDimensions} className='btn btn-light btn-outline-secondary' >Update</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                     
-                <table className="table text-center table-hover borderless" >
+                <table className="table table-responsive text-center table-hover borderless" >
                 <ContentEditable
                     spellCheck = "false"
-                    innerRef={this.captionEditable}
-                    html={this.state.captionHtml} // innerHTML of the editable div
-                    disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
-                    onChange={(evt)=>{this.setState({captionHtml:evt.target.value})}} // handle innerHTML change
+                    className={webContext.webStyle.isMobile?" px-2 ":" px-3"}
+                    innerRef={captionEditable}
+                    html={captionHtml} // innerHTML of the editable div
+                    disabled={!webContext.webStyle.isEditMode}       // use true to disable editing
+                    onChange={(evt)=>{setCaptionHtml(evt.target.value)}} // handle innerHTML change
                     tagName='caption'/>
                 {/* <caption>*All content from shoots, behind-the-scenes, IG lives, extra promtional stories...</caption> */}
-                <thead className='relative-div' onMouseEnter={()=>{this.setState({admin:true})}} onMouseLeave={()=>{this.setState({admin:false})}}>
+                <thead className='relative-div' onMouseEnter={()=>{setAdmin(true)}} onMouseLeave={()=>{setAdmin(false)}}>
                     <tr>
                     <th style={{width: "28%"}}></th>
                     {tableHeaders}
                     </tr>
-                    <div className={'relative-l'+((this.state.admin || this.state.edit) && this.props.webStyle.isEditMode ?"":" hidden")}>
-                        <button onClick={()=>{this.setState((state)=>({edit:!state.edit}))}} className='btn no-back ' >Dimensions <FontAwesomeIcon  icon={this.state.edit?faCheck:faPencilAlt}/></button>
+                    <div className={'relative-l'+((admin || edit) && webContext.webStyle.isEditMode ?"":" hidden")}>
+                        <button onClick={()=>{setEdit(!edit)}} className='btn no-back ' >Dimensions <FontAwesomeIcon  icon={edit?faCheck:faPencilAlt}/></button>
                     </div>
                 </thead>
                     {groups}
@@ -219,50 +230,97 @@ export default class PlanComparison extends React.Component {
             </div>
         </div>
     )
-  }
+  
 }
 
 
+//           rowComparisons: [
+//             {
+//               header: "Components",
+//               rowChecks: [false, false, false]
+//             },
+//             {
+//               header: "Calender",
+//               rowChecks: [true, true, true]
+//             },
+//             {
+//               header: "Email List",
+//               rowChecks: [true, true, true]
+//             },
+//             {
+//               header: "Socials Analytics",
+//               rowChecks: [false, false, true]
+//             },
+//             {
+//               header: "Modern Web Technology**",
+//               rowChecks: [false, false, true]
+//             },
+//             {
+//               header: "Instant Changes",
+//               rowChecks: [false, false, true]
+//             },
+//             {
+//               header: "Free To Use ***",
+//               rowChecks: [false, false, true]
+//             },
+//             {
+//               header: "Add your own",
+//               rowChecks: [false, true, true]
+//             }
+//           ],
+//           caption: `* We don't provide domain names or web hosting (neither are free but it will still cheaper than the alternatives). Go to the "Get Your Own" page to get some pointers.\`+
+//                               ** Wix and Wordpress are built using PHP which was created in 1994. We rely primarily on React which was released almost 2 decades later
+//                               *** Wix and Wordpress are both "Free to use" but expect to pay for any necessary features.`.replace(
+//             /\n +/g,
+//             "\n"
+
+
 function PlanComparisonRow(props){
-    const [rowNameHtml, setRowNameHtml] = useState(`Feature`);
-    const [checkRow,setCheckRow] = useState([false,false,false,false])
+    const [header, setHeader] = useState(`Feature`);
+    const [rowChecks,setRowChecks] = useState([false,false,false,false])
     const contentEditable = React.createRef();
 
     useEffect(() => {
         // alert("col count changed")
-        if (props.colCount > checkRow.length){
-            let newCheckRow = [...checkRow]
-            for (var i = 0; i < props.colCount - checkRow.length; i++){
+        if (props.colCount > rowChecks.length){
+            let newCheckRow = [...rowChecks]
+            for (var i = 0; i < props.colCount - rowChecks.length; i++){
                 newCheckRow.push(false)
             }
-            setCheckRow(newCheckRow)
+            setRowChecks(newCheckRow)
         }
-        else if (props.colCount < checkRow.length){
-            let newCheckRow = [...checkRow]
-            for (var i = 0; i < checkRow.length - props.colCount; i++){
+        else if (props.colCount < rowChecks.length){
+            let newCheckRow = [...rowChecks]
+            for (var i = 0; i < rowChecks.length - props.colCount; i++){
                 newCheckRow.pop()
             }
-            setCheckRow(newCheckRow)
+            setRowChecks(newCheckRow)
         }
       }, [props.colCount]);
 
       useEffect(() => {
+
+        if (props.content){
+            setHeader(props.content.header)
+            setRowChecks(props.content.rowChecks)
+          }
+
         const storedName = localStorage.getItem(props.id+'-name');
         const storedChecks = JSON.parse(localStorage.getItem(props.id+'-checkRow'))
         
         if (storedName){
-            setRowNameHtml(storedName)
+            setHeader(storedName)
         }
 
         if (storedChecks){
-            setCheckRow(storedChecks)
+            setRowChecks(storedChecks)
         }
 
       }, []);
     
 
     const handleRowNameChange = (evt) =>{
-        setRowNameHtml(evt.target.value)
+        setHeader(evt.target.value)
         localStorage.setItem(props.id+'-name',evt.target.value);
     }
 
@@ -270,24 +328,25 @@ function PlanComparisonRow(props){
         if (!props.webStyle.isEditMode){
             return
         }
-        let newCheckRow = [...checkRow]
+        let newCheckRow = [...rowChecks]
         newCheckRow[colNumber] = !newCheckRow[colNumber]
-        setCheckRow(newCheckRow)
+        setRowChecks(newCheckRow)
         localStorage.setItem(props.id+'-checkRow',JSON.stringify(newCheckRow));
 
     }
 
-    const columns = checkRow.map((value,index)  => (
+    const columns = rowChecks.map((value,index)  => (
         <td className='p-0 align-middle' key={props.id+`${index}`} onClick={()=>{checkCol(index)}}>{value&&<FontAwesomeIcon size={'xs'} icon={faCheck} />}</td>
     ))
 
     return(
         <tr>
             <ContentEditable
-                className="text-start font-shrink"
+                className={"text-start font-shrink "+(props.webStyle.isMobile?"ps-2":"ps-4")}
                 spellCheck = "false"
+                scope = "row"
                 innerRef={contentEditable}
-                html={rowNameHtml} // innerHTML of the editable div
+                html={header} // innerHTML of the editable div
                 disabled={!props.webStyle.isEditMode}       // use true to disable editing
                 onChange={handleRowNameChange} // handle innerHTML change
                 tagName='th'/>

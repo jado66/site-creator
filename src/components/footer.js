@@ -1,4 +1,5 @@
-import React from 'react'
+import React, {useContext} from 'react'
+
 import ContentEditable from 'react-contenteditable'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -8,12 +9,14 @@ import {
   Link
 } from "react-router-dom";
 
-export default class SocialLinks extends React.Component {
-  constructor(props) {
-    super(props)
-    this.contentEditable = React.createRef();
+import {WebContext} from "../App"
 
-    this.componentMapping = {
+
+export default function SocialLinks(props) {
+
+  const webContext = useContext(WebContext);
+
+  const componentMapping = {
       Email:faEnvelope,
       Facebook: faFacebookSquare,
       Twitter: faTwitter,
@@ -33,25 +36,22 @@ export default class SocialLinks extends React.Component {
       Soundcloud: faSoundcloud,
       Snapchat: faSnapchatGhost
     };
-  };
 
-  render = () => {
-
-    const socialLinks = this.props.socialMedias.filter(({location}) => {
+    const socialLinks = webContext.socialMedias.filter(({location}) => {
       if (location === "New Link") {
         return false; // skip
       }
       return true;
     }).map(({link,location}) =>
-      <Link className='col text-center' key = {location} to={{ pathname: link}} target={"_blank"} key={location} style={{color:this.props.webStyle.darkShade}}><FontAwesomeIcon className={"socialMediaLink m-auto"} icon={this.componentMapping[location]} /></Link>
+      <Link className='col text-center' key = {location} to={{ pathname: link}} target={"_blank"} key={location} style={{color:webContext.webStyle.darkShade}}><FontAwesomeIcon className={"socialMediaLink m-auto"} icon={componentMapping[location]} /></Link>
     );
 
     return(
-            <div className='mt-5' style = {{width:`${this.props.webStyle.centerWidth}%`, margin:"25px auto"}}>
+            <div className='mt-3' style = {{width:`50%`, margin:"25px auto"}}>
               <div className='row' style={{justifyContent:"space-evenly"}}>
                 {socialLinks}
               </div>
             </div>)
-  };
+  
 };
 

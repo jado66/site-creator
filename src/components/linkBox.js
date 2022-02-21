@@ -1,89 +1,56 @@
-// export default function LinkBox(props) {
-//     return (
-//       <div className={"link-box boxShadow"}>
-//           <h2 contentEditable>{props.title}</h2>
-//           <h3 contentEditable>{props.subtitle}</h3>
-//           <a href = {props.link}>{props.linkText}</a>
-//       </div>
-//     )
-//   }
-
-import React from 'react'
-
 import ContentEditable from 'react-contenteditable'
 import EditableLink from './editableLink';
 
-export default class LinkBox extends React.Component {
-  constructor(props) {
-    super(props)
-    this.contentEditable1 = React.createRef();
-    this.contentEditable2 = React.createRef();
+import React, { useContext, useEffect } from "react"
+import {WebContext} from "../App"
 
-    this.state = {h2: `<h2>Title</h2>`,
-                  h3: `<h3>Subtitle</h3>`};
-    
+export default function LinkBox(props){
+  const contentEditable1 = React.createRef();
+  const contentEditable2 = React.createRef();
+  
+  const webContext = useContext(WebContext);
+
+  const setTitle = evt => {
+    props.setTitle(evt.target.value);
+    // localStorage.setItem(this.props.id+'-h2',evt.target.value);
   };
 
-  handleChangeH2 = evt => {
-    this.setState({h2: evt.target.value});
-    localStorage.setItem(this.props.id+'-h2',evt.target.value);
-    // alert(`${this.props.id+'-h2'},${evt.target.value}`)
+  const setSubTitle = evt => {
+    props.setSubTitle(props.subTitle);
+    // localStorage.setItem(this.props.id+'-h3',evt.target.value);
   };
 
-  handleChangeH3 = evt => {
-    this.setState({h3: evt.target.value});
-    localStorage.setItem(this.props.id+'-h3',evt.target.value);
-  };
-
-  componentDidMount(){
-   
-    if (this.props.content){
-      this.setState({h2: this.props.content.title,h3: this.props.content.subTitle})
+  useEffect(() => {
+    if (props.content){
+      props.setTitle(props.content.title)
+      props.setSubTitle(props.content.subTitle)
     }
+  }, []);
 
-    const storedH2 = localStorage.getItem(this.props.id+'-h2');
-    const storedH3 = localStorage.getItem(this.props.id+'-h3');
-    
-    // if (storedH2){
-    //   this.setState({h2: storedH2})
-    // }
-    // else{
-    //   this.setState({h2: `<h2>Title</h2>`})
-    // }
-    
-    // if (storedH3){
-    //   this.setState({h3: storedH3})
-    // }
-    // else{
-    //   this.setState({h3: `<h3>Subtitle</h3>`})
-    // }
 
-    
-
-  }
-
-  render = () => {
-
-    return(
-      <div className={"p-3 boxShadow"} style={{backgroundColor:this.props.webStyle.lightShade}}>
-            <ContentEditable
-                    style={{color:this.props.webStyle.darkShade}}
-                    innerRef={this.contentEditable1}
-                    html={this.state.h2} // innerHTML of the editable div
-                    disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
-                    onChange={this.handleChangeH2} // handle innerHTML change
-                    tagName='h2' // Use a custom HTML tag (uses a div by default)
-                    />
-            <ContentEditable
-                    className='apply-font-secondary'
-                    style={{color:this.props.webStyle.darkShade}}
-                    innerRef={this.contentEditable2}
-                    html={this.state.h3} // innerHTML of the editable div
-                    disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
-                    onChange={this.handleChangeH3} // handle innerHTML change
-                    tagName='h3' // Use a custom HTML tag (uses a div by default)
-                    />
-            <EditableLink webStyle = {this.props.webStyle} content ={this.props.content.linkTxtContent} id = {this.props.id+"-link"} adminProps = {this.props.adminProps}/>
-            </div>)
-  };
+  return(
+    <div className={"p-3 boxShadow"} style={{backgroundColor: webContext.webStyle.lightShade}}>
+      <ContentEditable
+        style={{color: webContext.webStyle.darkShade}}
+        innerRef={contentEditable1}
+        html={props.title} // innerHTML of the editable div
+        disabled={! webContext.webStyle.isEditMode}       // use true to disable editing
+        onChange={setTitle} // handle innerHTML change
+        tagName='h2' // Use a custom HTML tag (uses a div by default)
+      />
+      <ContentEditable
+        className='apply-font-secondary'
+        style={{color: webContext.webStyle.darkShade}}
+        innerRef={contentEditable2}
+        html={props.subTitle} // innerHTML of the editable div
+        disabled={! webContext.webStyle.isEditMode}       // use true to disable editing
+        onChange={setSubTitle} // handle innerHTML change
+        tagName='h3' // Use a custom HTML tag (uses a div by default)
+      />
+      <EditableLink 
+        content ={props.content.linkTxtContent} id = {props.id+"-link"} 
+        linkText = {props.lLinkText} href = {props.lHref} setLinkText = {props.setLinkText} setHref = {props.setHref}
+      />
+      </div>)
+  
 };

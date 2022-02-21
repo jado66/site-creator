@@ -1,540 +1,745 @@
-import React from "react";
+import React, { useState, useContext, useEffect  } from "react";
 import {
-  Link
-} from "react-router-dom";
-import { Menu, MenuItem, MenuButton, SubMenu} from '@szhsin/react-menu';
-import { faAngleDoubleRight, faAngleDoubleLeft, faPlus, faPencilAlt, faTrashAlt,  faCheck, faTimes, faSortDown, faAngleDoubleUp, faAngleDoubleDown, faCarAlt, faCartPlus, faShoppingCart } from '@fortawesome/free-solid-svg-icons'
+  DndContext,
+  closestCenter,
+  useSensor,
+  useSensors,
+  useDroppable
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  horizontalListSortingStrategy,
+  verticalListSortingStrategy
+} from "@dnd-kit/sortable";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+
+import {
+  restrictToVerticalAxis,
+  restrictToHorizontalAxis,
+  restrictToWindowEdges,
+  snapCenterToCursor,
+} from '@dnd-kit/modifiers';
+
+import Fade from 'react-reveal/Fade';
+
+
+import { faAngleDoubleRight, faAngleDoubleLeft,faCaretSquareDown,  faPencilAlt, faTrashAlt,  faCheck, faSortDown, faArrowsAlt,  faCarrot, faShoppingCart , faArrowCircleDown, faHamburger, faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import ContentEditable from 'react-contenteditable'
-
-
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookSquare, faTwitter, faInstagram, faYoutube, faTiktok, faDiscord, faEtsy, faGithub, faImdb, faLinkedinIn,faPatreon, faPinterestP, faReddit, faShopify, faSpotify, faSoundcloud, faSnapchatGhost, faGooglePlusG } from "@fortawesome/free-brands-svg-icons"
 
 
-export default class Navbar extends React.Component {
-    constructor(props) {
-      super(props);
+import { faPlusSquare } from "@fortawesome/free-solid-svg-icons";
 
-      let menuItems = this.props.pages;
-      menuItems.forEach(menuItem=>{
-        menuItem.mode = "add/move"
-      })
+import { MouseSensor, KeyboardSensor } from "./Sensors";
+import AdminNavWrapper from "./AdminNavWrapper";
 
-      this.state = {
-        showMenu: false,
-        areButtonsVisible: false,
-        menuItems : menuItems,
-        mode: "add/move"
-      };
+import {WebContext} from "../App"
 
-      this.componentMapping = {
-        Email:faEnvelope,
-        Facebook: faFacebookSquare,
-        Twitter: faTwitter,
-        Instagram: faInstagram,
-        Youtube: faYoutube,
-        Tiktok: faTiktok,
-        Discord: faDiscord,
-        Etsy: faEtsy,
-        Github: faGithub,
-        Imdb: faImdb,
-        LinkedinIn: faLinkedinIn,
-        Patreon: faPatreon,
-        Pinterest: faPinterestP,
-        Reddit: faReddit,
-        Shopify: faShopify,
-        Spotify: faSpotify,
-        Soundcloud: faSoundcloud,
-        Snapchat: faSnapchatGhost
-      };
-    }
+
+import {
+  Link
+} from "react-router-dom";
+
+
+// TODO dropdowns need to open only their dropdowns
+
+export default function NavBar(props) {
+  const [isEdit, setIsEdit] = useState(false);
+  const [isShowDeleteSpot, showDeleteSpot] = useState(false);
+  const [isShowDropdownDeleteSpot, showDropdownDeleteSpot] = useState(false);
+  const [isShowButtons, showButtons] = useState(false);
+
+  const webContext = useContext(WebContext);
+
+  const [navData, setNavData] = useState([
+    {
+      id:1,
+      name:"Site Creator",
+      path:"/"
+    },
+    {
+      id:2,
+      name:"How It Works",
+      path:"/how-it-works"
+    }, 
+    {
+      id:3,
+      name:"Need Help",
+      path:"/need-help"
+    },
+    {
+      id:4,
+      name:"Getting Started",
+      path:"/getting-started"
+    },
+    {
+      id:5,
+      name:"Components",
+      path:"/components"
+    },
     
-
-    deleteMenuItem(index,dontAsk) {
-      // alert("Delete at index "+index)
-      if (window.confirm('Are you sure you want to delete this menu item?') || dontAsk) {
-        let newMenuItemList = [...this.state.menuItems.slice(0,index),...this.state.menuItems.slice(index+1)]
-
-        this.setState({mode:"add/move",menuItems:newMenuItemList}, function() {
-          this.returnToNormalState();
-        });
-        localStorage.setItem('navbar',JSON.stringify(newMenuItemList));
-
-      } 
+    {
+      id:6,
+      name:"Contact",
+      path:"/contact"
     }
+  ]);
 
-    addMenuItemBelow(index){
-      alert(`Add menu item below ${index}`)
-    }
+  useEffect(() => {
+    if (webContext.msgPort == "save"){
 
-    moveMenuItemLeft(index){
-      this.swapMenuItems(index,index-1)
-    }
-
-    moveMenuItemRight(index){
-      this.swapMenuItems(index,index+1)
-    }
-
-    swapMenuItems(indexA,indexB){
-      // alert(`Swap menuItem ${indexA} and ${indexB}`)
-      if (Math.max(indexA,indexB) == this.state.menuItems.length){
-        return
-      }
-
-      let newMenuItemList = [...this.state.menuItems];
-      let tempMenuItem = {...this.state.menuItems[indexB]};
-
-      newMenuItemList[indexB] = {...newMenuItemList[indexA]};
-      newMenuItemList[indexA] = tempMenuItem
-
-      this.setState({menuItems:newMenuItemList});
-      localStorage.setItem('navbar',JSON.stringify(newMenuItemList));
-    }
-
-    addMenuItemAtIndex(index){
-      let newMenuItem = {}
-      newMenuItem.name = "New MenuItem";
-      newMenuItem.path = "/"
-      newMenuItem.mode = "add/move"
-      
-      let newMenuItemList = [...this.state.menuItems.slice(0,index),newMenuItem,...this.state.menuItems.slice(index)]
-
-      this.setState({menuItems: newMenuItemList})
-
-      localStorage.setItem('navbar',JSON.stringify(newMenuItemList));
-    }
-
-    editMenuItemAtIndex(index,newName,newPath){
-      // alert("Change menuItem at index "+index + ` to ${newName}:${newPath}`)
-      let newMenuItemList = [...this.state.menuItems];
-      
-      // if (newMenuItemList[index].name == "New MenuItem" && newName != "New MenuItem"){
-      //   if (!this.props.pageCallbacks.checkIfPageExists(newName)){
-      //     alert("This page does not exist")
-      //   }
-      // }
-      if (!this.isPathExternal(newPath)){
-        if(!this.props.pageCallbacks.checkIfPageExists(newPath)){
-          if (window.confirm(`You don't have any pages with the path ${newPath}. Would you like to create one?`)){
-            this.props.pageCallbacks.addPage(newName,newPath)
-          }
+      const componentData = { 
+        name: props.componentName,
+        id: props.id,
+        content: {
+          navData:navData
         }
       }
 
-      newMenuItemList[index] = {name:newName,path:newPath}
-
-      this.setState({mode:"add/move",menuItems:newMenuItemList}, function() {
-        this.returnToNormalState();
-      });
-      localStorage.setItem('navbar',JSON.stringify(newMenuItemList));
+      webContext.saveComponentData(props.pageName,props.index,componentData)
     }
+  }, [webContext.msgPort]);
 
-    setButtonsVisibility(val){
-      // alert(val)
-      this.setState({areButtonsVisible:val})
-    }
+  // [
+  //   {
+  //     id:1,
+  //     name:"Site Creator",
+  //     path:"/"
+  //   },
+  //   {
+  //     id:2,
+  //     name:"How It Works",
+  //     path:"/how-it-works"
+  //   }, 
+  //   {
+  //     id:3,
+  //     name:"Need Help",
+  //     path:"/need-help"
+  //   },
+  //   {
+  //     id:4,
+  //     name:"Getting Started",
+  //     path:"/getting-started"
+  //   },
+  //   {
+  //     id:5,
+  //     name:"Components",
+  //     path:"/components"
+  //   },
+    
+  //   {
+  //     name:"Contact",
+  //     path:"/contact"
+  //   }
+  // ]
 
-     componentDidMount(){
-      let menuItems = JSON.parse(localStorage.getItem('navbar'))
   
-      // menuItems = menuItems.filter((menuItem) => menuItem.name !== "New MenuItem")
+  // useEffect(() => {
+  //   if(props.pages){
+  //     const pages = props.pages;
+     
+  //     setNavData(pages)
+  
+  // }
+  // }, []);
 
-      if (menuItems){ 
-        menuItems.forEach(menuItem=>{
-          menuItem.mode = "add/move"
-        })
-        this.setState({menuItems: menuItems})
-      }
-      else{
-        menuItems = this.props.pages;
-        localStorage.setItem('navbar',JSON.stringify(menuItems));
-      }
+  // const [items, setItems] = useState(["1", "2", "3"]);
+
+  const componentMapping = {
+    Email:faEnvelope,
+    Facebook: faFacebookSquare,
+    Twitter: faTwitter,
+    Instagram: faInstagram,
+    Youtube: faYoutube,
+    Tiktok: faTiktok,
+    Discord: faDiscord,
+    Etsy: faEtsy,
+    Github: faGithub,
+    Imdb: faImdb,
+    LinkedinIn: faLinkedinIn,
+    Patreon: faPatreon,
+    Pinterest: faPinterestP,
+    Reddit: faReddit,
+    Shopify: faShopify,
+    Spotify: faSpotify,
+    Soundcloud: faSoundcloud,
+    Snapchat: faSnapchatGhost
+  };
+
+
+  const sensors = useSensors(useSensor(MouseSensor,{
+    activationConstraint: {
+      delay: 100,
+      tolerance: 5,
     }
 
-    changeToEditMode(){
-      if (this.state.mode != "edit"){
-        let menuItems = [...this.state.menuItems];
-        menuItems.forEach(menuItem=>{
-          menuItem.mode = "edit"
-        })
+  }));
 
-        this.setState({menuItems:menuItems,mode:"edit"})
+  // , {
+  //   activationConstraint: {
+  //     delay: 1000,
+  //   },
+  // }
 
-      }
-      else{
-        this.returnToNormalState()
-      }
-    }
+  let navItems = [];
 
-    changeToDeleteMode(){
-      if (this.state.mode != "delete"){
-        let menuItems = [...this.state.menuItems];
-        menuItems.forEach(menuItem=>{
-          menuItem.mode = "delete"
-        })
+  if (isEdit) {
+    // for(var index = 1; index < navData.length; index++){
+    [...navData.slice(1)].forEach((el,index) => {
+      // let el = navData[index]
 
-        this.setState({menuItems:menuItems,mode:"delete"})
+      let dropdownItems = [];
 
-      }
-      else{
-        this.returnToNormalState()
-      }
-    }
-
-    returnToNormalState(){
-      let menuItems = [...this.state.menuItems];
-        menuItems.forEach(menuItem=>{
-          menuItem.mode = "add/move"
-        })
-
-        this.setState({menuItems:menuItems,mode:"add/move"})
-    }
-
-    isPathExternal(url){
-      const tmp = document.createElement('a');
-      tmp.href = url;
-      return tmp.host !== window.location.host;
-    }
-    toggleMenu(){
-      this.setState({ showMenu: !this.state.showMenu })
-    }  
-
-    render(){
-      let callbacks = {
-        deleteMenuItem: this.deleteMenuItem.bind(this),
-        moveMenuItemLeft: this.moveMenuItemLeft.bind(this),
-        moveMenuItemRight: this.moveMenuItemRight.bind(this),
-        addMenuItemAtIndex: this.addMenuItemAtIndex.bind(this),
-        editMenuItemAtIndex: this.editMenuItemAtIndex.bind(this),
-        returnToNormalState: this.returnToNormalState.bind(this),
-        addMenuItemBelow: this.addMenuItemBelow.bind(this)
-      }
-
-      const show = (this.state.showMenu) ? "show" : "" ;
-
-      const menuItems = []
-      this.state.menuItems.forEach((menuItem,index) => {
-        
-        if (index === 0){
-          return
-        }
-
-        if (index == 5){
-          menuItem = [menuItem.name,{name:"Life Coaching",path:"/life-coaching"},{name:"Influencer Coaching",path:"/coaching-and-consulting"},
-                                    {name:"Social Media Strategy",path:"/coaching-and-consulting"},{name:"Talent Training",path:"/talent-training"}]
-          }
-                                    // If the menuItem is an object and not a list of menuItems
-        if (menuItem.constructor == Object) {
-          let isExternalMenuItem = this.isPathExternal(menuItem.path) 
-
-          let newMenuItem = (isExternalMenuItem ?
-                      <Link className = {"navMenu apply-font-primary"+ (this.props.webStyle.isMobile?" pb-3 text-start":"")} to={{ pathname: menuItem.path}} target="_blank" style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem.name}</Link>
-                        :
-                        <Link className = {"navMenu apply-font-primary"+ (this.props.webStyle.isMobile?" pb-3 text-start":"")} to={menuItem.path} style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem.name}</Link>
-                      )
-          menuItems.push(
-            <AdminMenuItemWrapper key={menuItem.name+menuItem.path+"-admin"} adminProps = {this.props.adminProps} webStyle = {this.props.webStyle} isMenu = {false} isMobile = {this.props.webStyle.isMobile}
-                                index = {index} callbacks = {callbacks} mode = {this.state.mode} menuItem = {menuItem} menuItemCount = {this.state.menuItems.length}>
-              {newMenuItem}
-            </AdminMenuItemWrapper>)
-          }
-        else
-        {
-          // If the menuItem is list
-          let newMenuItemsList = [...menuItem].slice(1)
-          let newMenuItems = newMenuItemsList.map(({name, path})=> (
-            <MenuItem className={"apply-font-primary"} styles = {{textAlign:"left", hover: {color: 'white', backgroundColor: 'black'},active: {backgroundColor: 'black'}}}><Link className="link navMenu" to={path} style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={name+path}>{name}</Link></MenuItem>
-          ))
-
-
-          let newMenu = <Menu className={"nav apply-font-primary"+ (this.props.webStyle.isMobile?" mb-2":"")} menuStyles={{color: this.props.webStyle.lightShade, backgroundColor: this.props.webStyle.darkAccent, }} menuButton={<MenuButton className="navMenuHeader" styles={{color:this.props.webStyle.lightShade}}>{menuItem[0]}<FontAwesomeIcon style={{marginLeft:"10px"}} icon={faSortDown} /></MenuButton>}  transition>
-                              {newMenuItems}
-                              <MenuItem className={"apply-font-primary"} styles = {{hover: {color: this.props.webStyle.lightShade, backgroundColor: this.props.webStyle.darkAccent},active: {backgroundColor: 'black'}}}><FontAwesomeIcon  icon={faPlus}/></MenuItem>
-                            </Menu>
-          // <Link className="link" to={menuItem[1].path} style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} key={menuItem.name+menuItem.path}>{menuItem[0]}</Link>
+      if ("dropdown" in el) {
+        el.dropdown.forEach((subEl, subIndex) => {
+          dropdownItems.push(
+            <DropDownLink key = {el.name+subEl.name+subEl.path+"DropDown"}
+                          isEdit = {true} webStyle = {webContext.webStyle}
+                          name = {subEl.name} path = {subEl.path} 
+                          onChangeName = {(evt) => {
+                            handleLinkDropdownChange(evt, index, subIndex, "name");
+                          }}
             
-          menuItems.push(
-          <AdminMenuItemWrapper key={menuItem[0].name+menuItem[1].path+"-admin"} adminProps = {this.props.adminProps} webStyle = {this.props.webStyle} isMenu = {true} isMobile = {this.props.webStyle.isMobile}
-                                index = {index} callbacks = {callbacks} mode = {this.state.mode} menuItem = {menuItem[1]} menuItemCount = {this.state.menuItems.length}>
-          {newMenu}
-          </AdminMenuItemWrapper>
-          )
-        }
-      })
+                          onChangePath = {(evt) => {
+                            handleLinkDropdownChange(evt, index, subIndex, "path");
+                          }}/>
+          );
+        });
+      }
 
-      const socialLinks = this.props.socialMedias.filter(({location}) => {
-        if (location === "New Link") {
-          return false; // skip
-        }
-        return true;
-        }).map(({link,location}) =>
-          <li >
-            <a className={'col '} key = {location}  href={`${link}`}  style={{color:this.props.webStyle.lightShade}}><FontAwesomeIcon className={"sm-icons"} icon={this.componentMapping[location]} /></a>
+      navItems.push(
+        <li className={"nav-item "+(webContext.webStyle.isMobile?"ms-2":"mx-4")} 
+            key={"edit"+el.name+"input2"}
+        >
+          <div key={"edit"+el.name+"div"}>
+            {"dropdown" in el ? (
+              <div  key={"edit"+el.name+"div2"}
+                    className= {"position-relative "+(webContext.webStyle.isMobile ? "input-group" : "")}>
+                <input
+                  key={"edit"+el.name+"input"}
+                  className={
+                    "form-control-plaintext" + (webContext.webStyle.isMobile ? " w-50" : "")
+                  }
+                  onChange={(evt) => {
+                    handleLinkChange(evt, index+1, "text");
+                  }}
+                  style ={{width:`${el.name.length+2}ch`,color:webContext.webStyle.lightShade}}
+
+                  value={el.name}
+                />
+                <Link
+                  key={"edit"+el.name+"dropToggle"}
+                  className={
+                    "nav-link dropdown-toggle" + (webContext.webStyle.isMobile ? " w-50" : "")
+                  }
+                  style ={{color:webContext.webStyle.lightShade}}
+                  data-no-dnd="true"
+                  data-bs-toggle="dropdown"
+                  id="navbarDropdown"
+                  role="button"
+                  aria-expanded="false"
+                  path="javascript:void(0)"
+                >
+                  Dropdown
+                </Link>
+                <ul key={"edit"+el.name+"ul"} className="dropdown-menu boxShadow" style={{backgroundColor:webContext.webStyle.darkAccent}} aria-labelledby="navbarDropdown">
+                  {dropdownItems}
+                </ul>
+              </div>
+            ) : (
+              <div key={"edit"+el.name+"div"} className={webContext.webStyle.isMobile ? "input-group" : ""} >
+                <input
+                  key={"edit"+el.name+"input1"}
+                  className={
+                    "form-control-plaintext" + (webContext.webStyle.isMobile ? " w-50" : "")
+                  }
+                  onChange={(evt) => {
+                    handleLinkChange(evt, index+1, "name");
+                  }}
+                  style ={{width:`${el.name.length+2}ch`,color:webContext.webStyle.lightShade}}
+
+                  value={el.name}
+                />
+                <input
+                  key={"edit"+el.name+"input2"}
+                  className={
+                    "form-control-plaintext" + (webContext.webStyle.isMobile ? " w-50" : "")
+                  }
+                  onChange={(evt) => {
+                    handleLinkChange(evt, index+1, "path");
+                  }}
+                  style ={{width:`${el.path.length+2}ch`,color:webContext.webStyle.lightShade}}
+                  value={el.path}
+                />
+              </div>
+            )}
+          </div>
+        </li>
+      );
+    });
+
+    // Move Mode
+  } else {
+    for(var index = 1; index < navData.length; index++){
+
+      let el = navData[index]
+
+      let dropdownItems = [];
+
+      if ("dropdown" in el) {
+        el.dropdown.forEach((el, index) => {
+          dropdownItems.push(
+            <AdminNavWrapper
+              key={el.id}
+              id={el.id}
+              // order = {el.or}
+              className={"py-2 "}
+            >
+              <li className="nav-item ms-2">
+                <Link
+                  data-no-dnd="true"
+                  className="nav-link active "
+                  aria-current="page"
+                  path="javascript:void(0)"
+                >
+                  {el.name}
+                </Link>
+              </li>
+            </AdminNavWrapper>
+          );
+        });
+      }
+
+      navItems.push(
+        <AdminNavWrapper
+          key={el.id}
+          id={el.id}
+          // order = {el.or}
+          className={"py-2 "}
+        >
+          <li className={"nav-item "+(webContext.webStyle.isMobile?"ms-2":"mx-4")} style ={{whiteSpace: "nowrap"}}>
+            {"dropdown" in el ? (
+              <div className="position-relative ">
+                <a
+                  style={{color:webContext.webStyle.lightShade}}
+                  className="  dropdown-toggle text-decoration-none"
+                  data-bs-toggle="dropdown"
+                  id={"navbarDropdown" + el.id}
+                  role="button"
+                  aria-expanded="false"
+                  path="javascript:void(0)"
+                >
+                  {el.name}
+                </a>
+                <ul
+                  className="dropdown-menu border-0 rounded-0 boxShadow" style={{backgroundColor:webContext.webStyle.darkAccent, top:"2.5em"}}
+                  aria-labelledby={"navbarDropdown" + el.id}
+
+                >
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+
+                    // modifiers = {[ verticalListSortingStrategy]}
+
+                    onDragStart={() => {
+                      showDropdownDeleteSpot(true);
+                    }}
+                    onDragEnd={(evt) => {
+                      handleDropdownDragEnd(evt, index);
+                      showDropdownDeleteSpot(false);
+                      
+                    }}
+                  >
+                    <SortableContext
+                      items={el.dropdown}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {dropdownItems}
+                      {isShowDropdownDeleteSpot && (
+                        <DeleteDrop id={`${index}:deleteDrop`} />
+                      )}
+
+                      <button
+                        className="btn "
+                        data-no-dnd="true"
+                        type="button"
+                        onClick={(evt) => {
+                          addDropdownlink(evt, index);
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faPlusSquare}/>
+                      </button>
+                    </SortableContext>
+                  </DndContext>
+                </ul>
+              </div>
+            ) : (
+              <Link
+                data-no-dnd="true"
+
+                style={{color:webContext.webStyle.lightShade}}
+                className={"text-decoration-none "}
+                aria-current="page"
+                to={el.path}
+              >
+                {el.name}
+              </Link>
+            )}
           </li>
-        );
-    
-    return(
-            // <div className="fullWidth" style={{backgroundColor:"black",position: "sticky",top: 0, alignSelf: "flex-start",zIndex:1}}
-            //      onMouseEnter={() => this.setButtonsVisibility(true)} onMouseLeave={() => {this.setButtonsVisibility(false)}}>
-                
-                
-            //     {this.state.areButtonsVisible &&
-            //     <div className="floatOnTop" style={{justifyContent:"space-around",display: "flex", flexDirection: "column", height: "100%",left:"100px"}}>
-            //       <div>
-            //         {this.state.mode == "add/move"?
-            //         <div style={{zIndex:999}}>
-            //           <FontAwesomeIcon  style={{color:this.props.webStyle.lightShade,left:"25px", fontSize:"x-large",paddingBottom:"3px"}} icon={faPencilAlt} onClick={this.changeToEditMode.bind(this)}/>
-            //           <FontAwesomeIcon  style={{color:this.props.webStyle.lightShade, fontSize:"x-large",paddingBottom:"3px",marginLeft:"30px"}} icon={faTrashAlt} onClick={this.changeToDeleteMode.bind(this)}/>
-            //         </div >
-            //         :
-            //           <FontAwesomeIcon  style={{color:this.props.webStyle.lightShade,left:"25px", fontSize:"x-large",paddingBottom:"3px"}} icon={faTimes} onClick={this.returnToNormalState.bind(this)}/>
-            //         }
-            //         </div>
-            //     </div>
-            //     }
-            //     {menuItems}
-            //   </div>
-            <div className="relative-div">
-              <div className="relative-r boxShadow" style={{backgroundColor:this.props.webStyle.darkAccent,left:"-50%",width:"200%"}}>
-              </div>   
+        </AdminNavWrapper>
+      );
+    };
+  }
 
-                            
+  const socialLinks = webContext.socialMedias.filter(({location}) => {
+    if (location === "New Link") {
+      return false; // skip
+    }
+    return true;
+    }).map(({link,location}) =>
+      <li className="py-2">
+        <Link className={'nav-link social-link'} key = {location}  href={`${link}`}  style={{color:webContext.webStyle.lightShade}}><FontAwesomeIcon className={"sm-icons"} icon={componentMapping[location]} /></Link>
+      </li>
+    );
 
-              <nav className="navbar navbar-expand-lg navbar-dark px-5 mb-5  " style={{marginLeft:(this.props.webStyle.isMobile?"1em":"-3em"),marginRight:(this.props.webStyle.isMobile?"1em":"-3em"),backgroundColor:this.props.webStyle.darkAccent}}>
-                <Link className="navbar-brand" style={{color:this.props.webStyle.lightShade}}to={"/"} >React Site Creator</Link>
-                {/* {this.props.webStyle.isMobile?<span>M</span>:<span>D</span>} */}
-                <button className="navbar-toggler" type="button" onClick={ this.toggleMenu.bind(this) }>
-                  <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className={"collapse navbar-collapse " + show}>
-                  <div className={"navbar-nav justify-content-around ms-0"+ (this.props.webStyle.isMobile?" pb-3":"")} style={{flexGrow:1}}>
-                    {menuItems}
-                    {this.props.webStyle.isMobile &&
-                      <Link className="link" className = {"navMenu apply-font-primary text-start ms-4"} target="_blank" style={{color:this.props.webStyle.lightShade, whiteSpace:"nowrap"}} 
-                            onClick = {()=>{this.props.addMenuItemAtIndex(this.state.menuItems.length)}}>+</Link>
-                    }
+  return (
+    <div
+      className="fullWidth boxShadow px-5  " style={{backgroundColor:webContext.webStyle.darkAccent, color:webContext.webStyle.lightShade, position: "sticky",top: 0, alignSelf: "flex-start",zIndex:1}}
+      onMouseEnter={() => {
+        showButtons(true);
+      }}
+      onMouseLeave={() => {
+        showButtons(false);
+      }}
+    >
+      {/* style={{backgroundColor:webContext.webStyle.lightShade}} */}
+        <nav className="navbar navbar-expand-lg mx-4 p-0 container mx-auto">
+          
+          <div className={"container-fluid g-0 "+(webContext.webStyle.isMobile?" ms-3":"")}>
+            {isEdit?
+            <div data-no-dnd="true">
+              <input
+                  style ={{color:webContext.webStyle.lightShade}}
+
+                  className="form-control-plaintext w-50"
+                  value={navData[0].name}
+                  onChange={(evt) => {
+                    handleLinkChange(evt, 0, "name");
+                  }}
+                />
+                <input
+                  className="form-control-plaintext w-50"
+                  style ={{color:webContext.webStyle.lightShade}}
+
+                  value={navData[0].path}
+                  onChange={(evt) => {
+                    handleLinkChange(evt, 0, "path");
+                  }}
+                />
+            </div>
+            :
+            <Link className="navbar-brand" style={{color:webContext.webStyle.lightShade}}>{navData[0].name}</Link>
+            }
+            <button
+              className="navbar-toggler btn"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <FontAwesomeIcon  style={{color:webContext.webStyle.lightShade}} icon={faBars}/>
+            </button>
+            <div
+              className="collapse navbar-collapse"
+              id="navbarSupportedContent"
+            >
+              <ul className={"navbar-nav me-auto mb-2 mb-lg-0 "+(webContext.webStyle.isMobile?" ":"align-items-center")}>
+                {isEdit ? (
+                  <div data-no-dnd="true" className={"d-flex "+(webContext.webStyle.isMobile?"flex-column ":"flex-direction-col")}>
+                      {navItems}
                   </div>
-                  <div style={{right:"0"}}>
-                  <ul className="navbar-nav sm-icons justify-content-start" >
-                    {socialLinks}
-                    {
+                  
+                ) : (
+                  <DndContext
+                    sensors={sensors}
+                    modifiers = {[ webContext.webStyle.isMobile
+                      ? restrictToVerticalAxis
+                      : restrictToHorizontalAxis]}
+                    collisionDetection={closestCenter}
+                    onDragStart={() => {
+                      showDeleteSpot(true);
+                    }}
+                    onDragEnd={(evt) => {
+                      handleDragEnd(evt);
+                      showDeleteSpot(false);
+                    }}
+                  >
+                    <SortableContext
+                      items={navData}
+                      strategy={
+                        webContext.webStyle.isMobile
+                          ? verticalListSortingStrategy
+                          : horizontalListSortingStrategy
+                      }
+                    >
+                      {navItems}
+                      {isShowDeleteSpot && (
+                        <div className={"py-2"}>
+                          <DeleteDrop id={"deleteDrop"} />
+                        </div>
+                      )}
+                    </SortableContext>
+                    
+                  </DndContext>
+                  
+                )}
+              </ul>
+              {isShowButtons && (
+                  <div
+                    data-no-dnd="true"
+                    className="btn-group  "
+                    role="group"
+                    aria-label="Basic example"
 
-                    }
-                    {Object.keys(this.props.cart).length != 0 &&
+                    // onClick={()=>{alert("group")}}
+                  >
+                    <button
+                      className="btn border-end mx-2"
+                      type="button"
+                      onClick={() => {
+                        addLink();
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faPlusSquare} style={{color:webContext.webStyle.lightShade}} />
+                    </button>
+                      
+                    <button
+                      className="btn mx-1 px-0"
+                      type="button"
+                      onClick={() => {
+                        addLink(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faCaretSquareDown} style={{color:webContext.webStyle.lightShade}}/>
+
+                    </button>
+                    <button
+                      className="btn border-start mx-2"
+                      type="button"
+                      onClick={() => {
+                        setIsEdit(!isEdit); 
+                      }}
+                    >
+                      <FontAwesomeIcon icon={isEdit?faArrowsAlt:faPencilAlt} style={{color:webContext.webStyle.lightShade}}/> 
+                    </button>
+                  </div>
+                )}
+                  <ul className="navbar-nav sm-icons justify-content-start me-0 " style={{float:0}} >
+                    {socialLinks}
+                    
+                    {Object.keys(webContext.cart).length != 0 &&
                     <li className="position-relative">
-                      <Link className='col ms-3' to={"/checkout"}  style={{color:this.props.webStyle.lightShade}}><FontAwesomeIcon className={"m-icons"} icon={faShoppingCart} /></Link>
-                      <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-                        {Object.keys(this.props.cart).length}
+                      <Link className='col ms-3' to={"/checkout"}  style={{color:webContext.webStyle.lightShade}}><FontAwesomeIcon className={"m-icons"} icon={faShoppingCart} /></Link>
+                      <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill ">
+                        {Object.keys(webContext.cart).length}
                         <span className="visually-hidden">unread messages</span>
                       </span>
                     </li>
                     } 
                   </ul>
-
-                  </div>
-                </div>
-              </nav>  
+                
             </div>
-          
-              
-    )
-  }
-
-}
-
-class AdminMenuItemWrapper extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      areButtonsVisible: false,
-      menuItemHtml: `<a>${this.props.menuItem.name}</a>`,
-      menuItemPath: this.props.menuItem.path
-    };
-  }
-
-  setButtonsVisibility(showButtons){
-    // if (this.adminProps.userIsAdmin)
-        this.setState({areButtonsVisible: showButtons})
-  }
-
-  handleMenuItemHTMLChange = evt => {
-    this.setState({menuItemHtml: evt.target.value});
-  };
-
-  handleMenuItemPathChange = evt => {
-    this.setState({menuItemPath: evt.target.value});
-  };
-
-  editMenuItem(){
-    if (this.state.menuItemPath == this.props.menuItem.path && this.state.menuItemHtml == `<a>${this.props.menuItem.name}</a>`){
-      this.props.callbacks.returnToNormalState();
-      this.setButtonsVisibility(false)
-      return
-    }
-
-    if (this.state.menuItemHtml == "" || this.state.menuItemHtml == "<br>"){
-      if (window.confirm('Are you sure you want to delete this menuItem?')) {
-        this.props.callbacks.deleteMenuItem(this.props.index,true)
-        return
-      } else {
-        this.setState({menuItemHtml: `<a>${this.props.menuItem.name}</a>`})
-        this.setButtonsVisibility(false)
-        return
-      }
-    }
-
-    let menuItemName = this.state.menuItemHtml.match(/(?<=>)[^/</>]*(?=<)/g)
-    this.props.callbacks.editMenuItemAtIndex(this.props.index,menuItemName,this.state.menuItemPath)
-    this.forceUpdate();
-  }
-
-  render() {
-
-    let mode = this.props.menuItem.mode;
-
-    if (this.props.menuItem.name == `New MenuItem`){
-      mode = "edit"
-    }
-
-    let buttonClass = this.state.areButtonsVisible && this.props.webStyle.isEditMode ? "" :"hidden"
-
-    if (this.props.webStyle.isMobile){
-      buttonClass = ""
-    }
-
-    // buttonClass = "hidden"-3
-
-    return ( 
-      <div className={"relative-div flex-grow-1 "+(this.props.webStyle.isMobile?"":"text-center")} onMouseEnter={() => this.setButtonsVisibility(true)} onMouseLeave={() => {this.setButtonsVisibility(false)}}>
-        {/* Add/Move Mode: Arrows and pluses */}
-        {mode == "add/move" &&
-          <div className={buttonClass}>
-            {this.props.webStyle.isMobile ?
-            <div>
-              {/* Mobile */}
-              <div className="relative-r" style={{color:this.props.webStyle.lightShade,right:".5em"}}>
-                {this.props.index != 1 && <FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleUp} onClick = {()=>{this.props.callbacks.moveMenuItemLeft(this.props.index)}}/>}
-              </div>
-              <div className={"relative-r"} style={{color:this.props.webStyle.lightShade,right:"1.5em"}}>
-                {this.props.index != this.props.menuItemCount-1 &&<FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleDown} onClick = {()=>{this.props.callbacks.moveMenuItemRight(this.props.index)}}/>}
-              </div> 
-            </div>
-            :
-            <div>
-              {/* Desktop */}
-                <div className="relative-l" style={{color:this.props.webStyle.lightShade,left:"1em"}}>
-                  <FontAwesomeIcon className="icon-link m-auto" icon={faPlus} onClick = {()=>{this.props.callbacks.addMenuItemAtIndex(this.props.index)}}/>
-                </div>
-                <div className={"relative-r"} style={{color:this.props.webStyle.lightShade,right:"1em"}}>
-                  <FontAwesomeIcon className="icon-link m-auto" icon={faPlus} onClick = {()=>{this.props.callbacks.addMenuItemAtIndex(this.props.index+1)}}/>
-                </div>
-
-                <div className="relative-l" style={{color:this.props.webStyle.lightShade,left:"0em"}}>
-                  {this.props.index != 1 && <FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleLeft} onClick = {()=>{this.props.callbacks.moveMenuItemLeft(this.props.index)}}/>}
-                </div>
-                <div className={"relative-r"} style={{color:this.props.webStyle.lightShade,right:"0em"}}>
-                  {this.props.index != this.props.menuItemCount-1 &&<FontAwesomeIcon className="icon-link m-auto" icon={faAngleDoubleRight} onClick = {()=>{this.props.callbacks.moveMenuItemRight(this.props.index)}}/>}
-                </div> 
-            </div>
-            }
           </div>
-        }
-
-        {/* Edit/Delete: Pencil and Trashcan */}
-        {mode == "edit/delete" &&
-          <div className={buttonClass}>
-            {this.props.webStyle.isMobile ?
-            <div>
-              {/* Mobile */}
-              <div className="relative-r" style={{color:this.props.webStyle.lightShade,right:".5em"}}>
-                <FontAwesomeIcon className="icon-link m-auto" icon={faPencilAlt} onClick = {()=>{this.props.callbacks.editMenuItem(this.props.index)}}/>
-              </div>
-              <div className={"relative-r"} style={{color:this.props.webStyle.lightShade,right:"1.5em"}}>
-                <FontAwesomeIcon className="icon-link m-auto" icon={faTrashAlt} onClick = {()=>{this.props.callbacks.deleteMenuItem(this.props.index)}}/>
-              </div> 
-            </div>
-            :
-            <div>
-              {/* Desktop */}
-                <div className="relative-l" style={{color:this.props.webStyle.lightShade,left:"1em"}}>
-                  <FontAwesomeIcon className="icon-link m-auto" icon={faPencilAlt} onClick = {()=>{this.props.callbacks.editMenuItem(this.props.index)}}/>
-                </div>
- 
-                <div className="relative-l" style={{color:this.props.webStyle.lightShade,left:"0em"}}>
-                  <FontAwesomeIcon className="icon-link m-auto" icon={faTrashAlt} onClick = {()=>{this.props.callbacks.deleteMenuItem(this.props.index)}}/>
-                </div>
-               
-            </div>
-            }
-          </div>
-        }
-        {/* Main Content */}
-        {this.props.children}
+        </nav>
       </div>
-    
-      // <div className = {"row"} style={{flex:"0 0"}} >
-      //   {/* To the right of component */}
-      //   <div className = {"col floatOnTopCentered "+buttonClass} style={{color:this.props.webStyle.lightShade}}>
-      //     {/* <FontAwesomeIcon className="icon-menuItem" icon={faPencilAlt} onClick = {()=>{this.props.callbacks.addMenuItemAtIndex(this.props.index)}}/> */}
-      //   </div>
-      //   <div className = {"row relative-div"} style={{padding:"0px 50px"}}>
-      //       {mode == "add/move" && <div>
-      //         <div className={"col relative-l "+buttonClass} style={{color:this.props.webStyle.lightShade,left:"25px", justifyContent:"center"}}>
-      //           <FontAwesomeIcon className="icon-link" icon={faPlus} onClick = {()=>{this.props.callbacks.addMenuItemAtIndex(this.props.index)}}/>
-      //         </div>
-      //         <div className={"col floatOnTop "+buttonClass} style={{color:this.props.webStyle.lightShade,left:"0px", justifyContent:"center"}}>
-      //           {this.props.index != 0 && <FontAwesomeIcon className="icon-link" icon={faAngleDoubleLeft} onClick = {()=>{this.props.callbacks.moveMenuItemLeft(this.props.index)}}/>}
-      //         </div>
-      //       </div>}
-      //       {mode == "delete" && <div>
-      //         <div className={"col floatOnTop"} style={{color:this.props.webStyle.lightShade,left:"25px", justifyContent:"center"}}>
-      //           <FontAwesomeIcon className="icon-link" icon={faTrashAlt} onClick = {()=>{this.props.callbacks.deleteMenuItem(this.props.index)}}/>
-      //         </div>
-      //       </div>}
+  );
 
-      //       {mode != "edit" && 
-      //         <div style={{position:"relative", padding:"16px 0px"}}>
-              
-      //           
-      //           {mode != "delete" && ! this.props.isMenu &&
-      //           <div className={"floatOnTop "+buttonClass} style={{textAlign:"center",width:"100%",top:"55%"}}>
-      //             <FontAwesomeIcon style={{color:this.props.webStyle.lightShade, fontSize:"x-large"}} className={"icon-link"} icon={faSortDown} onClick = {()=>{this.props.callbacks.addMenuItemBelow(this.props.index)}}/>
-      //           </div>}
-      //         </div>
-      //       }
-      //       {mode == "edit" && 
-      //         <div className="col">
-      //           <ContentEditable
-      //             style={{color:this.props.webStyle.lightShade,marginTop:"10px"}}
-      //             innerRef={this.contentEditable}
-      //             html={this.state.menuItemHtml} // innerHTML of the editable div
-      //             onChange={this.handleMenuItemHTMLChange} // handle innerHTML change
-      //             />
-      //           {!this.props.isMenu && <input type="text" value={this.state.menuItemPath} 
-      //                  style={{marginBottom:"10px"}}
-      //                  onChange={this.handleMenuItemPathChange}/>}
-      //         </div>}
+  function addLink(isDropdown) {
+    const newLink = isDropdown
+      ? {
+          id: Math.random() * 10000,
+          name: "New Dropdown",
+          dropdown: [{ name: "New Link", path: "/", id: Math.random() * 10000 }]
+        }
+      : { id: Math.random() * 10000, name: "New Link", path: "/" };
 
-      //         {mode == "edit" && <div>
-      //         <div className={"col floatOnTop"} style={{color:this.props.webStyle.lightShade,right:"25px", justifyContent:"center"}}>
-      //           <FontAwesomeIcon className="icon-link" icon={ faCheck} onClick = {this.editMenuItem.bind(this)}/>
-      //         </div>
-      //       </div>}
+    setNavData([...navData, newLink]);
+  }
 
-      //       {mode == "add/move" && <div>
-            
-      //         {this.props.index != this.props.menuItemCount-1 &&<div className={"col floatOnTop "+buttonClass} style={{color:this.props.webStyle.lightShade,right:"0px", justifyContent:"center"}}>
-      //           <FontAwesomeIcon className="icon-link" icon={faAngleDoubleRight} onClick = {()=>{this.props.callbacks.moveMenuItemRight(this.props.index)}}/>
-      //         </div>}
-      //         <div className={"col floatOnTop "+buttonClass} style={{color:this.props.webStyle.lightShade,right:"25px", justifyContent:"center"}}>
-      //           <FontAwesomeIcon className="icon-link" icon={faPlus} onClick = {()=>{this.props.callbacks.addMenuItemAtIndex(this.props.index+1)}}/>
-      //         </div>
-      //       </div>}
-      //     </div>
-      //   </div>
-    )
-  };
+  function addDropdownlink(event, index) {
+    setNavData((prevData) => {
+      // alert(index);
+      let newData = [...prevData];
+
+      newData[index].dropdown = [
+        ...newData[index].dropdown,
+        { id: Math.random() * 10000, name: "New Link", path: "/" }
+      ];
+
+      setNavData(newData);
+    });
+    event.stopPropagation();
+  }
+
+  function removeLink(index) {
+    // If dropdown be super sure because it will remove all the subdata
+    if (window.confirm("Are you sure you want to remove this link?")) {
+      setNavData((prevData) => {
+        // alert(index);
+        let newData = [
+          ...prevData.slice(0, index),
+          ...prevData.slice(index + 1)
+        ];
+
+        setNavData(newData);
+      });
+    }
+  }
+
+  function removeDropdownLink(parentIndex, index) {
+    // If dropdown be super sure because it will remove all the subdata
+    if (window.confirm("Are you sure you want to remove this link?")) {
+      setNavData((prevData) => {
+        // alert(index);
+        let newData = [...prevData];
+        let newDropdown = [
+          ...newData[parentIndex].dropdown.slice(0, index),
+          ...newData[parentIndex].dropdown.slice(index + 1)
+        ];
+        newData[parentIndex].dropdown = newDropdown;
+        setNavData(newData);
+      });
+    }
+  }
+
+  function handleLinkChange(event, index, type) {
+    setNavData((prevData) => {
+      let newData = [...prevData];
+
+      newData[index][type] = event.target.value;
+
+      return newData;
+    });
+  }
+
+  function handleLinkDropdownChange(event, parentIndex, index, type) {
+    setNavData((prevData) => {
+      let newData = [...prevData];
+
+      newData[parentIndex].dropdown[index][type] = event.target.value;
+
+      return newData;
+    });
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event;
+
+        // event.preventDefault();
+
+
+    if (active.id !== over.id) {
+      const oldIndex = active.data.current.sortable.index;
+
+      if (!over.data.current) {
+        removeLink(oldIndex);
+        return;
+      }
+
+      const newIndex = over.data.current.sortable.index;
+
+      // removeLink
+
+      setNavData((prevData) => {
+        return arrayMove(prevData, oldIndex, newIndex);
+      });
+    }
+
+  }
+
+  function handleDropdownDragEnd(event, index) {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = active.data.current.sortable.index;
+
+      // if( === 0){
+      if (!over.data.current) {
+        removeDropdownLink(index, oldIndex);
+        return;
+      }
+
+      const newIndex = over.data.current.sortable.index;
+
+      setNavData((prevData) => {
+        let newData = [...prevData];
+
+        newData[index].dropdown = arrayMove(
+          newData[index].dropdown,
+          oldIndex,
+          newIndex
+        );
+
+        return newData;
+      });
+    }
+    // event.preventDefault();
+
+  }
+
 }
 
+const DeleteDrop = (props) => {
+  const { setNodeRef } = useDroppable({
+    id: props.id
+  });
+  return (
+    <div ref={setNodeRef}>
+      <li
+        className="nav-link active border-primary rounded-3"
+        style={{ borderStyle: "dashed", borderWidth: "1px" }}
+      >
+        Delete
+      </li>
+    </div>
+  );
+};
+
+
+
+//  I really need to consolidate this....
+
+const DropDownLink = (props) =>{
+  const webContext = useContext(WebContext);
+
+  if (props.isEdit)
+    return (
+      
+      <li className="nav-item col" >
+        <div className="input-group " >
+          <input
+            style ={{color:webContext.webStyle.lightShade}}
+
+            className="form-control-plaintext w-50"
+            value={props.name}
+            onChange={props.onChangeName}
+            
+          />
+          <input
+            className="form-control-plaintext w-50"
+            style ={{color:webContext.webStyle.lightShade}}
+            value={props.path}
+            onChange={props.onChangePath}
+          />
+        </div>
+      </li>
+    )
+  else{
+    return(<div></div>)
+  }
+}

@@ -1,4 +1,4 @@
-import DynamicPage from '../components/dynamicPage';
+import DynamicPage from '../components/dynamicPageOG';
 
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid

@@ -22,74 +22,62 @@
 //     </div>)
 // }
 
-import React from 'react'
+import React, { useEffect, useState, useContext } from "react";
+
+// const webContext = useContext(WebContext);
+
 
 import ContentEditable from 'react-contenteditable'
 import QuillComponent from "./quillComponent"
 
-export default class Paragraph extends React.Component {
-  constructor(props) {
-    super(props)
-    this.contentEditable = React.createRef();
-    this.state = {html: `<p>Here is a paragraph...</p>`};
-    
-  };
+import {WebContext} from "../App"
 
-  // componentDidUpdate(prevProps) {
-  //   if (prevProps.webStyle.lightAccent !== this.props.webStyle.lightAccent) {
-  //     alert("background color change")
+export default function Paragraph(props) {
+  const webContext = useContext(WebContext);
+
+  // useEffect(() => {
+  //   if (props.template){
+  //     setHtml(props.template.content)
+
   //   }
-  // }
-    
-
-  handleChange = evt => {
-    this.setState({html: evt.target.value});
-    localStorage.setItem(this.props.id,evt.target.value);
-  };
-
-    
-
-  componentDidMount(){
-
-    if (this.props.template){
-      this.setState({html: this.props.template.content})
-
-    }
-    else{
-      const storedText = localStorage.getItem(this.props.id);
+  //   // else{
+  //   //   const storedText = localStorage.getItem(this.props.id);
 
 
-      if (storedText){
-          this.setState({html: storedText})
-      }
-      // Set header to page name on new render
+  //   //   if (storedText){
+  //   //       this.setState({html: storedText})
+  //   //   }
+  //   //   // Set header to page name on new render
       
-      else if (this.props.index === 0){
-        this.setState({html: `<p>${this.props.pageName}</p>`})
-      }
-    }
+  //   //   else if (this.props.index === 0){
+  //   //     this.setState({html: `<p>${this.props.pageName}</p>`})
+  //   //   }
+  //   // }
+  // }, []);
+
+
+    
 
 
    
-  }
+  
 
-  render = () => {
 
-    return(
-      <div className='mb-5 px-5' >
-          <QuillComponent  webStyle = {this.props.webStyle} id ={this.props.id} content = {this.props.content} />
+  return(
+    <div className={webContext.webStyle.isMobile?"px-3 ":" px-5"} >
+        <QuillComponent className = "paragraph"  webStyle = {webContext.webStyle} id ={props.id} content = {props.content} />
 
-          {/* <ContentEditable 
-            spellCheck = "false"
-            innerRef={this.contentEditable}
-            html={this.state.html} // innerHTML of the editable div
-            disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
-            onChange={this.handleChange} // handle innerHTML change
-            tagName='p'
-            /> */}
-        </div>
-            )
-  };
+        {/* <ContentEditable 
+          spellCheck = "false"
+          innerRef={this.contentEditable}
+          html={this.state.html} // innerHTML of the editable div
+          disabled={!this.props.webStyle.isEditMode}       // use true to disable editing
+          onChange={this.handleChange} // handle innerHTML change
+          tagName='p'
+          /> */}
+      </div>
+          )
 };
+
 
 //<h2 style = {{margin:"0", padding: "20px 0px", color:props.webStyle.darkShade}} contentEditable spellCheck={false}>{headerValue}</h2>

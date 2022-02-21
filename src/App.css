@@ -2,12 +2,29 @@ html,
 body,
 #root {
   height: 100%;
+  overflow-x: hidden;
 }
 
 /* input {
   height: 25px;
   margin: 3px;
 } */
+
+.paragraph > h1,
+.paragraph > h2,
+.paragraph > h3 {
+  line-height: 175% !important;
+  margin-bottom: 1em !important;
+}
+
+.paragraph > h3:last-child {
+  margin-bottom: 0 !important;
+}
+
+p {
+  text-align: left;
+}
+
 .custom-select {
   display: inline-block;
   width: 100%;
@@ -77,6 +94,10 @@ input[type="number"]::-webkit-inner-spin-button {
   -ms-user-select: none;
   user-select: none;
   background-color: #dee2e6;
+}
+
+.nav-social-icon:last-child > a {
+  margin-right: 0 !important;
 }
 
 textarea {
@@ -183,7 +204,11 @@ textarea {
   flex-direction: column;
   /* width: 100%; */
 /* } */
-*/ .fullWidth {
+.social-link:last-child {
+  padding-right: 0 !important;
+}
+
+.fullWidth {
   /* width: 100vw; */
   /* position: relative; */
   margin-left: calc(-50vw + 50%);
@@ -250,6 +275,7 @@ textarea {
   position: absolute;
 } */
 /* Number text (1/3 etc) */
+
 .numbertext {
   color: #f2f2f2;
   font-size: 12px;

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import ReactHtmlParser from 'react-html-parser'; 
 import QuillToolbar from "./quillToolbar.js";
+import QuillToolbarMini from "./quillToolbarMini";
 
 
 // Modules object for setting up the Quill editor
@@ -45,9 +46,11 @@ export const formats = [
 ];
 
 export default function QuillComponent(props){
-    const [html, setHtml] = useState("Here goes some txt");
+    const [html, setHtml] = useState("");
     const [edit, setEdit] = useState(false);
     const [isShowButtons, showButtons] = useState(false)
+
+    const placeholder = "Here goes some txt"
 
     useEffect(() => {
       const storedState =JSON.parse(localStorage.getItem(props.id+'-quill'));
@@ -63,6 +66,14 @@ export default function QuillComponent(props){
 
     }, []);
 
+    useEffect(() => {
+      if (props.content){
+        // alert(JSON.stringify(props.content.html))
+        setHtml(props.content.html)
+      }
+
+    }, [props.content]);
+
     const copyToClipboard =() =>{
       let htmlString = html
       htmlString = htmlString.replace(/></g,`>\n<`)
@@ -75,25 +86,31 @@ export default function QuillComponent(props){
       localStorage.setItem(props.id+"-quill",value);
     };
     return (
-      <div className="text-editor mb-5 " onMouseEnter={() => {showButtons(true)}} onMouseLeave={() => {showButtons(false)}}>
+      <div className="text-editor  " onMouseEnter={() => {showButtons(true)}} onMouseLeave={() => {showButtons(false)}}>
         {edit?
         <div >
+          {props.mini?
+          <QuillToolbarMini  check checkCallback = {()=>{setEdit(false)}} clipboardCallback = {() => {copyToClipboard()}}/>
+          :
           <QuillToolbar check checkCallback = {()=>{setEdit(false)}} clipboardCallback = {() => {copyToClipboard()}}/>
+        }
           <ReactQuill
-            className="px-3"
+            className={"text-left "+ props.className}
             theme="snow"
             value={html}
             onChange={handleChange}
-            placeholder={"Write something awesome..."}
+            placeholder={placeholder}
             modules={modules}
             formats={formats}
           />
         </div>:
-        <div className="relative-div px-3" onMouseEnter={() => {showButtons(true)}} onMouseLeave={() => {showButtons(false)}}>
+        <div className="relative-div text-left " onMouseEnter={() => {showButtons(true)}} onMouseLeave={() => {showButtons(false)}}>
           {true&& <div className="relative-r">
             <FontAwesomeIcon icon = {faPencilAlt} onClick={()=>{setEdit(true)}}/>
           </div>}
-          <div>{ ReactHtmlParser (html) } </div>
+          <div className={props.className}>
+            {html? ReactHtmlParser(html): ReactHtmlParser(placeholder)} 
+          </div>
           
         </div>}
       </div>

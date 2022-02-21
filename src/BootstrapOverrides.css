@@ -11,6 +11,13 @@
   padding: 2rem !important;
 }
 
+.py-6 {
+  padding-top: 3rem !important;
+}
+.py-7 {
+  padding-top: 4rem !important;
+}
+
 .sm-icons {
   font-size: large;
   flex-direction: row;

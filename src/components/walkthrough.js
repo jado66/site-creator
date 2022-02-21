@@ -26,13 +26,15 @@
 import {
   Link,  useLocation 
 } from "react-router-dom";
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import ReactQuill, {Quill} from 'react-quill';
 import '../quill.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import ReactHtmlParser from 'react-html-parser'; 
 import QuillToolbar from "./quillToolbar.js";
+
+import {WebContext} from "../App"
 
 // Modules object for setting up the Quill editor
 export const modules = {
@@ -118,6 +120,9 @@ export default function WalkThrough(props) {
   const [edit, setEdit] = useState(false);
   const [isShowButtons, showButtons] = useState(false)
 
+  const webContext = useContext(WebContext);
+
+
   useEffect(() => {
     
     // alert(storedState)
@@ -152,7 +157,9 @@ export default function WalkThrough(props) {
 
     headers.forEach(header=>{
 
-      let id = header.innerHTML.replace(" ","-")+"-"+header.tagName.toLowerCase()
+      let id = header.innerHTML
+      id = id.replaceAll(" ","_")
+      id +="-"+header.tagName.toLowerCase()
 
       header.id = id
       // alert(JSON.stringify({ text: header.innerHTML, linkToID: header.innerHTML.replace(" ","-")+"-"+header.tagName.toLowerCase(), type: header.tagName.toLowerCase() }))
@@ -190,37 +197,40 @@ export default function WalkThrough(props) {
     // Make these editable?
     let linkStyle = linkStyles[sectionLink.type]
 
-    let path = "/"+pagePath+"#"+sectionLink.linkToID
+    let path = "/"+pagePath
 
     return (
       <div className="row" key = {props.id+"linkDiv-row"+sectionLink.linkToID}>
         {/* <Link className = {"link-dark text-decoration-none h5"} style={{...linkStyle}} to={"/getting-started#"+sectionLink.linkToID}  key={"link2" + sectionLink.text}>{sectionLink.text}</Link> */}
 
-        <a
+        <Link
         className="link-dark text-decoration-none h5"
         style={{...linkStyle}}
-        href={path}
+        to={{
+          pathname:path,
+          hash:"#"+sectionLink.linkToID
+        }}
         key={"a2" + sectionLink.id}
         >
         {sectionLink.text}
-      </a>
+      </Link>
       </div>
       
     );
   });
 
   return (
-    <div className="mb-5 px-5">
-      <div className="row boxShadow g-0" style={{backgroundColor:props.webStyle.lightShade}}>
+    <div className={(webContext.webStyle.isMobile?"px-3":"px-5")}>
+      <div className="row boxShadow g-0" style={{backgroundColor:webContext.webStyle.lightShade}}>
       
-      <div className="col-8">
-        {edit && props.webStyle.isAdmin && props.webStyle.isEditMode?
+      <div className={webContext.webStyle.isMobile?"col-12":"col-8"}>
+        {edit && webContext.webStyle.isAdmin && webContext.webStyle.isEditMode?
           <div>
-            <div className="sticky-top">
+            <div className={"sticky-top "}>
               <QuillToolbar update  checkCallback = {saveEdits} clipboardCallback = {() => {copyToClipboard()}}/>
             </div>
             <ReactQuill
-              className="py-5 px-5"
+              className={"py-5 px-5"}
               theme="snow"
               value={html}
               onChange={handleChange}
@@ -233,7 +243,7 @@ export default function WalkThrough(props) {
           <div className="relative-div" onMouseEnter={() => {showButtons(true)}} onMouseLeave={() => {showButtons(false)}}>
             
             <div style={{height:"1.5rem"}} className="sticky-top" >
-              {isShowButtons && props.webStyle.isAdmin && props.webStyle.isEditMode &&
+              {isShowButtons && webContext.webStyle.isAdmin && webContext.webStyle.isEditMode &&
               <div className="relative-r pe-2 pt-3">
                 <FontAwesomeIcon icon = {faPencilAlt} onClick={()=>{setEdit(true)}}/>
               </div>}
@@ -244,15 +254,15 @@ export default function WalkThrough(props) {
           </div>
           }   
         </div>
-        <div className="col-4 align-items-stretch">
+        {!webContext.webStyle.isMobile&&<div className="col-4 align-items-stretch">
           <div className="px-5 border-start border-dark h-100 ">
-            <div className="sticky-top py-5" >
+            <div className={"sticky-top "+(webContext.webStyle.isShowEditor?"py-7":"py-5")} >
               {links}
 
             </div>
           </div>
           
-        </div>
+        </div>}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ export default function ModelingPage(props) {
     return(
       <div>
         <Navbar webStyle = {props.webStyle} userIsAdmin ={props.userIsAdmin} viewAsNormalUser = {props.viewAsNormalUser}/>
-        <InstagramFeed token="IGQVJWUnR4bFkxSW9ZAdHMwX294bVZArMEdfcWtvVmtadTgyVHRXMzRlZAHBnVzZATRVRCemo3dlZAFWk5GdGlqY05BanlNXzVWWTRaZA2xMVmRTRnNvWWZAHMkNwOHhpSTlTRWIxQW9pUUtDRU5hY3dZAOUNhaAZDZD"  counter="6"/>
+        {/* <InstagramFeed token="IGQVJWUnR4bFkxSW9ZAdHMwX294bVZArMEdfcWtvVmtadTgyVHRXMzRlZAHBnVzZATRVRCemo3dlZAFWk5GdGlqY05BanlNXzVWWTRaZA2xMVmRTRnNvWWZAHMkNwOHhpSTlTRWIxQW9pUUtDRU5hY3dZAOUNhaAZDZD"  counter="6"/> */}
         <h2>Ooh La La I'm So Sexy - Pay To Take Pictures Of Me </h2>
         <div className={"col"} style =  {{width:"60%", margin:"auto",paddingTop:"10px",paddingBottom:"50px"}}>
             <input style = {{paddingLeft:"5px"}} placeholder={"Name *"}></input>

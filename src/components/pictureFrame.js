@@ -5,7 +5,7 @@ import { compress, decompress } from "lz-string"
 
 
 export default function PictureFrame(props){
-    const [imageUrl, setImageUrl] = useState("")
+    // const [imageUrl, setImageUrl] = useState("")
     const [areButtonsVisible, setButtonsVisible] = useState(null)
     const inputFile = useRef(null) 
     
@@ -14,53 +14,29 @@ export default function PictureFrame(props){
     useEffect(() => {
         const images = require.context('../../public/images', true);
 
-        // setImageUrl(images(`./test.png`).default)
-        
-          // alert(storedState)
         if (props.content){
             if (props.content.src){
                 try{
                     let path = `./${props.content.src}`
-                    setImageUrl(images(path).default)
+                    props.setImageUrl(images(path).default)
                 }
                 catch{
 
                 }
             }
-            // alert(JSON.stringify(props.content.html))
-            // setHtml(props.content.html, ()=>{
-            
-            // })
-            
-        }
-
-
-        // Update the document title using the browser API
-        // const storedUrlData = localStorage.getItem(props.id);
-        
-        // if (storedUrlData){
-        //     const decompressedData = decompress(storedUrlData)
-        //     setImageUrl(decompressedData)
-        // }
-        // else{
-        //   setImageUrl("")
-        // }
-    
+        }    
     }, []);
 
     const updateImage = (newImage) =>  {
-        // setImage(newImage);
         if (newImage){
             encodeImageFileAsURL(newImage)
         }
-        // alert(encodeImageFil eAsURL(newImage))
-        // imgData = getBase64Image(newImage);
-
     }
 
     const removePicture = () => {
-        setImageUrl("")
-        localStorage.removeItem(props.id);
+        props.setImageUrl("")
+        // setImageUrl("")
+        // localStorage.removeItem(props.id);
     }
 
     const imageToDataUri = (img, width, height) => {
@@ -145,8 +121,8 @@ export default function PictureFrame(props){
                 // resizeBase64Img(result, dims.width, dims.height).then((compressedResult)=>{
                 const compressedResult = compress(newResult)
 
-                setImageUrl(newResult)
-                localStorage.setItem(props.id,compressedResult);
+                props.setImageUrl(newResult)
+                // localStorage.setItem(props.id,compressedResult);
                 // });
                 // $('#imgresizepreview, #profilepicturepreview').attr('src', this.src);
             }
@@ -169,11 +145,11 @@ export default function PictureFrame(props){
     const borderStyle = (props.noBorder ? "" : "boxShadow ")
     
     return(
-        <div className={"relative-div "+props.className+(props.isNested?"":" px-5")} onMouseEnter={()=>{setButtonsVisible(true)}} onMouseLeave={()=>{setButtonsVisible(false)}} style={{flex: "1"}}>
+        <div className={"relative-div "+props.className+(props.isNested?"":" px-5 mb-5")} onMouseEnter={()=>{setButtonsVisible(true)}} onMouseLeave={()=>{setButtonsVisible(false)}} style={{flex: "1"}}>
             {/* {props.webStyle.isEditMode?<span>Edit Mode</span>:<span>No Edit Mode</span>} */}
-            {imageUrl ? 
+            {props.imageUrl ? 
                 <div style={{backgroundColor:props.webStyle.darkAccent}}>
-                    <img className={borderStyle+"w-100"} src={imageUrl} />
+                    <img className={borderStyle+"w-100"} src={props.imageUrl} />
                 </div>
                 
                 :
@@ -192,12 +168,12 @@ export default function PictureFrame(props){
                                 updateImage(event.target.files[0]);
                                 }}
                             />
-                        {!imageUrl ?
+                        {!props.imageUrl ?
                             <input type ="button" value="Upload Image" onClick={()=>{inputFile.current.click()}} style={buttonStyle}/>
                             :
                             <input type ="button" value="Change Image" onClick={()=>{inputFile.current.click()}} style={buttonStyle}/>
                         }
-                        {imageUrl &&
+                        {props.imageUrl &&
                             <input type ="button" value="Remove Picture" onClick={()=>removePicture()} style={buttonStyle}/>
                         }
                     </div>

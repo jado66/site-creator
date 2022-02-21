@@ -27,6 +27,8 @@ import React from 'react'
 import ContentEditable from 'react-contenteditable'
 import QuillComponent from "./quillComponent"
 
+import {WebContext} from "../App"
+
 export default class ParagraphBacked extends React.Component {
   constructor(props) {
     super(props)
@@ -74,7 +76,7 @@ export default class ParagraphBacked extends React.Component {
   render = () => {
 
     return(
-      <div className='mb-5 px-5' >
+      <div className='px-5' >
         <div className="row boxShadow g-0 p-5" style={{backgroundColor:this.props.webStyle.lightShade}}>
 
           <QuillComponent  webStyle = {this.props.webStyle} id ={this.props.id} content = {this.props.content} />
