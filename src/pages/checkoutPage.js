@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../components/navbar';
+import Navbar from '../components/pageComponents/Navbar';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';

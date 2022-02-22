@@ -1,39 +1,27 @@
-import React, { useState, useEffect, useCallback, useContext, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  useLocation 
 } from "react-router-dom";
-import './App.css';
 
+// CSS
+import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import './BootstrapOverrides.css'
-import BlogBanner from "./components/blogBanner";
-import ViewPostPage from "./pages/viewBlogPostPage";
-// import Image from "./components/image";
-import WebsiteStyleEditor from "./components/styleEditor";
 
-import CoachingPage from "./pages/coachingPage";
-import AdvertisingPage from "./pages/advertisingPage";
-import CreatePostPage from "./pages/createBlogPostPage";
-// import AdminPage from "./pages/adminPage";
-import AboutPage from "./pages/aboutPage";
-import ModelingPage from "./pages/modelingPage"
-import Header from "./components/header";
-import DynamicPage from "./components/dynamicPage";
-import Mosaic from "./components/mosaic";
-import Blog from "./pages/blogPage";
-import TestPage from "./pages/testPage";
-import Navbar from "./components/navbar";
+// High level components
+import WebsiteStyleEditor from "./components/StyleEditor";
+import DynamicPage from "./components/DynamicPage";
+
+// Pages
 import CheckoutPage from "./pages/checkoutPage";
-
-import EditableLineGraph from "./components/editableLineGraph";
-import Product from "./components/product";
-
-
+import AdminPage from "./pages/AdminPage"
+import AdminLogin from "./pages/AdminLogin"
+import Page404 from "./pages/Page404"
 
 
+// Data
 import {site_template} from "./websiteVersions/current"
 
 const adminDefaults = { //These are just the values, functions are added in the App component
@@ -286,7 +274,7 @@ function App() {
       
       appContext.setSavedData(newSavedData)
 
-      alert(JSON.stringify(newSavedData,null,4))
+      // alert(JSON.stringify(newSavedData,null,4))
     }
   })
   
@@ -333,6 +321,19 @@ function App() {
     if (appContext.msgPort == "save"){
 
       appContext.sendMsgPortMsg("")
+
+      alert(appContext.newSavedData)
+
+      // if(window.confirm("Would you like to download the website data?")){
+      //   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appContext.newSavedData, null, 4));
+      //   var downloadAnchorNode = document.createElement('a');
+      //   downloadAnchorNode.setAttribute("href",     dataStr);
+      //   downloadAnchorNode.setAttribute("download", "data.json");
+      //   document.body.appendChild(downloadAnchorNode); // required for firefox
+      //   downloadAnchorNode.click();
+      //   downloadAnchorNode.remove();
+      // }
+     
     }
   }, [appContext.msgPort]);
 
@@ -347,85 +348,85 @@ function App() {
     // getBlogCount();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('site-pages',JSON.stringify(pages))
-  }, [pages]);
+  // useEffect(() => {
+  //   localStorage.setItem('site-pages',JSON.stringify(pages))
+  // }, [pages]);
 
-  useEffect(() => {
-    localStorage.setItem('social-medias',JSON.stringify(socialMedias))
-  }, [socialMedias]);
+  // useEffect(() => {
+  //   localStorage.setItem('social-medias',JSON.stringify(socialMedias))
+  // }, [socialMedias]);
 
  
 
-  const getWebStyleFromStorage = () => {
-    let newState = {}
+  // const getWebStyleFromStorage = () => {
+  //   let newState = {}
     
-    let stored_lightShade  = localStorage.getItem("webStyle-lightShade");
-    if (stored_lightShade){
-      newState.lightShade = stored_lightShade
-    }
+  //   let stored_lightShade  = localStorage.getItem("webStyle-lightShade");
+  //   if (stored_lightShade){
+  //     newState.lightShade = stored_lightShade
+  //   }
 
-    let stored_lightAccent = localStorage.getItem("webStyle-lightAccent");
-    if (stored_lightAccent){
-      newState.lightAccent = stored_lightAccent
-    }
-    let stored_mainBrandColor = localStorage.getItem("webStyle-mainBrandColor");
-    if (stored_mainBrandColor){
+  //   let stored_lightAccent = localStorage.getItem("webStyle-lightAccent");
+  //   if (stored_lightAccent){
+  //     newState.lightAccent = stored_lightAccent
+  //   }
+  //   let stored_mainBrandColor = localStorage.getItem("webStyle-mainBrandColor");
+  //   if (stored_mainBrandColor){
       
-      newState.mainBrandColor = stored_mainBrandColor
+  //     newState.mainBrandColor = stored_mainBrandColor
 
-    }
-    let stored_darkAccent = localStorage.getItem("webStyle-darkAccent");
-    if (stored_darkAccent){
+  //   }
+  //   let stored_darkAccent = localStorage.getItem("webStyle-darkAccent");
+  //   if (stored_darkAccent){
       
-      newState.darkAccent = stored_darkAccent
+  //     newState.darkAccent = stored_darkAccent
 
-    }
-    let stored_darkShade = localStorage.getItem("webStyle-darkShade");
-    if (stored_darkShade){
+  //   }
+  //   let stored_darkShade = localStorage.getItem("webStyle-darkShade");
+  //   if (stored_darkShade){
       
-      newState.darkShade = stored_darkShade
+  //     newState.darkShade = stored_darkShade
 
-    }
-    // widths
-    let stored_centerWidth = localStorage.getItem("webStyle-centerWidth");
-    if (stored_centerWidth){
+  //   }
+  //   // widths
+  //   let stored_centerWidth = localStorage.getItem("webStyle-centerWidth");
+  //   if (stored_centerWidth){
       
-      newState.centerWidth = stored_centerWidth
+  //     newState.centerWidth = stored_centerWidth
 
-    }
-    let stored_secondCenterWidth = localStorage.getItem("webStyle-secondCenterWidth");
-    if (stored_secondCenterWidth){
-      newState.secondCenterWidth = stored_secondCenterWidth
+  //   }
+  //   let stored_secondCenterWidth = localStorage.getItem("webStyle-secondCenterWidth");
+  //   if (stored_secondCenterWidth){
+  //     newState.secondCenterWidth = stored_secondCenterWidth
 
-    }
+  //   }
 
-    let stored_isEditMode = localStorage.getItem("webStyle-isEditMode");
-    if (stored_isEditMode){
-      newState.isEditMode = stored_isEditMode === "true"
-    }
+  //   let stored_isEditMode = localStorage.getItem("webStyle-isEditMode");
+  //   if (stored_isEditMode){
+  //     newState.isEditMode = stored_isEditMode === "true"
+  //   }
 
-    // let stored_isShowEditor = localStorage.getItem("webStyle-isShowEditor");
-    // if (stored_isShowEditor){
-    //   newState.isShowEditor = stored_isShowEditor === "true"
-    // }
+  //   // let stored_isShowEditor = localStorage.getItem("webStyle-isShowEditor");
+  //   // if (stored_isShowEditor){
+  //   //   newState.isShowEditor = stored_isShowEditor === "true"
+  //   // }
     
-    // let stored_isAdmin = localStorage.getItem("webStyle-isAdmin");
-    // if (stored_isAdmin){
-    //   newState.isAdmin = stored_isAdmin === "true"
+  //   // let stored_isAdmin = localStorage.getItem("webStyle-isAdmin");
+  //   // if (stored_isAdmin){
+  //   //   newState.isAdmin = stored_isAdmin === "true"
 
-    // }
+  //   // }
 
-    setWebStyle({...webStyle,...newState})
-  }
+  //   setWebStyle({...webStyle,...newState})
+  // }
 
-  const setPagesFromStorage = () =>{
-    let pages = JSON.parse(localStorage.getItem('site-pages'))
+  // const setPagesFromStorage = () =>{
+  //   let pages = JSON.parse(localStorage.getItem('site-pages'))
   
-    if (pages){ 
-      setPages(pages)
-    }
-  }
+  //   if (pages){ 
+  //     setPages(pages)
+  //   }
+  // }
 
   const setCartFromStorage = () => {
     // This stays as a local storage item
@@ -628,29 +629,8 @@ function App() {
     // alert(data.IPv4 === "108.51.21.72")
   }
 
-  // const getBlogCount = async () => {
-  //   // Get IP address for ADMIN rights
-  //   const response = await fetch('http://localhost:9000/getBlogCount');
-  //   const count = await response.text();
-
-  //   setBlogCount(parseInt(count))
-  // }
-  // const checkForTemplate = (pageName) => {
-  //   if (pageName in templates){
-  //     return templates[pageNames]
-  //   }
-  //   else {
-  //     return ["Header","Navbar"]
-  //   }
-  // }
-
-
   let componentOptions = ["PlanComparison","WalkThrough","ListComparisonTable","Paragraph","ParagraphBacked","QuickLink","PictureFrame","Navbar","Header","Footer","Mosaic","DynamicForm","CardPaymentBlock","CaptionedPicture","BlogPreview","VideoFrame","SlideShow"]
 
-  // const routes = []
-  // pageNames.forEach((name, index) => { 
-    // let template = checkForTemplate(name);
-  // let newPath = pageUrls[index]
   let routeComponents  = pages.map(({name, path})=> {
     
     let pageTemplate = site_template[name];
@@ -672,9 +652,7 @@ function App() {
                     updateWebStyles = {updateWebStyles} />
     </Route>)}
      
-    // routes.push(newRoute)
   )
-  // alert(routes.length)
 
   
 
@@ -715,7 +693,7 @@ function App() {
                 <CheckoutPage promoCodes = {promoCodes} cart = {cart} cartCallbacks = {cartCallbacks} pages = {pages} pageCallbacks = {pageCallbacks} socialMedias = {socialMedias} webStyle = {webStyle}/>
             </Route>
             <Route>
-              <HeaderView cart = {cart} cartCallbacks = {cartCallbacks} pages = {pages} pageCallbacks = {pageCallbacks} socialMedias = {socialMedias} webStyle = {webStyle}/>
+              <Page404 cart = {cart} cartCallbacks = {cartCallbacks} pages = {pages} pageCallbacks = {pageCallbacks} socialMedias = {socialMedias} webStyle = {webStyle}/>
                 {/* <AdminPage  webStyle = {webStyle} viewAsNormalUserCallback = {() => {setViewAsNormalUser(true)}} showWebsiteStyleEditor = {() => {showWebsiteStyleEditor(true)}}/> */}
             </Route>
           </Switch>
@@ -729,160 +707,10 @@ function App() {
 
 export default App;
 
-function AdminLogin(props){
-  const [rememberMeCheck,setRememberMeCheck] = useState(false)
 
-  const signIn = () =>{
-    props.signInCallback(rememberMeCheck);
-    alert(`Successfully signed in. ${rememberMeCheck?"You won't have to login next time.":""}`)
-  }
 
-  const buttonStyle = {
-                       backgroundColor:props.webStyle.darkAccent,
-                       color:props.webStyle.lightShade
-                      }
 
-  return(
-    <div id = "outerSection" className={props.webStyle.isMobile?" ":" container"}>
-      <Navbar {...props} socialMedias = {props.socialMedias} cart = {props.cart}/>
-     
-      <div id = "innerSection" className="col justify-items-baseline p-5 boxShadow h-100 w-50 m-auto" style={{backgroundColor:props.webStyle.lightAccent}}>
-        <div className="form-signin  m-auto">
-          <form>
-          <h1 className="h3 mb-3 fw-normal text-center">Please Sign In</h1>
 
-          <div className="form-floating">
-            <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com"/>
-            <label for="floatingInput">Email address</label>
-          </div>
-          <div className="form-floating">
-            <input type="password" className="form-control" id="floatingPassword" placeholder="Password"/>
-            <label for="floatingPassword">Password</label>
-          </div>
-
-          <div className="text-center">
-            <div className="checkbox my-3">
-              <label>
-                <input type="checkbox" value="remember-me" checked = {rememberMeCheck} onClick={()=>{setRememberMeCheck(!rememberMeCheck)}}/> Remember me
-              </label>
-            </div>
-            <button onClick={signIn} className="w-50 btn btn-lg" style={buttonStyle} type="submit">Sign in</button>
-            <p className="mt-5 mb-3 text-muted">© 2022-2025 Life By LaRae</p>
-          </div>
-          
-          </form>
-        </div>
-        
-      
-      
-      </div>
-    </div>
-  )
-}
-
-function AdminPage(props){
-  
-  const buttonStyle = {
-                       backgroundColor:props.webStyle.darkAccent,
-                       color:props.webStyle.lightShade
-                      }
-
-  const retrieveIgInsights = async () => {
-    const response = await fetch(`https://graph.facebook.com/v12.0/318170626/insights?metric=impressions&period=days_28&since=1501545600&until=1502493720&access_token=IGQVJWUnR4bFkxSW9ZAdHMwX294bVZArMEdfcWtvVmtadTgyVHRXMzRlZAHBnVzZATRVRCemo3dlZAFWk5GdGlqY05BanlNXzVWWTRaZA2xMVmRTRnNvWWZAHMkNwOHhpSTlTRWIxQW9pUUtDRU5hY3dZAOUNhaAZDZD`,
-      {
-        method: 'GET', // *GET, POST, PUT, DELETE, etc.
-      });
-    
-    return response.json(); // parses JSON response into native JavaScript objects
-  };
-
-  return(
-    <div id = "outerSection" className="container ">
-      <Navbar cart = {props.cart} {...props} socialMedias = {props.socialMedias}/>
-      <h2 className="text-center mb-4">Admin Editor Tools</h2>
-      <WebsiteStyleEditor isAdminPage = {false} webStyle = {props.webStyle} updateWebStyles = {props.updateWebStyles} showStyleEditor = {props.showStyleEditor}
-                                    showStyleEditor = {()=>{}} minimizeStyleEditor = {()=>{}} expandStyleEditor = {()=>{}} isAdminPage = {true} style = {{backgroundColor:"white"}}
-                                    socialMedias = {props.socialMedias} socialMediaCallbacks = {props.socialMediaCallbacks} pages = {props.pages} pageCallbacks = {props.pageCallbacks}
-                                    promoCodes = {props.promoCodes}/>
-        
-      <div id = "innerSection" className="col justify-items-baseline p-5 boxShadow" style={{backgroundColor:props.webStyle.lightAccent}}>
-        
-        <div className="text-center">
-        <h2>Hi LaRae! Welcome to your site!</h2>
-        
-        
-        <div>
-          <input className="btn m-3" style={buttonStyle} type = {"button"} value = {"Create New Blog Post"} />
-          <input className="btn m-3" style={buttonStyle} type = {"button"} value = {"Send New Email"}/>
-          <input className="btn m-3" style={buttonStyle} type = {"button"} value = {"Edit Website Styles"} />
-          <input className="btn m-3" style={buttonStyle} type = {"button"} value = {"Get IG Insights"}
-            onClick={()=>{retrieveIgInsights().then(response => alert(JSON.stringify(response)))}} />
-          <input onClick={props.logOutCallback} className="btn m-3" style={buttonStyle} type = {"button"} value = {"Log Out"} />
-
-          {/* <label>profilePage_318170626</label> */}
-
-          
-
-          {/* <Link to = "/" onClick = {props.viewAsNormalUserCallback}>View Site As Non-Admin</Link> */}
-
-          <div className={"row"}>
-            <div className={"col  py-3"}>
-              {/* <h3>IG Analytics</h3> */}
-                <div className="m-auto ">
-                  <EditableLineGraph webStyle = {props.webStyle} />
-                </div>
-              
-            </div>
-            <div className={"col py-3"}>
-              {/* <h3>Discovery Call Schedule</h3> */}
-              <Product cartCallbacks = {props.cartCallbacks} webStyle = {props.webStyle} />
-            </div>
-
-          </div>
-        </div>
-      </div>
-      </div>
-    </div>
-  )
-}
-
-function HeaderView(props) {
-  const location = useLocation();
-  const pageList = props.pages.map(({name, path})=> (<p>- {name}: {path}</p>))
-  console.log(location.pathname);
-
-  const pageNameArr = location.pathname.slice(1).split(/[\-\_]/g)
-
-  for (let i = 0; i < pageNameArr.length; i++) {
-    pageNameArr[i] = pageNameArr[i][0].toUpperCase() + pageNameArr[i].substr(1);
-  }
-
-  const pageName = pageNameArr.join(" ");
-
-  return (
-    <div id = "outerSection" className="container ">
-        <div id = "innerSection" className="col justify-items-baseline p-5 boxShadow h-100" style={{backgroundColor:props.webStyle.lightAccent}}>
-          <Navbar cart = {props.cart} {...props} socialMedias = {props.socialMedias}/>
-          <div >
-            <h3>• The page <span style={{fontWeight:"bolder"}}>{location.pathname}</span> does not exist within this website.</h3>
-            
-
-            <button className="btn btn-secondary" onClick={()=>{props.pageCallbacks.addPage(pageName,location.pathname)}}>Create New Page</button>
-
-            <h4>The following pages are included in the website:</h4>
-            <ul >
-              {pageList}
-            </ul>
-
-            <h4>To change page names and paths please see the page menu in the admin edit section.</h4>
-          </div>
-        </div>
-    </div>
-      
-
-     
-    )
-}
 /*
  <Route path="/test">
               { <TestPage/> 

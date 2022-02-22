@@ -1,0 +1,79 @@
+Date : 2022-02-21 22:59:47
+Directory : c:\Users\LaRae\Desktop\Site-Creator
+Total : 44 files,  20006 codes, 404 comments, 452 blanks, all 20862 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          3 |     17,638 |          0 |          3 |     17,641 |
+| JavaScript         |         33 |      2,191 |        378 |        425 |      2,994 |
+| HTML               |          2 |         89 |         25 |          6 |        120 |
+| TypeScript         |          2 |         35 |          1 |          7 |         43 |
+| JSON with Comments |          1 |         26 |          0 |          1 |         27 |
+| CSS                |          2 |         25 |          0 |          8 |         33 |
+| Markdown           |          1 |          2 |          0 |          2 |          4 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                      | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                         |         44 |     20,006 |        404 |        452 |     20,862 |
+| public                                                                    |          5 |        117 |         25 |          9 |        151 |
+| src                                                                       |         36 |      2,250 |        379 |        440 |      3,069 |
+| src\components                                                            |         29 |      1,709 |        359 |        350 |      2,418 |
+| src\functions                                                             |          2 |        102 |         13 |         43 |        158 |
+| src\websiteVersions                                                       |          1 |        422 |          6 |         14 |        442 |
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                  | language           | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\LaRae\Desktop\Site-Creator\package-lock.json                     | JSON               |     17,528 |          0 |          1 |     17,529 |
+| c:\Users\LaRae\Desktop\Site-Creator\package.json                          | JSON               |         85 |          0 |          1 |         86 |
+| c:\Users\LaRae\Desktop\Site-Creator\public\404.html                       | HTML               |         37 |          0 |          3 |         40 |
+| c:\Users\LaRae\Desktop\Site-Creator\public\README.md                      | Markdown           |          2 |          0 |          2 |          4 |
+| c:\Users\LaRae\Desktop\Site-Creator\public\env.js                         | JavaScript         |          1 |          0 |          0 |          1 |
+| c:\Users\LaRae\Desktop\Site-Creator\public\index.html                     | HTML               |         52 |         25 |          3 |         80 |
+| c:\Users\LaRae\Desktop\Site-Creator\public\manifest.json                  | JSON               |         25 |          0 |          1 |         26 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\App.css                           | CSS                |         19 |          0 |          7 |         26 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\App.js                            | JavaScript         |         -8 |          0 |         24 |         16 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\BootstrapOverrides.css            | CSS                |          6 |          0 |          1 |          7 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\AdminNavWrapper.js     | JavaScript         |         32 |          8 |          4 |         44 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\AdminWrapper.js        | JavaScript         |         38 |          9 |          8 |         55 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\Photo.js               | JavaScript         |         22 |          0 |          5 |         27 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\Sensors.ts             | TypeScript         |         35 |          0 |          6 |         41 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\appointments.js        | JavaScript         |        260 |         12 |         26 |        298 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\countDown.js           | JavaScript         |        240 |          6 |         34 |        280 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\dynamicForm.js         | JavaScript         |        435 |         20 |         41 |        496 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\dynamicForm2.js        | JavaScript         |        125 |          0 |         29 |        154 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\dynamicPage.js         | JavaScript         |       -138 |        -77 |        -53 |       -268 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\dynamicPageOG.js       | JavaScript         |        150 |        287 |        112 |        549 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\editableLink.js        | JavaScript         |        -14 |         11 |         -1 |         -4 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\emailSender.js         | JavaScript         |         15 |          0 |          7 |         22 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\footer.js              | JavaScript         |         -4 |          0 |          4 |          0 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\header.js              | JavaScript         |         13 |         -6 |         12 |         19 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\linkBox.js             | JavaScript         |        -14 |         -8 |         -3 |        -25 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\listComparisonTable.js | JavaScript         |         21 |          3 |         10 |         34 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\mosaic.js              | JavaScript         |         84 |          4 |         16 |        104 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\navbar.js              | JavaScript         |        197 |        -22 |         20 |        195 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\paragraph.js           | JavaScript         |        -23 |         10 |          3 |        -10 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\paragraphBacked.js     | JavaScript         |         40 |         32 |         27 |         99 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\photoGallery.js        | JavaScript         |         28 |          1 |          8 |         37 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\pictureFrame.js        | JavaScript         |          2 |          1 |          0 |          3 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\planComparison.js      | JavaScript         |        -11 |         59 |         11 |         59 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\quillComponent.js      | JavaScript         |         19 |          1 |          4 |         24 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\quillToolbarMini.js    | JavaScript         |         68 |          6 |          7 |         81 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\styleEditor.js         | JavaScript         |          5 |          0 |          3 |          8 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\test.js                | JavaScript         |         16 |          0 |          0 |         16 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\testPhotos.js          | JavaScript         |         47 |          0 |          1 |         48 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\components\walkthrough.js         | JavaScript         |         21 |          2 |          9 |         32 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\functions\browserEmail.js         | JavaScript         |          6 |          5 |          6 |         17 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\functions\googleCalendarAPI.js    | JavaScript         |         96 |          8 |         37 |        141 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\react-app-env.d.ts                | TypeScript         |          0 |          1 |          1 |          2 |
+| c:\Users\LaRae\Desktop\Site-Creator\src\websiteVersions\current.js        | JavaScript         |        422 |          6 |         14 |        442 |
+| c:\Users\LaRae\Desktop\Site-Creator\tsconfig.json                         | JSON with Comments |         26 |          0 |          1 |         27 |
+| Total                                                                     |                    |     20,006 |        404 |        452 |     20,862 |
++---------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

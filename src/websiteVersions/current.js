@@ -40,12 +40,50 @@ export const site_template = {
         {
           name: "Navbar",
           id: `Site Creator-Navbar-1-469 `,
-          content: {}
+          content: { 
+            homeLinkText : "Site Creator",
+            navData: 
+            [
+              {
+                id:1,
+                name:"How It Works",
+                path:"/how-it-works"
+              }, 
+              {
+                id:2,
+                name:"Need Help",
+                dropdown:
+                  [
+                    { name: "Get Professional Help", path: "/need-help", id: 6},
+                    { name: "Install It Yourself", path: "/getting-started", id: 3},
+                  ]
+                
+              },
+              {
+                id:4,
+                name:"Components",
+                path:"/components"
+              },
+              
+              {
+                id:5,
+                name:"Contact",
+                path:"/contact"
+              }
+            ] 
+          }
         },
         
         {
           name: "CountDown",
           id: `Site Creator-CountDown-2-381`,
+          content:
+            {
+              date: '2022-02-28',
+              includes: [true,true],
+              timeStyle: "Words",
+              finalText: "Hip Hip Hooray",
+            }
           // content:{src: "construction.png"}
         },
         {
@@ -147,7 +185,6 @@ export const site_template = {
       {
         name: "Navbar",
         id: `Getting Started-Navbar-1-891`,
-        content: {}
       },
       {
         name: "WalkThrough",
@@ -293,7 +330,7 @@ export const site_template = {
         content: { headerHtml: "Have additional questions?" }
       },
       {
-        name: "EmailSender",
+        name: "DyanmicForm",
         id: `Need Help-EmailSender-4-654`,
         content: {
           
@@ -309,7 +346,6 @@ export const site_template = {
       {
         name: "Navbar",
         id: `How It Works-Navbar-1-${ String(new Date().getTime()).slice(-3) }`,
-        content: {}
       },
       {
         name: "WalkThrough",
@@ -359,7 +395,6 @@ export const site_template = {
     {
       name: "Navbar",
       id: `How It Works-Navbar-1-496`,
-      content: {}
     },
     { 
       name: "Header",

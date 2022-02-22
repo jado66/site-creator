@@ -1,0 +1,63 @@
+import PictureFrame from "../PictureFrame"
+import { useState, useContext, useRef, useEffect } from "react"
+import { WebContext } from "../../App"
+import ContentEditable from "react-contenteditable"
+
+export default function CaptionedPicture(props){
+    const pictureFrameID = `${props.id}-rightPictureFrame`
+    
+    const webContext = useContext(WebContext)
+
+    const [imageUrl, setImageUrl] = useState("")
+    const [caption, setCaption] = useState("")
+    const contentEditable = useRef(null)
+
+    const setContent = (content) =>{
+        setImageUrl(content.imageUrl)
+      } 
+    
+      const getContent = () =>{
+        let content = {}
+        content.imageUrl = imageUrl
+       
+        return content
+      }
+    
+      // Load content
+      useEffect(() => {
+        if (props.content){
+          setContent(props.content)
+        }
+      }, []);
+    
+      // Save data
+      useEffect(() => {
+        if (webContext.msgPort == "save"){
+          const componentData = { 
+            name: props.componentName,
+            id: props.id,
+            content: getContent()
+          }
+          webContext.saveComponentData(props.pageName,props.index,componentData)
+        }
+      }, [webContext.msgPort]);
+
+    return(
+        <div className = {"row"} style = {{paddingTop:"40px", paddingBottom:"40px",justifyContent:"center",flex: 1,width:"100%"}}>
+            <div className = {"col"} style={{width:"100%"}}>
+            <PictureFrame webStyle = {props.webStyle} key = {pictureFrameID} id = {pictureFrameID}/>
+            <ContentEditable
+                className=''
+                style={{color:webContext.webStyle.darkShade}}
+                spellCheck = "false"
+                innerRef={contentEditable}
+                html={caption} // innerHTML of the editable div
+                disabled={!webContext.webStyle.isEditMode}      // use true to disable editing
+                onChange={setCaption} // handle innerHTML change
+                tagName='p' // Use a custom HTML tag (uses a div by default)
+                /> 
+            </div>
+        </div>
+
+    )
+}
