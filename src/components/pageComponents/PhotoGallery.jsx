@@ -18,7 +18,7 @@ const SortableGallery = SortableContainer(({ items }) => (
 export default function PhotoGallery(props) {
   const [items, setItems] = useState(testPhotos);
 
-  const webContext = useContext(WebContext);
+    const { webStyle } = useContext(WebContext);
 
   const onSortEnd = ({ oldIndex, newIndex }) => {
     setItems(arrayMoveImmutable(items, oldIndex, newIndex));
@@ -26,7 +26,7 @@ export default function PhotoGallery(props) {
 
     return (
         <div className="px-5 mb-3">
-            <div className="  card boxShadow" style = {{backgroundColor:webContext.webStyle.darkAccent}}>
+            <div className="  card boxShadow" style = {{backgroundColor:webStyle.darkAccent}}>
             <SortableGallery items={items} onSortEnd={onSortEnd}  axis={"xy"} />
             </div>
         </div>

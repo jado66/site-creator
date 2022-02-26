@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import ReactQuill from 'react-quill';
 import '../quill.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,7 +7,7 @@ import ReactHtmlParser from 'react-html-parser';
 import QuillToolbar from "./QuillToolbar";
 import QuillToolbarMini from "./QuillToolbarMini";
 
-
+import { WebContext } from "../App";
 // Modules object for setting up the Quill editor
 export const modules = {
   toolbar: {
@@ -52,27 +52,30 @@ export default function QuillComponent(props){
 
     const placeholder = "Here goes some txt"
 
+    const { webStyle } = useContext(WebContext);
+
+
     useEffect(() => {
       // const storedState =JSON.parse(localStorage.getItem(props.id+'-quill'));
       
       // alert(storedState)
-      if (props.content){
+      if (Object.keys(props.content).length > 0){
         // alert(JSON.stringify(props.content.html))
         setHtml(props.content.html)
       }
-      else if (storedState){
-        setHtml(storedState )
-      }
+      // else if (storedState){
+      //   setHtml(storedState )
+      // }
 
     }, []);
 
-    useEffect(() => {
-      if (props.content){
-        // alert(JSON.stringify(props.content.html))
-        setHtml(props.content.html)
-      }
+    // useEffect(() => {
+    //   if (Object.keys(props.content).length > 0){
+    //     // alert(JSON.stringify(props.content.html))
+    //     setHtml(props.content.html)
+    //   }
 
-    }, [props.content]);
+    // }, [props.content]);
 
     const copyToClipboard =() =>{
       let htmlString = html
@@ -108,7 +111,7 @@ export default function QuillComponent(props){
           {isShowButtons&& <div className="relative-r">
             <FontAwesomeIcon icon = {faPencilAlt} onClick={()=>{setEdit(true)}}/>
           </div>}
-          <div className={props.className}>
+          <div className={props.className} style = {{color: webStyle.darkShade}}>
             {html? ReactHtmlParser(html): ReactHtmlParser(placeholder)} 
           </div>
           

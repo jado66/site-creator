@@ -1,79 +1,102 @@
 export const site_template = {
-    pages: [
-            {
-              id:1,
-              name:"Site Creator",
-              path:"/"
-            },
-            {
-              id:2,
-              name:"How It Works",
-              path:"/how-it-works"
-            }, 
-            {
-              id:3,
-              name:"Need Help",
-              path:"/need-help"
-            },
-            {
-              id:4,
-              name:"Getting Started",
-              path:"/getting-started"
-            },
-            {
-              id:5,
-              name:"Components",
-              path:"/components"
-            },
-            
-            // {
-            //   name:"Contact",
-            //   path:"/contact"
-            // }
+    
+  pages: [
+    {
+      id:1,
+      name:"Site Creator",
+      path:"/"
+    },
+    {
+      id:2,
+      name:"How It Works",
+      path:"/how-it-works"
+    }, 
+    {
+      id:3,
+      name:"Need Help",
+      path:"/need-help"
+    },
+    {
+      id:4,
+      name:"Getting Started",
+      path:"/getting-started"
+    },
+    {
+      id:5,
+      name:"Components",
+      path:"/components"
+    },
+    
+    {
+      id: 6,
+      name:"Contact",
+      path:"/contact"
+    }
           ],
+  masterNavBarData: 
+      [
+        {
+          id:1,
+          name:"How It Works",
+          path:"/how-it-works"
+        }, 
+        {
+          id:2,
+          name:"Need Help",
+          dropdown:
+            [
+              { name: "Get Professional Help", path: "/need-help", id: 6},
+              { name: "Install It Yourself", path: "/getting-started", id: 3},
+            ]
+          
+        },
+        {
+          id:4,
+          name:"Components",
+          path:"/components"
+        },
+        
+        {
+          id:5,
+          name:"Contact",
+          path:"/contact"
+        }
+      ],
+      socialMedias:[
+        {
+          location  :"Github",
+          link:"https://github.com/jado66/site-creator"
+        },
+        {
+          location  :"LinkedinIn",
+          link:"https://www.linkedin.com/in/jadonerwin/"
+        }
+      ],
+  
     ["Site Creator"]: [
         { 
           name: "Header",
           id: `Site Creator-Header-0-589`,
-          content: { headerHtml: "React Site Creator" }
+          content: { html: "React Site Creator" }
         },
         {
           name: "Navbar",
           id: `Site Creator-Navbar-1-469 `,
-          content: { 
-            homeLinkText : "Site Creator",
-            navData: 
-            [
-              {
-                id:1,
-                name:"How It Works",
-                path:"/how-it-works"
-              }, 
-              {
-                id:2,
-                name:"Need Help",
-                dropdown:
-                  [
-                    { name: "Get Professional Help", path: "/need-help", id: 6},
-                    { name: "Install It Yourself", path: "/getting-started", id: 3},
-                  ]
-                
-              },
-              {
-                id:4,
-                name:"Components",
-                path:"/components"
-              },
-              
-              {
-                id:5,
-                name:"Contact",
-                path:"/contact"
-              }
-            ] 
-          }
+          content:{}
         },
-        
+        {
+          name: "Paragraph",
+          id: `Site Creator-Paragraph-481`,
+          content: { html: `<h3>This website creator is a <strong>FREE</strong> tool built just for you! Create your own website complete with all the necessary components to build a successful blog, portfolio, or business site. You can try it out by modifying this website.</h3>
+          <p>
+          </p>
+          <h3>Go ahead and add a new component. Hover your mouse (or tap if on a mobile device) in the margin right below this text. Then tap on a component you would like to add.</h3>`}
+        },
+        {
+          name: "Paragraph",
+          id: `Site Creator-Paragraph-491`,
+          content: { html: `<h3>Now move the component. Hover your mouse right above the new component (you will see the cursor change to a hand), and then drag the component to a new spot. On mobile devices tap and hold to drag.</h3>`}
+        },
         {
           name: "CountDown",
           id: `Site Creator-CountDown-2-381`,
@@ -89,8 +112,7 @@ export const site_template = {
         {
           name: "Paragraph",
           id: `Site Creator-Paragraph-2-381`,
-          content: { html: `<h3>This website creator is a <strong>FREE</strong> tool built just for you! Create your own website complete with all the necessary components to build a successful blog, portfolio, or business site.</h3>
-                            <h3>You can use this website creator for <strong>FREE </strong>for personal or commercial use.* You only have to buy a domain name for your site and pay for hosting service, and unfortunately we can't provide you with either.</h3>
+          content: { html: `<h3>You can use this website creator for <strong>FREE </strong>for personal or commercial use.* You only have to buy a domain name for your site and pay for hosting service, and unfortunately we can't provide you with either.</h3>
                             <h3>If you would like help getting your website up and running with a domain name, business email, and this software, we are more than willing to help. Go to the <a href="need-help" rel="noopener noreferrer"  style="color: rgb(29, 146, 178);">Need Help</a>
                             <span style="color: rgb(255, 255, 255);"> </span>page to get some professional assistance.</h3>
                             `
@@ -101,78 +123,72 @@ export const site_template = {
           name: "Mosaic",
           id: `Site Creator-Mosiac-3-387`,
           content: {
-            lPicContent: {src:"test.png"},
-            lLinkBoxContent:{
-              title:"Get Your Own Site",
-              subTitle:"Pay Us Nothing",
-              linkTxtContent:{
-                txt:"These are the steps",
-                href:"getting-started"
-              }
-            },
-            rPicContent: {src:"test2.png"},
-            rLinkBoxContent:{
-              title:"Everything Is Editable",
-              subTitle:"Try editing this website",
-              linkTxtContent:{
-                txt:"This tutorial explains how.",
-                href:"how-it-works"
-              }
-            }
+            lImageUrl:"test.png",
+            lTitle:"Get Your Own Site",
+            lSubTitle:"Pay Us Nothing",
+            lLinkText:"These are the steps",
+            lHref:"getting-started",
+            rImageUrl:"test2.png",
+            rTitle:"Everything Is Editable (Even This)",
+            rSubTitle:"Try editing this website",
+            rLinkText:"This tutorial explains how.",
+            rHref:"how-it-works"
           }
         },
-        {
-          name: "PlanComparison",
-          id: `Site Creator-PlanComparison-4-984`,
-          content: {
-            header:"Site Generator Comparison",
-            colCount: 3,
-            colNameHtmls: [
-              "Wix Pro\n$27 / Month",
-              "WordPress Business\n$25 / Month",
-              "React Site Creator\n*100% Free"
-            ],
-            rowGroupCount: 2,
-            rowGroups: [4, 3],
-            comparisonRowContent: [
-              {
-                header: "Calender",
-                rowChecks: [true, true, true]
-              },
-              {
-                header: "Email List",
-                rowChecks: [true, true, true]
-              },
-              {
-                header: "Socials Analytics",
-                rowChecks: [false, false, true]
-              },
-              {
-                header: "Modern Web Technology**",
-                rowChecks: [false, false, true]
-              },
-              {
-                header: "Instant Changes",
-                rowChecks: [false, false, true]
-              },
-              {
-                header: "Free To Use ***",
-                rowChecks: [false, false, true]
-              },
-              {
-                header: "Add your own",
-                rowChecks: [false, true, true]
-              }
-            ],
-            captionHtml: `<div>* We don't provide domain names or web hosting (neither are free but it will still cheaper than the alternatives). Go to the "Get Your Own" page to get some pointers.</div>
-                          <div>** Wix and Wordpress are built using PHP which was created in 1994. We rely primarily on React which was released almost 2 decades later</div>
-                          <div>*** Wix and Wordpress are both "Free to use" but expect to pay for any necessary features</div>`
-          }
+        // {
+        //   name: "ProductComparisonTable",
+        //   id: `Site Creator-ProductComparisonTable-4-984`,
+        //   content: {
+        //     header:"Site Generator Comparison",
+        //     colCount: 3,
+        //     colNameHtmls: [
+        //       "Wix Pro\n$27 / Month",
+        //       "WordPress Business\n$25 / Month",
+        //       "React Site Creator\n*100% Free"
+        //     ],
+        //     rowGroupCount: 2,
+        //     rowGroups: [4, 3],
+        //     comparisonRowContent: [
+        //       {
+        //         header: "Calender",
+        //         rowChecks: [true, true, true]
+        //       },
+        //       {
+        //         header: "Email List",
+        //         rowChecks: [true, true, true]
+        //       },
+        //       {
+        //         header: "Socials Analytics",
+        //         rowChecks: [false, false, true]
+        //       },
+        //       {
+        //         header: "Modern Web Technology**",
+        //         rowChecks: [false, false, true]
+        //       },
+        //       {
+        //         header: "Instant Changes",
+        //         rowChecks: [false, false, true]
+        //       },
+        //       {
+        //         header: "Free To Use ***",
+        //         rowChecks: [false, false, true]
+        //       },
+        //       {
+        //         header: "Add your own",
+        //         rowChecks: [false, true, true]
+        //       }
+        //     ],
+        //     captionHtml: `<div>* We don't provide domain names or web hosting (neither are free but it will still cheaper than the alternatives). Go to the "Get Your Own" page to get some pointers.</div>
+        //                   <div>** Wix and Wordpress are built using PHP which was created in 1994. We rely primarily on React which was released almost 2 decades later</div>
+        //                   <div>*** Wix and Wordpress are both "Free to use" but expect to pay for any necessary features</div>`
+        //   }
       
-        },
+        // },
         {
           name: "Footer",
           id: `Site Creator-Footer-5-${ String(new Date().getTime()).slice(-3) }`,
+          content:{}
+
         }
     ],
     ["Getting Started"]: [
@@ -180,11 +196,13 @@ export const site_template = {
         name: "Header",
         id: `Getting Started-Header-0-654`,
         type: "h1",
-        content: { headerHtml: "React Site Creator" }
+        content: { html: "React Site Creator" }
       },
       {
         name: "Navbar",
         id: `Getting Started-Navbar-1-891`,
+        content:{}
+
       },
       {
         name: "WalkThrough",
@@ -264,11 +282,13 @@ export const site_template = {
         name: "Header",
         id: `Need Help-Header-0-654`,
         type: "h1",
-        content: { headerHtml: "Need Help?" }
+        content: { html: "Need Help?" }
       },
       {
         name: "Navbar",
-        id: `Need Help-Navbar-1-381`
+        id: `Need Help-Navbar-1-381`,
+        content:{}
+
       },
       {
         name: "Paragraph",
@@ -294,8 +314,8 @@ export const site_template = {
           // - 
       },
       {
-        name:"ListComparisonTable",
-        id:"Need Help-ListComparisonTable-2-381",
+        name:"ProductComparisonCards",
+        id:"Need Help-ProductComparisonCards-2-381",
         content:[
           {
           header:"Basic Help (Steps 1-3)",
@@ -327,7 +347,7 @@ export const site_template = {
         name: "Header",
         id: `Need Help-Header-4-654`,
         type: "h1",
-        content: { headerHtml: "Have additional questions?" }
+        content: { html: "Have additional questions?" }
       },
       {
         name: "DyanmicForm",
@@ -341,11 +361,13 @@ export const site_template = {
       { 
         name: "Header",
         id: `How It Works-Header-0-${ String(new Date().getTime()).slice(-3) }`,
-        content: { headerHtml: "React Site Creator" }
+        content: { html: "React Site Creator" }
       },
       {
         name: "Navbar",
         id: `How It Works-Navbar-1-${ String(new Date().getTime()).slice(-3) }`,
+        content:{}
+
       },
       {
         name: "WalkThrough",
@@ -383,23 +405,26 @@ export const site_template = {
       {
         name: "Footer",
         id: `Site Creator-Footer-5-${ String(new Date().getTime()).slice(-3) }`,
+        content:{}
+
       }
   ],
     ["Components"]: [
     { 
       name: "Header",
       id: `Components-Header-0-459`,
-      content: { headerHtml: "React Site Creator" }
+      content: { html: "React Site Creator" }
     },
     
     {
       name: "Navbar",
       id: `How It Works-Navbar-1-496`,
+      content:{}
     },
     { 
       name: "Header",
       id: `Components-Header-2-896`,
-      content: { headerHtml: "Gallery: Try Dragging The Pictures" }
+      content: { html: "Gallery: Try Dragging The Pictures" }
     },
     {
       name:"PhotoGallery",
@@ -409,7 +434,7 @@ export const site_template = {
     { 
       name: "Header",
       id: `Components-Header-4-879`,
-      content: { headerHtml: "Appointments: Connect To Your Google Calendar" }
+      content: { html: "Appointments: Connect To Your Google Calendar" }
     },
     {
       name:"Appointments",
@@ -431,7 +456,7 @@ export const site_template = {
         },
         rPicContent: {src:"test2.png"},
         rLinkBoxContent:{
-          title:"Everything Is Editable",
+          title:"Everything Is Editable (Even this)",
           subTitle:"Try editing this website",
           linkTxtContent:{
             txt:"This tutorial explains how.",
@@ -444,6 +469,8 @@ export const site_template = {
     {
       name: "Footer",
       id: `Site Creator-Footer-5-${ String(new Date().getTime()).slice(-3) }`,
+      content:{}
+
     }
   ],
   };

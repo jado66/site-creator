@@ -14,7 +14,7 @@ import {WebContext} from "../../App"
 
 export default function SocialLinks(props) {
 
-  const webContext = useContext(WebContext)
+  const {webStyle, msgPort, appMethods, socialMedias} = useContext(WebContext)
 
   const setContent = (content) =>{
     //const \[(.+), .+ use.+
@@ -31,22 +31,22 @@ export default function SocialLinks(props) {
 
   // Load content
   useEffect(() => {
-    if (props.content){
+    if (Object.keys(props.content).length > 0){
       setContent(props.content)
     }
   }, []);
 
   // Save data
   useEffect(() => {
-    if (webContext.msgPort == "save"){
+    if (msgPort == "save"){
       const componentData = { 
         name: props.componentName,
         id: props.id,
         content: getContent()
       }
-      webContext.saveComponentData(props.pageName,props.index,componentData)
+      appMethods.saveComponentData(props.pageName,props.index,componentData)
     }
-  }, [webContext.msgPort]);
+  }, [msgPort]);
 
 
 
@@ -71,13 +71,13 @@ export default function SocialLinks(props) {
       Snapchat: faSnapchatGhost
     };
 
-    const socialLinks = webContext.socialMedias.filter(({location}) => {
+    const socialLinks = socialMedias.filter(({location}) => {
       if (location === "New Link") {
         return false; // skip
       }
       return true;
     }).map(({link,location}) =>
-      <Link className='col text-center' key = {location} to={{ pathname: link}} target={"_blank"} key={location} style={{color:webContext.webStyle.darkShade}}><FontAwesomeIcon className={"socialMediaLink m-auto"} icon={componentMapping[location]} /></Link>
+      <Link className='col text-center' key = {location} to={{ pathname: link}} target={"_blank"} key={location} style={{color:webStyle.darkShade}}><FontAwesomeIcon className={"socialMediaLink m-auto"} icon={componentMapping[location]} /></Link>
     );
 
     return(

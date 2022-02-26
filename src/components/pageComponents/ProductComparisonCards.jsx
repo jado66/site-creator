@@ -7,18 +7,48 @@ import QuillComponent from '../QuillComponent'
 
 import {WebContext} from "../../App"
 
-export default function ListComparisonTable (props){
+export default function ProductComparisonCards (props){
 
+    const [packagePlans, setPackagePlans] = useState(
+      [
+        {
+          header: "Product 1",
+          price: "$ Price",
+          htmlContent: "Description",
+        },
+        {
+          header: "Product 2",
+          price: "$ Price",
+          htmlContent: "Description",
+        },
+        {
+          header: "Product 3",
+          price: "Price",
+          htmlContent: "Description",
+        }
+     ]
+    )
     const [packagePlanCount, setPackagePlanCount] = useState(3)
     const [contentData,setContentData] = useState([null,null,null])
 
-    const webContext = useContext(WebContext);
+    function handleValueChange(index, valueName, value) {
+      setPackagePlans((prevData) => {
+        let newData = [...prevData];
+  
+        newData[index][valueName] = value;
+  
+        return newData;
+      });
+    }
+
+    const {webStyle, msgPort, appMethods} = useContext(WebContext)
 
     const setContent = (content) =>{
         //const \[(.+), .+ use.+
         // set$1(content.$1)
         setPackagePlanCount(content.packagePlanCount)
         setContentData(content.content)
+        setPackagePlans(content.packagePlans)
       } 
     
       const getContent = () =>{
@@ -28,87 +58,49 @@ export default function ListComparisonTable (props){
         let content = {}
         content.contentData = contentData
         content.packagePlanCount = packagePlanCount
+        content.packagePlans = packagePlans
         return (content)
       }
     
        // Load content
         useEffect(() => {
-            if (props.content){
-            setContent(props.content)
+            if (Object.keys(props.content).length > 0){
+              setContent(props.content)
             }
         }, []);
     
       // Save data
       useEffect(() => {
-        if (webContext.msgPort == "save"){
+        if (msgPort == "save"){
           const componentData = { 
             name: props.componentName,
             id: props.id,
             content: getContent()
           }
-          webContext.saveComponentData(props.pageName,props.index,componentData)
+          appMethods.saveComponentData(props.pageName,props.index,componentData)
         }
-      }, [webContext.msgPort]);
+      }, [msgPort]);
 
 
    
 
     return(
         <div className="row row-cols-1 row-cols-md-3 mb-3 text-center px-5">
-            <PackagePlan content = {contentData[0]} webStyle = {webContext.webStyle} id = {props.id+"-1"}/>
-            <PackagePlan content = {contentData[1]} webStyle = {webContext.webStyle} id = {props.id+"-2"}/>
-            <PackagePlan content = {contentData[2]} webStyle = {webContext.webStyle} id = {props.id+"-3"}/>
+            <PackagePlan data = {packagePlans[0]} webStyle = {webStyle} id = {props.id+"-1"} index = {0} handleValueChange = {handleValueChange}/>
+            <PackagePlan data = {packagePlans[1]} webStyle = {webStyle} id = {props.id+"-2"} index = {1} handleValueChange = {handleValueChange}/>
+            <PackagePlan data = {packagePlans[2]} webStyle = {webStyle} id = {props.id+"-3"} index = {2} handleValueChange = {handleValueChange}/>
         </div>
       )
 };
 
 
 function PackagePlan(props){
-    const [header,setHeader] = useState("Package Name")
-    const [price,setPrice] = useState("$250")
-    const contentEditable = [React.createRef(),React.createRef()] // Header, Price, Button
-    const [htmlContent,setHtmlContent] = useState(null)
-
-
-    const handleHeaderChange = (value) => {
-        setHeader(value);
-        // localStorage.setItem(props.id+"-header",value);
-      };
-
-    const handlePriceChange = (value) => {
-        setPrice(value);
-        // localStorage.setItem(props.id+"-price",value);
-    };
-
-    useEffect(() => {
-        if (props.content){
-            // alert(JSON.stringify(props.content.html))
-            setHeader(props.content.header)
-            setPrice(props.content.price)
-            setHtmlContent(props.content.bodyContent)
-          }
-
-      }, [props.content]);
-
-    useEffect(() => {
-        if (props.content){
-            // alert(JSON.stringify(props.content.html))
-            setHeader(props.content.header)
-            setPrice(props.content.price)
-          }
-
-
-        // const storedHeader = localStorage.getItem(props.id+'-header');
-        // const storedPrice = localStorage.getItem(props.id+'-price');    
     
-        // if (storedHeader){
-        //     setHeader(storedHeader)
-        // }
-        
-        // if (storedPrice){
-        //     setPrice(storedPrice)
-        // }
-      }, []);
+    const contentEditable = [React.createRef(),React.createRef()] // Header, Price, Button
+
+    const setHeader = (val) => {props.handleValueChange(props.index,"header",val)}
+    const setPrice = (val) => {props.handleValueChange(props.index,"price",val)}
+    const setHtmlContent = (val) => {props.handleValueChange(props.index,"html",val)}
 
     return(
         <div className="col">
@@ -119,9 +111,9 @@ function PackagePlan(props){
                     className="my-0 fw-normal"
                     spellCheck = "false"
                     innerRef={contentEditable[0]}
-                    html={header} // innerHTML of the editable div
+                    html={props.data.header} // innerHTML of the editable div
                     disabled={!props.webStyle.isEditMode}      // use true to disable editing
-                    onChange={(evt)=>{handleHeaderChange(evt.target.value)}} // handle innerHTML change
+                    onChange={(evt)=>{setHeader(evt.target.value)}} // handle innerHTML change
                     tagName='h4'/>
             </div>
             <div className="card-body rounded-bottom" style={{backgroundColor:props.webStyle.lightShade}}>
@@ -131,13 +123,13 @@ function PackagePlan(props){
                     className="card-title pricing-card-title"
                     spellCheck = "false"
                     innerRef={contentEditable[1]}
-                    html={price} // innerHTML of the editable div
+                    html={props.data.price} // innerHTML of the editable div
                     disabled={!props.webStyle.isEditMode}      // use true to disable editing
-                    onChange={(evt)=>{handlePriceChange(evt.target.value)}} // handle innerHTML change
+                    onChange={(evt)=>{setPrice(evt.target.value)}} // handle innerHTML change
                     tagName='h1'/>
                 <ul className="list-unstyled mt-3 mb-4">
                     
-                <QuillComponent mini = {true} webStyle = {props.webStyle} id ={props.id} content = {htmlContent}/>
+                <QuillComponent mini = {true} webStyle = {props.webStyle} id ={props.id} content = {{html:props.data.html}}/>
             
                 </ul>
                 <ButtonEditable webStyle = {props.webStyle} className={"w-100 btn btn-lg "} style = {{backgroundColor:props.webStyle.darkAccent, color: props.webStyle.lightShade}} callback = {()=>{alert("he he")}}/>

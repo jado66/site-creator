@@ -5,7 +5,7 @@ import QuillComponent from "../QuillComponent"
 import {WebContext} from "../../App"
 
 export default function Paragraph(props) {
-  const webContext = useContext(WebContext);
+    const { webStyle } = useContext(WebContext);
 
   // useEffect(() => {
   //   if (props.template){
@@ -28,8 +28,8 @@ export default function Paragraph(props) {
   // }, []);
 
   return(
-    <div className={webContext.webStyle.isMobile?"px-3 ":" px-5"} data-no-dnd="true" >
-      <QuillComponent className = "paragraph"  webStyle = {webContext.webStyle} id ={props.id} content = {props.content} />
+    <div className={webStyle.isMobile?"px-3 ":" px-5"} data-no-dnd="true" style={{color:webStyle.darkShade}}>
+      <QuillComponent className = "paragraph" id ={props.id} content = {props.content} />
     </div>
           )
 };

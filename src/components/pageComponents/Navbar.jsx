@@ -24,7 +24,7 @@ import {
 import Fade from 'react-reveal/Fade';
 
 
-import { faAngleDoubleRight, faAngleDoubleLeft,faCaretSquareDown,  faPencilAlt, faTrashAlt,  faCheck, faSortDown, faArrowsAlt,  faCarrot, faShoppingCart , faArrowCircleDown, faHamburger, faBars } from '@fortawesome/free-solid-svg-icons'
+import { faAngleDoubleRight, faAngleDoubleLeft,faCaretSquareDown,  faPencilAlt, faTrashAlt,  faCheck, faSortDown, faArrowsAlt,  faCarrot, faShoppingCart, faBars, faCog } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookSquare, faTwitter, faInstagram, faYoutube, faTiktok, faDiscord, faEtsy, faGithub, faImdb, faLinkedinIn,faPatreon, faPinterestP, faReddit, faShopify, faSpotify, faSoundcloud, faSnapchatGhost, faGooglePlusG } from "@fortawesome/free-brands-svg-icons"
@@ -46,34 +46,59 @@ import {
 // TODO dropdowns need to open only their dropdowns
 
 export default function NavBar(props) {
+  const [isSettingsMode,setIsSettingsMode] = useState(false);
+  const [isUnique, setIsUnique] = useState(false)
   const [isEdit, setIsEdit] = useState(false);
   const [isShowDeleteSpot, showDeleteSpot] = useState(false);
   const [isShowDropdownDeleteSpot, showDropdownDeleteSpot] = useState(false);
   const [isShowButtons, showButtons] = useState(false);
 
-  const webContext = useContext(WebContext);
+  const {webStyle, msgPort, appMethods, socialMedias, cart, masterNavData} = useContext(WebContext)
   const [homeLinkText, setHomeLinkText] = useState("Site Creator")
-  const [navData, setNavData] = useState([]);
+  const [uniqueNavData, setUniqueNavData] = useState([]);
+
+  const setNavData = (state) => {
+    if (isUnique){
+      setUniqueNavData(state)
+    }
+    else{
+      appMethods.setMasterNavData(state)
+    }
+  }
 
   const setContent = (content) =>{
     //const \[(.+), .+ use.+
     // set$1(content.$1)
     // alert(JSON.stringify(content,null,4))
+    setIsUnique(true)
     setHomeLinkText(content.homeLinkText)
-    setNavData(content.navData)
+    setUniqueNavData(content.navData)
   } 
 
   const getContent = () =>{
     //const \[(.+), .+ use.+
     //content.$1 = $1
     let content = {}
-    content.homeLinkText = homeLinkText
-    content.navData = navData
-    return content
+
+    if (isUnique){
+      content.homeLinkText = homeLinkText
+      content.navData = uniqueNavData
+      return content
+    }
+    else{
+      return {}
+    }
+   
+  }
+
+  const makeNavbarUnique = () => {
+    setIsUnique(true)
+
+    setNavData(masterNavData)
   }
 
   useEffect(() => {
-    if (webContext.msgPort == "save"){
+    if (msgPort == "save"){
 
       const componentData = { 
         name: props.componentName,
@@ -81,62 +106,16 @@ export default function NavBar(props) {
         content: getContent()
       }
 
-      webContext.saveComponentData(props.pageName,props.index,componentData)
+      appMethods.saveComponentData(props.pageName,props.index,componentData)
     }
-  }, [webContext.msgPort]);
+  }, [msgPort]);
 
   useEffect(() => {
-    if (props.content){
+    if (Object.keys(props.content).length > 0){
 
       setContent(props.content)
     }
   }, []);
-
-
-  // [
-  //   {
-  //     id:1,
-  //     name:"Site Creator",
-  //     path:"/"
-  //   },
-  //   {
-  //     id:2,
-  //     name:"How It Works",
-  //     path:"/how-it-works"
-  //   }, 
-  //   {
-  //     id:3,
-  //     name:"Need Help",
-  //     path:"/need-help"
-  //   },
-  //   {
-  //     id:4,
-  //     name:"Getting Started",
-  //     path:"/getting-started"
-  //   },
-  //   {
-  //     id:5,
-  //     name:"Components",
-  //     path:"/components"
-  //   },
-    
-  //   {
-  //     name:"Contact",
-  //     path:"/contact"
-  //   }
-  // ]
-
-  
-  // useEffect(() => {
-  //   if(props.pages){
-  //     const pages = props.pages;
-     
-  //     setNavData(pages)
-  
-  // }
-  // }, []);
-
-  // const [items, setItems] = useState(["1", "2", "3"]);
 
   const componentMapping = {
     Email:faEnvelope,
@@ -174,6 +153,13 @@ export default function NavBar(props) {
   //   },
   // }
 
+  let navData = (isUnique?uniqueNavData:masterNavData)
+
+  if (!navData){
+    navData = []
+  }
+
+
   let navItems = [];
 
   if (isEdit) {
@@ -186,46 +172,47 @@ export default function NavBar(props) {
       if ("dropdown" in el) {
         el.dropdown.forEach((subEl, subIndex) => {
           dropdownItems.push(
-            <DropDownLink key = {el.name+subEl.name+subEl.path+"DropDown"}
-                          isEdit = {true} webStyle = {webContext.webStyle}
-                          name = {subEl.name} path = {subEl.path} 
-                          onChangeName = {(evt) => {
-                            handleLinkDropdownChange(evt, index, subIndex, "name");
-                          }}
-            
-                          onChangePath = {(evt) => {
-                            handleLinkDropdownChange(evt, index, subIndex, "path");
-                          }}/>
+            <DropDownLink
+              key = {el.name+subEl.name+subEl.path+"DropDown"}
+              isEdit = {true} webStyle = {webStyle}
+              name = {subEl.name} path = {subEl.path} 
+              onChangeName = {(evt) => {
+                handleLinkDropdownChange(evt, index, subIndex, "name");
+              }}
+
+              onChangePath = {(evt) => {
+                handleLinkDropdownChange(evt, index, subIndex, "path");
+              }}/>
           );
         });
       }
 
       navItems.push(
-        <li className={"nav-item "+(webContext.webStyle.isMobile?"ms-2":"mx-4")} 
+        <li className={"nav-item "+(webStyle.isMobile?"ms-2":"mx-4")} 
             key={"edit"+el.name+"input2"}
         >
           <div key={"edit"+el.name+"div"}>
             {"dropdown" in el ? (
               <div  key={"edit"+el.name+"div2"}
-                    className= {"position-relative "+(webContext.webStyle.isMobile ? "input-group" : "")}>
+                    className= {"position-relative "+(webStyle.isMobile ? "input-group" : "")}>
                 <input
                   key={"edit"+el.name+"input"}
                   className={
-                    "form-control-plaintext" + (webContext.webStyle.isMobile ? " w-50" : "")
+                    "form-control-plaintext" + (webStyle.isMobile ? " w-50" : "")
                   }
                   onChange={(evt) => {
-                    handleLinkChange(evt, index+1, "text");
+                    handleLinkChange(evt, index, "text");
                   }}
-                  style ={{width:`${el.name.length+2}ch`,color:webContext.webStyle.lightShade}}
+                  style ={{width:`${el.name.length+2}ch`,color:webStyle.lightShade}}
 
                   value={el.name}
                 />
                 <Link
                   key={"edit"+el.name+"dropToggle"}
                   className={
-                    "nav-link dropdown-toggle" + (webContext.webStyle.isMobile ? " w-50" : "")
+                    "nav-link dropdown-toggle" + (webStyle.isMobile ? " w-50" : "")
                   }
-                  style ={{color:webContext.webStyle.lightShade}}
+                  style ={{color:webStyle.lightShade}}
                   data-no-dnd="true"
                   data-bs-toggle="dropdown"
                   id="navbarDropdown"
@@ -235,33 +222,36 @@ export default function NavBar(props) {
                 >
                   Dropdown
                 </Link>
-                <ul key={"edit"+el.name+"ul"} className="dropdown-menu boxShadow" style={{backgroundColor:webContext.webStyle.darkAccent}} aria-labelledby="navbarDropdown">
+                <ul key={"edit"+el.name+"ul"} className={"dropdown-menu "+(webStyle.isMobile?"":"boxShadow")} style={{backgroundColor:webStyle.darkAccent}} aria-labelledby="navbarDropdown">
+                  <div>
                   {dropdownItems}
+
+                  </div>
                 </ul>
               </div>
             ) : (
-              <div key={"edit"+el.name+"div"} className={webContext.webStyle.isMobile ? "input-group" : ""} >
+              <div key={"edit"+el.name+"div"} className={webStyle.isMobile ? "input-group" : ""} >
                 <input
                   key={"edit"+el.name+"input1"}
                   className={
-                    "form-control-plaintext" + (webContext.webStyle.isMobile ? " w-50" : "")
+                    "form-control-plaintext" + (webStyle.isMobile ? " w-50" : "")
                   }
                   onChange={(evt) => {
-                    handleLinkChange(evt, index+1, "name");
+                    handleLinkChange(evt, index, "name");
                   }}
-                  style ={{width:`${el.name.length+2}ch`,color:webContext.webStyle.lightShade}}
+                  style ={{width:`${el.name.length+2}ch`,color:webStyle.lightShade}}
 
                   value={el.name}
                 />
                 <input
                   key={"edit"+el.name+"input2"}
                   className={
-                    "form-control-plaintext" + (webContext.webStyle.isMobile ? " w-50" : "")
+                    "form-control-plaintext" + (webStyle.isMobile ? " w-50" : "")
                   }
                   onChange={(evt) => {
-                    handleLinkChange(evt, index+1, "path");
+                    handleLinkChange(evt, index, "path");
                   }}
-                  style ={{width:`${el.path.length+2}ch`,color:webContext.webStyle.lightShade}}
+                  style ={{width:`${el.path.length+2}ch`,color:webStyle.lightShade}}
                   value={el.path}
                 />
               </div>
@@ -286,14 +276,15 @@ export default function NavBar(props) {
               key={el.id}
               id={el.id}
               // order = {el.or}
-              className={"py-2 "}
+              className={(webStyle.isMobile?"ps-3":"py-2 ")}
             >
-              <li className="nav-item ms-2">
+              <li className="nav-item ms-2" >
                 <Link
+                  style={{color:webStyle.lightShade}}
                   data-no-dnd="true"
-                  className="nav-link active "
+                  className="nav-link "
                   aria-current="page"
-                  path="javascript:void(0)"
+                  to={el.path}
                 >
                   {el.name}
                 </Link>
@@ -310,11 +301,11 @@ export default function NavBar(props) {
           // order = {el.or}
           className={"py-2 "}
         >
-          <li className={"nav-item "+(webContext.webStyle.isMobile?"ms-2":"mx-4")} style ={{whiteSpace: "nowrap"}}>
+          <li className={"nav-item "+(webStyle.isMobile?"ms-2":"mx-4")} style ={{whiteSpace: "nowrap"}}>
             {"dropdown" in el ? (
               <div className="position-relative ">
                 <a
-                  style={{color:webContext.webStyle.lightShade}}
+                  style={{color:webStyle.lightShade}}
                   className="  dropdown-toggle text-decoration-none"
                   data-bs-toggle="dropdown"
                   id={"navbarDropdown" + el.id}
@@ -325,10 +316,12 @@ export default function NavBar(props) {
                   {el.name}
                 </a>
                 <ul
-                  className="dropdown-menu border-0 rounded-0 boxShadow" style={{backgroundColor:webContext.webStyle.darkAccent, top:"2.5em"}}
+                  className={"dropdown-menu border-0 rounded-0 mt-0 "+(webStyle.isMobile?"":"boxShadow")} style={{backgroundColor:webStyle.darkAccent, top:"2.5em", opacity:"1 !important"}}
                   aria-labelledby={"navbarDropdown" + el.id}
 
-                >
+                >                  
+                  <div>
+
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -353,25 +346,27 @@ export default function NavBar(props) {
                         <DeleteDrop id={`${index}:deleteDrop`} />
                       )}
 
-                      <button
-                        className="btn "
+                      {isShowButtons&&<button
+                        className={"btn "+(webStyle.isMobile?"ps-4":"w-100")}
                         data-no-dnd="true"
                         type="button"
+                        style={{color:webStyle.lightShade}}
                         onClick={(evt) => {
                           addDropdownlink(evt, index);
                         }}
                       >
                         <FontAwesomeIcon icon={faPlusSquare}/>
-                      </button>
+                      </button>}
                     </SortableContext>
                   </DndContext>
+                  </div>
                 </ul>
               </div>
             ) : (
               <Link
                 data-no-dnd="true"
 
-                style={{color:webContext.webStyle.lightShade}}
+                style={{color:webStyle.lightShade}}
                 className={"text-decoration-none "}
                 aria-current="page"
                 to={el.path}
@@ -385,20 +380,20 @@ export default function NavBar(props) {
     };
   }
 
-  const socialLinks = webContext.socialMedias.filter(({location}) => {
+  const socialLinks = socialMedias.filter(({location}) => {
     if (location === "New Link") {
       return false; // skip
     }
     return true;
     }).map(({link,location}) =>
       <li className="py-2">
-        <Link className={'nav-link social-link'} key = {location}  href={`${link}`}  style={{color:webContext.webStyle.lightShade}}><FontAwesomeIcon className={"sm-icons"} icon={componentMapping[location]} /></Link>
+        <Link className={'nav-link social-link'} key = {location}  href={`${link}`}  style={{color:webStyle.lightShade}}><FontAwesomeIcon className={"sm-icons"} icon={componentMapping[location]} /></Link>
       </li>
     );
 
   return (
     <div
-      className="fullWidth boxShadow px-5  " style={{backgroundColor:webContext.webStyle.darkAccent, color:webContext.webStyle.lightShade, position: "sticky",top: 0, alignSelf: "flex-start",zIndex:1}}
+      className="fullWidth boxShadow px-5  " style={{backgroundColor:webStyle.darkAccent, color:webStyle.lightShade, position: "sticky",top: 0, alignSelf: "flex-start",zIndex:1}}
       onMouseEnter={() => {
         showButtons(true);
       }}
@@ -406,14 +401,15 @@ export default function NavBar(props) {
         showButtons(false);
       }}
     >
-      {/* style={{backgroundColor:webContext.webStyle.lightShade}} */}
+      {/* style={{backgroundColor:webStyle.lightShade}} */}
         <nav className="navbar navbar-expand-lg mx-4 p-0 container mx-auto">
           
-          <div className={"container-fluid g-0 "+(webContext.webStyle.isMobile?" ms-3":"")}>
+          {!isSettingsMode?
+            <div className={"container-fluid g-0 "+(webStyle.isMobile?" ms-3":"")}>
             {isEdit?
             <div data-no-dnd="true">
               <input
-                  style ={{color:webContext.webStyle.lightShade}}
+                  style ={{color:webStyle.lightShade}}
 
                   className="form-control-plaintext w-50"
                   value={homeLinkText}
@@ -423,7 +419,7 @@ export default function NavBar(props) {
                 />
                 <input
                   className="form-control-plaintext w-50"
-                  style ={{color:webContext.webStyle.lightShade}}
+                  style ={{color:webStyle.lightShade}}
 
                   value={"\\"}
                   onChange={(evt) => {
@@ -432,9 +428,10 @@ export default function NavBar(props) {
                 />
             </div>
             :
-            <Link className="navbar-brand" to = {'/'} style={{color:webContext.webStyle.lightShade}}>{homeLinkText}</Link>
+            <Link data-no-dnd="true" className="navbar-brand" to = '/' style={{color:webStyle.lightShade}}>{homeLinkText}</Link>
             }
             <button
+              data-no-dnd="true"
               className="navbar-toggler btn"
               type="button"
               data-bs-toggle="collapse"
@@ -443,22 +440,23 @@ export default function NavBar(props) {
               aria-expanded="false"
               aria-label="Toggle navigation"
             >
-              <FontAwesomeIcon  style={{color:webContext.webStyle.lightShade}} icon={faBars}/>
+              <FontAwesomeIcon  style={{color:webStyle.lightShade}} icon={faBars}/>
             </button>
             <div
               className="collapse navbar-collapse"
               id="navbarSupportedContent"
             >
-              <ul className={"navbar-nav me-auto mb-2 mb-lg-0 "+(webContext.webStyle.isMobile?" ":"align-items-center")}>
+              <ul className={"navbar-nav me-auto mb-2 mb-lg-0 "+(webStyle.isMobile?" ":"align-items-center")}>
                 {isEdit ? (
-                  <div data-no-dnd="true" className={"d-flex "+(webContext.webStyle.isMobile?"flex-column ":"flex-direction-col")}>
+                  <div data-no-dnd="true" className={"d-flex "+(webStyle.isMobile?"flex-column ":"flex-direction-col")}>
                       {navItems}
                   </div>
                   
                 ) : (
+                  
                   <DndContext
                     sensors={sensors}
-                    modifiers = {[ webContext.webStyle.isMobile
+                    modifiers = {[ webStyle.isMobile
                       ? restrictToVerticalAxis
                       : restrictToHorizontalAxis]}
                     collisionDetection={closestCenter}
@@ -473,7 +471,7 @@ export default function NavBar(props) {
                     <SortableContext
                       items={navData}
                       strategy={
-                        webContext.webStyle.isMobile
+                        webStyle.isMobile
                           ? verticalListSortingStrategy
                           : horizontalListSortingStrategy
                       }
@@ -490,7 +488,7 @@ export default function NavBar(props) {
                   
                 )}
               </ul>
-              {isShowButtons && (
+              {isShowButtons && !isShowDeleteSpot && (
                   <div
                     data-no-dnd="true"
                     className="btn-group  "
@@ -501,12 +499,13 @@ export default function NavBar(props) {
                   >
                     <button
                       className="btn border-end mx-2"
+                      
                       type="button"
                       onClick={() => {
                         addLink();
                       }}
                     >
-                      <FontAwesomeIcon icon={faPlusSquare} style={{color:webContext.webStyle.lightShade}} />
+                      <FontAwesomeIcon icon={faPlusSquare} style={{color:webStyle.lightShade}} />
                     </button>
                       
                     <button
@@ -516,7 +515,7 @@ export default function NavBar(props) {
                         addLink(true);
                       }}
                     >
-                      <FontAwesomeIcon icon={faCaretSquareDown} style={{color:webContext.webStyle.lightShade}}/>
+                      <FontAwesomeIcon icon={faCaretSquareDown} style={{color:webStyle.lightShade}}/>
 
                     </button>
                     <button
@@ -526,29 +525,55 @@ export default function NavBar(props) {
                         setIsEdit(!isEdit); 
                       }}
                     >
-                      <FontAwesomeIcon icon={isEdit?faArrowsAlt:faPencilAlt} style={{color:webContext.webStyle.lightShade}}/> 
+                      <FontAwesomeIcon icon={isEdit?faArrowsAlt:faPencilAlt} style={{color:webStyle.lightShade}}/> 
                     </button>
                   </div>
                 )}
                   <ul className="navbar-nav sm-icons justify-content-start me-0 " style={{float:0}} >
                     {socialLinks}
                     
-                    {Object.keys(webContext.cart).length != 0 &&
+                    {Object.keys(cart).length != 0 &&
                     <li className="position-relative">
-                      <Link className='col ms-3' to={"/checkout"}  style={{color:webContext.webStyle.lightShade}}><FontAwesomeIcon className={"m-icons"} icon={faShoppingCart} /></Link>
+                      <Link className='col ms-3' to={"/checkout"}  style={{color:webStyle.lightShade}}><FontAwesomeIcon className={"m-icons"} icon={faShoppingCart} /></Link>
                       <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill ">
-                        {Object.keys(webContext.cart).length}
+                        {Object.keys(cart).length}
                         <span className="visually-hidden">unread messages</span>
                       </span>
                     </li>
                     } 
                   </ul>
+                  {isShowButtons&&<button className="relative-r btn" style={{marginRight:"-2.5em"}} data-no-dnd = "true" onClick = {()=>{setIsSettingsMode(!isSettingsMode)}}>
+                    <FontAwesomeIcon icon={faCog} style={{color:webStyle.lightShade}} />
+                  </button>}
                 
             </div>
-          </div>
+            </div>
+            :
+            <div className="text-center w-100 py-3">
+              <h3>Navigation Bar Settings</h3>
+              <form className="text-start">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                <label class="form-check-label" for="flexCheckDefault">
+                  Is this Navigation Bar unique?
+                </label>
+              </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlTextarea1" class="form-label">Below will be other settings:</label>
+                  {/* <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea> */}
+                </div>
+              </form>
+              {<button className="relative-r btn h-auto mt-2 " style={{marginRight:"-2.5em", top:"0"}} data-no-dnd = "true" onClick = {()=>{setIsSettingsMode(!isSettingsMode)}}>
+                    <FontAwesomeIcon icon={faCog} style={{color:webStyle.lightShade}} />
+                  </button>}
+            </div> 
+          }
+
+
         </nav>
       </div>
   );
+  
 
   function addLink(isDropdown) {
     const newLink = isDropdown
@@ -706,7 +731,7 @@ const DeleteDrop = (props) => {
 //  I really need to consolidate this....
 
 const DropDownLink = (props) =>{
-  const webContext = useContext(WebContext);
+    const { webStyle } = useContext(WebContext);
 
   if (props.isEdit)
     return (
@@ -714,7 +739,7 @@ const DropDownLink = (props) =>{
       <li className="nav-item col" >
         <div className="input-group " >
           <input
-            style ={{color:webContext.webStyle.lightShade}}
+            style ={{color:webStyle.lightShade}}
 
             className="form-control-plaintext w-50"
             value={props.name}
@@ -723,7 +748,7 @@ const DropDownLink = (props) =>{
           />
           <input
             className="form-control-plaintext w-50"
-            style ={{color:webContext.webStyle.lightShade}}
+            style ={{color:webStyle.lightShade}}
             value={props.path}
             onChange={props.onChangePath}
           />

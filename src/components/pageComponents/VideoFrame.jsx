@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { compress, decompress } from "lz-string"
+import { WebContext } from "../../App";
 
 export default function VideoFrame(props){
     const [linkInput, setLinkInput] = useState("")
     const [videoSource, setVideoSource] = useState("")
     const [areButtonsVisible, setButtonsVisible] = useState(false)
 
+    const {webStyle} = useContext(WebContext)
 
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
@@ -55,7 +57,7 @@ export default function VideoFrame(props){
                     />
                 </div>
                 :
-                <div className="boxShadow" style={{minHeight:"300px",backgroundColor:props.webStyle.darkShade,margin:"auto"}}></div>
+                <div className="boxShadow" style={{minHeight:"300px",backgroundColor:webStyle.darkAccent,margin:"auto"}}></div>
             }
             {
                 areButtonsVisible &&

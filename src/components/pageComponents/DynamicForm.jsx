@@ -70,7 +70,7 @@ export default function DynamicForm(props) {
 
   // Load content
   useEffect(() => {
-    if (props.content){
+    if (Object.keys(props.content).length > 0){
       setContent(props.content)
     }
   }, []);

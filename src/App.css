@@ -24,7 +24,9 @@ body,
 p {
   text-align: left;
 }
-
+.react-reveal {
+  animation-fill-mode: backwards !important;
+}
 .custom-select {
   display: inline-block;
   width: 100%;

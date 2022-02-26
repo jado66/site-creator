@@ -30,7 +30,7 @@ export default function CountDown(props) {
   const [showButtons, setShowButtons] = useState(false);
   const [finalText, setFinalText] = useState("Hip Hip Hooray");
 
-  const webContext = useContext(WebContext);
+  const {webStyle, msgPort, appMethods} = useContext(WebContext)
 
   const setContent = (content) =>{
     //const \[(.+), .+ use.+
@@ -54,22 +54,22 @@ export default function CountDown(props) {
 
   // Load content
   useEffect(() => {
-    if (props.content){
+    if (Object.keys(props.content).length > 0){
       setContent(props.content)
     }
   }, []);
 
   // Save data
   useEffect(() => {
-    if (webContext.msgPort == "save"){
+    if (msgPort == "save"){
       const componentData = { 
         name: props.componentName,
         id: props.id,
         content: getContent()
       }
-      webContext.saveComponentData(props.pageName,props.index,componentData)
+      appMethods.saveComponentData(props.pageName,props.index,componentData)
     }
-  }, [webContext.msgPort]);
+  }, [msgPort]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -233,7 +233,7 @@ export default function CountDown(props) {
         <div className="px-5 " data-no-dnd="true">
       <div
         className="card rounded-3 boxShadow px-3 py-5 position-relative"
-        style={{backgroundColor:webContext.webStyle.darkAccent}}
+        style={{backgroundColor:webStyle.darkAccent}}
         onMouseEnter={() => {
           setShowButtons(true);
         }}
@@ -247,12 +247,12 @@ export default function CountDown(props) {
             type="text"
             placeholder={"Website is Currently Under Construction:"}
             value={"Website is Currently Under Construction:"}
-            style={{ textAlign: "center", border: "none" ,color:webContext.webStyle.lightShade,background:"none"}}
+            style={{ textAlign: "center", border: "none" ,color:webStyle.lightShade,background:"none"}}
           />
         )}
 
         {timeStr.length > 1 ? (
-          <span className="mb-3 text-center h2" style={{color:webContext.webStyle.lightShade}}>{timeStr}</span>
+          <span className="mb-3 text-center h2" style={{color:webStyle.lightShade}}>{timeStr}</span>
         ) : (
           <span>{finalText}</span>
         )}
@@ -262,7 +262,7 @@ export default function CountDown(props) {
           className=" h2"
             type="text"
             value={"until the site launches!"}
-            style={{ textAlign: "center", border: "none" ,color:webContext.webStyle.lightShade,background:"none"}}
+            style={{ textAlign: "center", border: "none" ,color:webStyle.lightShade,background:"none"}}
           />
         )}
 

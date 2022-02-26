@@ -1,11 +1,16 @@
 import React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { compress, decompress } from "lz-string"
 // const images = require.context('../../public/images', true);
 
+import { WebContext } from "../App";
 
 export default function PictureFrame(props){
-    // const [imageUrl, setImageUrl] = useState("")
+
+    const { webStyle } = useContext(WebContext);
+
+
+    const [imageUrl, setImageUrl] = useState("")
     const [areButtonsVisible, setButtonsVisible] = useState(null)
     const inputFile = useRef(null) 
     
@@ -14,18 +19,17 @@ export default function PictureFrame(props){
     useEffect(() => {
         const images = require.context('../../public/images', true);
 
-        if (props.content){
-            if (props.content.src){
-                try{
-                    let path = `./${props.content.src}`
-                    props.setImageUrl(images(path).default)
-                }
-                catch{
-
-                }
+        if (props.imageUrl){
+            try{
+                let path = `./${props.imageUrl}`
+                setImageUrl(images(path).default)
             }
+            catch{
+
+            }
+            
         }    
-    }, []);
+    }, [props.imageUrl]);
 
     const updateImage = (newImage) =>  {
         if (newImage){
@@ -138,25 +142,25 @@ export default function PictureFrame(props){
       }
 
 
-    const buttonStyle = {backgroundColor:props.webStyle.lightShade,color:props.webStyle.darkShade,
-                         borderRadius: "3px", border: `1px solid ${props.webStyle.darkShade}`}
+    const buttonStyle = {backgroundColor:webStyle.lightShade,color:webStyle.darkShade,
+                         borderRadius: "3px", border: `1px solid ${webStyle.darkShade}`}
 
     
     const borderStyle = (props.noBorder ? "" : "boxShadow ")
     
     return(
         <div className={"relative-div "+props.className+(props.isNested?"":" px-5 mb-5")} onMouseEnter={()=>{setButtonsVisible(true)}} onMouseLeave={()=>{setButtonsVisible(false)}} style={{flex: "1"}}>
-            {/* {props.webStyle.isEditMode?<span>Edit Mode</span>:<span>No Edit Mode</span>} */}
-            {props.imageUrl ? 
-                <div style={{backgroundColor:props.webStyle.darkAccent}}>
-                    <img className={borderStyle+"w-100"} src={props.imageUrl} />
+            {/* {webStyle.isEditMode?<span>Edit Mode</span>:<span>No Edit Mode</span>} */}
+            {imageUrl ? 
+                <div style={{backgroundColor:webStyle.darkAccent}}>
+                    <img className={borderStyle+"w-100"} src={imageUrl} />
                 </div>
                 
                 :
-                <div className={borderStyle+"blankDiv w-100"} style={{minHeight:"300px",backgroundColor:props.webStyle.darkAccent}}></div>
+                <div className={borderStyle+"blankDiv w-100"} style={{minHeight:"300px",backgroundColor:webStyle.darkAccent}}></div>
             }
             {
-                areButtonsVisible && props.webStyle.isEditMode &&
+                areButtonsVisible && webStyle.isEditMode &&
                 <div className="row relative-l">
                     <div > 
                         <input

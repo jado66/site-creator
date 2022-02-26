@@ -46,16 +46,6 @@ const adminDefaults = { //These are just the values, functions are added in the 
     secondaryFont:""
   },
   pages:site_template.pages,
-  socialMedias:[
-    {
-      location  :"Github",
-      link:"https://github.com/jado66/site-creator"
-    },
-    {
-      location  :"LinkedinIn",
-      link:"https://www.linkedin.com/in/jadonerwin/"
-    }
-  ],
   cart :{},
   promoCodes: {
     test12Free:{type:"Free"},
@@ -64,84 +54,86 @@ const adminDefaults = { //These are just the values, functions are added in the 
   },
   savedData: {},
   msgPort: "",
-  componentOptions: ["PlanComparison","WalkThrough","ListComparisonTable","Paragraph","ParagraphBacked","QuickLink","PictureFrame","Navbar","Header","Footer","Mosaic","DynamicForm","CardPaymentBlock","CaptionedPicture","BlogPreview","VideoFrame","SlideShow"],
-  flatComponents : ["Navbar","Header","Footer","CountDown","PlanComparison"]
 }
 
-export const WebContext = createContext(adminDefaults)
+export const WebContext = createContext()
 
 function App() {
-  const [appContext, setAppContext] = useState({
-    ...adminDefaults,
-    setWebStyles: (state) => {
-      setAppContext(prevState => ({
-        ...prevState,
-        webStyle: state,
-      }))
-    },
-    setCart: (state) => {
-      setAppContext(prevState => ({
-        ...prevState,
-        cart: state,
-      }))
-    },
-    setSocialMedias: (state) =>{
-      setAppContext(prevState => ({
-        ...prevState,
-        socialMedias: state,
-      }))
-    },
-    setPages: (state) =>{
-      setAppContext(prevState => ({
-        ...prevState,
-        pages: state,
-      }))
-    },
-    sendMsgPortMsg:(msg)=>{
-      setAppContext(prevState => ({
-      ...prevState,
-      msgPort: msg,
-    }))
-    },
-    setSavedData: (state) =>{
-      setAppContext(prevState => ({
-        ...prevState,
-        savedData: state,
-      }))
-    },
+
+  const [webStyle, setWebStyle] = useState({
+    siteName: "React Site-Creator",
+    isMobile: window.innerWidth <= 991,
+    isEditMode: true,
+    isShowEditor: true,
+    isAdmin: true,
+    // Website colors
+    lightShade: "#EEE4E8",
+    lightAccent: "#8BF6FD",
+    mainBrandColor: "#1D92B2",
+    darkAccent: "#1F4C57" ,
+    darkShade: "#1C191E",
+    // colorsUpdated: false,
+    // widths
+    centerWidth:60,
+    secondCenterWidth:90,
+    // page names
+    primaryFont:"Merienda",
+    secondaryFont:""
+  } )
+
+  const [masterNavData, setMasterNavData] = useState(site_template.masterNavBarData)
+  const [socialMedias, setSocialMedias] = useState(site_template.socialMedias)
+  const [pages, setPages] = useState(adminDefaults.pages)
+  const [promoCodes, setPromoCodes] = useState(adminDefaults.pages)
+  const [cart, setCart] = useState({})
+  const [msgPort,setMsgPort] = useState("")
+  const [savedData, setSavedData] = useState({})
+  const componentOptions = ["Product Comparison Table","Walk Through","Product Comparison Cards","Paragraph","Paragraph Backed","Quick Link","Navbar","Header","Footer","Mosaic","Captioned Picture","Video Frame","Slide Show"].sort()
+  const flatComponents = ["Navbar","Header","Footer","CountDown","ProductComparisonTable"]
+
+  const appMethods = {
+    setWebStyle: (state) => setWebStyle(state),
+    setMasterNavData: (state) => setMasterNavData(state),
+    setCart: (state) => setCart(state),
+    setSocialMedias: (state) => setSocialMedias(state),
+    setPages: (state) => setPages(state),
+    sendMsgPortMsg:(msg)=> setMsgPort(msg),
+    setSavedData: (state) => setSavedData(state),
+    setPromoCodes: (state) => setPromoCodes(state),
+    
     addToCart: (cartItem) =>{
       // Check if we already have it in the cart
-      if (cartItem.name in appContext.cart){
-        let newCart = {...appContext.cart}
+      if (cartItem.name in cart){
+        let newCart = {...cart}
         newCart[cartItem.name].quantity += 1
-        appContext.setCart(newCart)
+        setCart(newCart)
       }
       else{
-        let newCart = {...appContext.cart,[cartItem.name]:cartItem}
-        appContext.setCart(newCart)
+        let newCart = {...cart,[cartItem.name]:cartItem}
+        setCart(newCart)
       }
     },
   
     removeFromCart: (itemName) =>{
       // Check if we already have it in the cart
-      if (itemName in appContext.cart){
-        let newCart = {...appContext.cart}
+      if (itemName in cart){
+        let newCart = {...cart}
         delete newCart[itemName]
-        appContext.setCart(newCart)
+        setCart(newCart)
       }
     },
   
     setCartItemQuantity: (itemName, quantity) =>{
       // This should only be called if the item already exists in the cart
-      if (itemName in appContext.cart){
-        let newCart = {...appContext.cart}
+      if (itemName in cart){
+        let newCart = {...cart}
         
         newCart[itemName].quantity = parseInt(quantity)
         
         if (newCart[itemName].quantity === 0){
           delete newCart[itemName]
         }
-        appContext.setCart(newCart)
+        setCart(newCart)
         // localStorage.setItem("cart",JSON.stringify(newCart))
       }
       else{
@@ -150,28 +142,24 @@ function App() {
     }, 
 
     handlePageNameChange: (index,name) => {
-      let newPage = {}
-      appContext.setPages( arr => {
-        newPage.path = arr[index].path;
-        newPage.name = name;
-     
-        return [...arr.slice(0,index), newPage ,...arr.slice(index+1)]}
-        ); // Callback to save to storage
+      let newPage = {
+        path: pages[index].path,
+        name: name
+      }
+      setPages([...pages.slice(0,index), newPage ,...pages.slice(index+1)]); // Callback to save to storage
     },
   
     handlePagePathChange: (index,path) => {
-      let newPage = {}
-      appContext.setPages( arr => {
-        newPage.path = path;
-        newPage.name = arr[index].name;
-     
-        return [...arr.slice(0,index), newPage ,...arr.slice(index+1)]}
-        );
+      let newPage = {
+        path: path,
+        name: pages[index].name
+      }
+      setPages([...pages.slice(0,index), newPage ,...pages.slice(index+1)]);
     },
   
     checkIfPageExists: (path) => {
       let pageExists = false
-      appContext.pages.forEach(page => {
+      pages.forEach(page => {
         if (page.path === path){
           pageExists = true;
         }
@@ -183,9 +171,7 @@ function App() {
       let sureDelete = prompt(`Are you sure you would like to delete the page ${pageName}? This action is irreversible. Type "YES" to delete this page:`, "");
   
       if (sureDelete === "YES"){
-        appContext.setPages( arr => {     
-          return [...arr.slice(0,index) ,...arr.slice(index+1)]}
-          );
+        setPages([...pages.slice(0,index) ,...pages.slice(index+1)]);
       }
     },
   
@@ -198,71 +184,60 @@ function App() {
         path = "/new-page"
       }
       
-      let newPage = {}
-      appContext.setPages( arr => {
-        newPage.path = path;
-        newPage.name = name;
-     
-        return [...arr, newPage]}
-        );
+      let newPage = {
+          path: path,
+        name: name
+      }
+      setPages([...pages, newPage])
     },
   
     // Social
     handleSocialSiteChange: (index,location) => {
-      let newSocialMedia = {}
-      appContext.setSocialMedias( arr => {
-        newSocialMedia.link = arr[index].link;
-        newSocialMedia.location = location;
-     
-        return [...arr.slice(0,index), newSocialMedia ,...arr.slice(index+1)]}
-        ); // Callback to save to storage
+      let newSocialMedia = {
+        link: socialMedias[index].link,
+        location: location
+      }
+      setSocialMedias([...socialMedias.slice(0,index), newSocialMedia ,...socialMedias.slice(index+1)]); // Callback to save to storage
     },
   
     handleSocialLinkChange: (index,link) => {
-      let newSocialMedia = {}
-      appContext.setSocialMedias( arr => {
-        newSocialMedia.location = arr[index].location;
-        newSocialMedia.link = link;
-  
-     
-        return [...arr.slice(0,index), newSocialMedia ,...arr.slice(index+1)]}
-        );
+      let newSocialMedia = {
+        location: socialMedias[index].location,
+        link:link
+      }
+      setSocialMedias([...socialMedias.slice(0,index), newSocialMedia ,...socialMedias.slice(index+1)]);
     },
   
     deleteSocialMedia: (location, index) => {
       let sureDelete = window.confirm(`Are you sure you would like to your social media link to ${location}`);
   
       if (sureDelete){
-        appContext.setSocialMedias( arr => {     
-          return [...arr.slice(0,index) ,...arr.slice(index+1)]}
-          );
+        setSocialMedias([...socialMedias.slice(0,index) ,...socialMedias.slice(index+1)]);
       }
     },
   
     addSocialMedia: () => {
-      let newSocialMedia = {}
-      appContext.setSocialMedias( arr => {
-        newSocialMedia.location = "New Link";
-        newSocialMedia.link = "/";
-     
-        return [...arr, newSocialMedia]}
-        );
+      let newSocialMedia = {
+        location: "New Link",
+        link: "/"
+      }
+
+      setSocialMedias([...socialMedias, newSocialMedia]);
     },
     saveWebsite:()=>{
-      appContext.sendMsgPortMsg("save")
+      appMethods.sendMsgPortMsg("save")
     },
-    toggleStyleEditor:()=>{
-      let newWebstyle = {...appContext.webStyle}
-      newWebstyle.isShowEditor = !newWebstyle.isShowEditor
 
-      setAppContext(prevState => ({
-        ...prevState,
-        webStyle: newWebstyle,
-      }))
+    toggleStyleEditor:()=>{
+      let newWebstyle = {...webStyle}
+      newWebstyle.isShowEditor = !newWebstyle.isShowEditor
+      setWebStyle(newWebstyle)
+     
     },
+
     saveComponentData: (pageName,index, data)=>{
       
-      let newSavedData = appContext.savedData
+      let newSavedData = savedData
 
       if (pageName in newSavedData){
         newSavedData[pageName][index] = data
@@ -272,38 +247,15 @@ function App() {
         newSavedData[pageName][index] = data
       }
       
-      appContext.setSavedData(newSavedData)
+      setSavedData(newSavedData)
 
       // alert(JSON.stringify(newSavedData,null,4))
     }
-  })
-  
-  const [promoCodes,setPromoCodes] = useState(
-    { 
-      test12Free:{type:"Free"},
-      testHalfOff:{type:"% Off", value: 50},
-      test20Off:{type:"$ Off", value: 20}
-    }
-  )
+  }  
 
-  const [webStyle,setWebStyle] = useState(adminDefaults.webStyle)
-
-  const [pages,setPages] = useState(site_template.pages)
-  const [socialMedias,setSocialMedias] = useState([
-    {
-      location  :"Github",
-      link:"https://github.com/jado66/site-creator"
-    },
-    {
-      location  :"LinkedinIn",
-      link:"https://www.linkedin.com/in/jadonerwin/"
-    }
-  ])
-
-  const [cart,setCart] = useState({})
 
   function handleWindowSizeChange() {
-    getWebStyleFromStorage();
+    // getWebStyleFromStorage();
     const isMobile = window.innerWidth <= 991
     setWebStyle({...webStyle, isMobile:isMobile})
 
@@ -318,14 +270,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (appContext.msgPort == "save"){
+    if (msgPort == "save"){
 
-      appContext.sendMsgPortMsg("")
+      appMethods.sendMsgPortMsg("")
 
-      alert(appContext.newSavedData)
+      // alert(newSavedData)
 
       // if(window.confirm("Would you like to download the website data?")){
-      //   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appContext.newSavedData, null, 4));
+      //   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(newSavedData, null, 4));
       //   var downloadAnchorNode = document.createElement('a');
       //   downloadAnchorNode.setAttribute("href",     dataStr);
       //   downloadAnchorNode.setAttribute("download", "data.json");
@@ -335,15 +287,15 @@ function App() {
       // }
      
     }
-  }, [appContext.msgPort]);
+  }, [msgPort]);
 
   useEffect(() => {
     // Update the document title using the browser API
-    getIsUserAdmin();
-    setPagesFromStorage();
+    // getIsUserAdmin();
+    // setPagesFromStorage();
     setSocialMediasFromStorage();
     setCartFromStorage();
-    getWebStyleFromStorage();
+    // getWebStyleFromStorage();
     // setWebStyle({...webStyle,...{colorsUpdated:true}})
     // getBlogCount();
   }, []);
@@ -481,11 +433,11 @@ function App() {
   }
 
   const setSocialMediasFromStorage = () =>{
-    let socialMedias = JSON.parse(localStorage.getItem('social-medias'))
+    // let socialMedias = JSON.parse(localStorage.getItem('social-medias'))
   
-    if (socialMedias){ 
-      setSocialMedias(socialMedias)
-    }
+    // if (socialMedias){ 
+    //   setSocialMedias(socialMedias)
+    // }
   }
 
   const handlePageNameChange = (index,name) => {
@@ -629,7 +581,6 @@ function App() {
     // alert(data.IPv4 === "108.51.21.72")
   }
 
-  let componentOptions = ["PlanComparison","WalkThrough","ListComparisonTable","Paragraph","ParagraphBacked","QuickLink","PictureFrame","Navbar","Header","Footer","Mosaic","DynamicForm","CardPaymentBlock","CaptionedPicture","BlogPreview","VideoFrame","SlideShow"]
 
   let routeComponents  = pages.map(({name, path})=> {
     
@@ -639,8 +590,8 @@ function App() {
     return(
     
     <Route basename="/site-creator" exact path = {path+"/:pathParam?"} key = {name+"Route"}>
-      {/* <span>{(appContext.webStyle.isAdmin?"True":"False")} + {(appContext.webStyle.isShowEditor?"True":"False")}</span> */}
-      {appContext.webStyle.isAdmin && appContext.webStyle.isShowEditor &&
+      {/* <span>{(webStyle.isAdmin?"True":"False")} + {(webStyle.isShowEditor?"True":"False")}</span> */}
+      {webStyle.isAdmin && webStyle.isShowEditor &&
       <WebsiteStyleEditor webStyle = {webStyle} updateWebStyles = {updateWebStyles}   
                           showStyleEditor = {()=>{}} minimizeStyleEditor = {()=>{}} expandStyleEditor = {()=>{}} promoCodes = {promoCodes}
                           socialMedias = {socialMedias} socialMediaCallbacks = {socialMediaCallbacks} pages = {pages} pageCallbacks = {pageCallbacks}/>
@@ -657,7 +608,22 @@ function App() {
   
 
   return (
-    <WebContext.Provider value = {appContext}>
+    <WebContext.Provider value = {
+        {
+          webStyle: webStyle,
+          socialMedias: socialMedias,
+          masterNavData: masterNavData,
+          pages: pages,
+          promoCodes: promoCodes,
+          cart: cart, 
+          msgPort: msgPort,
+          savedData: savedData, 
+          flatComponents: flatComponents,
+          componentOptions: componentOptions,
+
+          appMethods: appMethods
+        }
+      }>
       <div className="App" style={{minHeight:"100vh", overflowX: "hidden",}}>
         {/* <span>{webStyle.isMobile?"M":"D"}</span> */}
 

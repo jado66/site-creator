@@ -95,13 +95,13 @@ export default function WalkThrough(props) {
   const [edit, setEdit] = useState(false);
   const [isShowButtons, showButtons] = useState(false)
 
-  const webContext = useContext(WebContext);
+    const { webStyle } = useContext(WebContext);
 
 
   useEffect(() => {
     
     // alert(storedState)
-    if (props.content){
+    if (Object.keys(props.content).length > 0){
       // alert(JSON.stringify(props.content.html))
       // setHtml(props.content.html, ()=>{
         setContent(props.content)
@@ -180,7 +180,7 @@ export default function WalkThrough(props) {
 
         <Link
         className="link-dark text-decoration-none h5"
-        style={{...linkStyle}}
+        style={{...linkStyle, color:webStyle.darkShade}}
         to={{
           pathname:path,
           hash:"#"+sectionLink.linkToID
@@ -195,11 +195,11 @@ export default function WalkThrough(props) {
   });
 
   return (
-    <div className={(webContext.webStyle.isMobile?"px-3":"px-5")} data-no-dnd="true">
-      <div className="row boxShadow g-0" style={{backgroundColor:webContext.webStyle.lightShade}}>
+    <div className={(webStyle.isMobile?"px-3":"px-5")} data-no-dnd="true">
+      <div className="row boxShadow g-0" style={{backgroundColor:webStyle.lightShade}}>
       
-      <div className={webContext.webStyle.isMobile?"col-12":"col-8"}>
-        {edit && webContext.webStyle.isAdmin && webContext.webStyle.isEditMode?
+      <div className={webStyle.isMobile?"col-12":"col-8"}>
+        {edit && webStyle.isAdmin && webStyle.isEditMode?
           <div>
             <div className={"sticky-top "}>
               <QuillToolbar update  checkCallback = {saveEdits} clipboardCallback = {() => {copyToClipboard()}}/>
@@ -218,20 +218,20 @@ export default function WalkThrough(props) {
           <div className="relative-div" onMouseEnter={() => {showButtons(true)}} onMouseLeave={() => {showButtons(false)}}>
             
             <div style={{height:"1.5rem"}} className="sticky-top" >
-              {isShowButtons && webContext.webStyle.isAdmin && webContext.webStyle.isEditMode &&
+              {isShowButtons && webStyle.isAdmin && webStyle.isEditMode &&
               <div className="relative-r pe-2 pt-3">
                 <FontAwesomeIcon icon = {faPencilAlt} onClick={()=>{setEdit(true)}}/>
               </div>}
             </div>
 
-            <div className="py-4 px-5 ">{ ReactHtmlParser (html) } </div>
+            <div className="py-4 px-5 " style ={{color:webStyle.darkShade}}>{ ReactHtmlParser (html) } </div>
             
           </div>
           }   
         </div>
-        {!webContext.webStyle.isMobile&&<div className="col-4 align-items-stretch">
-          <div className="px-5 border-start border-dark h-100 ">
-            <div className={"sticky-top "+(webContext.webStyle.isShowEditor?"py-7":"py-5")} >
+        {!webStyle.isMobile&&<div className="col-4 align-items-stretch">
+          <div className="px-5 h-100 " style ={{borderColor:webStyle.darkAccent, borderLeft:"1px solid"}}>
+            <div className={"sticky-top "+(webStyle.isShowEditor?"py-7":"py-5")} >
               {links}
 
             </div>

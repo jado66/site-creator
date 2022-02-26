@@ -7,7 +7,7 @@ import QuillComponent from "../QuillComponent"
 
 import {WebContext} from "../../App"
 
-export default function PlanComparison (props){
+export default function ProductComparisonTable (props){
     const [admin, setAdmin] = useState(false)
     const [edit, setEdit] = useState(false)
     const [header, setHeader] = useState("Header")
@@ -23,7 +23,7 @@ export default function PlanComparison (props){
     const contentEditables = [React.createRef(),React.createRef(),React.createRef(),React.createRef()]
     const headerEditable = React.createRef()
 
-    const webContext = useContext(WebContext);
+    const { webStyle } = useContext(WebContext);
 
     const captionEditable = React.createRef()
   
@@ -37,7 +37,7 @@ export default function PlanComparison (props){
   }
 
    useEffect(() => {
-    if (props.content){
+    if (Object.keys(props.content).length > 0){
         setColNameHtmls(props.content.colNameHtmls)
         setCaptionHtml(props.content.captionHtml)
         setHeader(props.content.header)
@@ -129,7 +129,7 @@ export default function PlanComparison (props){
                 spellCheck = "false"
                 innerRef={contentEditables[i]}
                 html={value} // innerHTML of the editable div
-                disabled={!webContext.webStyle.isEditMode}       // use true to disable editing
+                disabled={!webStyle.isEditMode}       // use true to disable editing
                 onChange={(evt)=>{editColHeader(evt,i)}} // handle innerHTML change
                 tagName='th'/>
         // <th style={{width: "18%"}}>{value}</th>
@@ -145,8 +145,8 @@ export default function PlanComparison (props){
 
         for (var j = 0; j < rowGroups[i]; j++){
             let newID = props.id+`-g${i},r${j}`
-            groupRows.push(
-                <PlanComparisonRow webStyle = {webContext.webStyle} content = {props.content.comparisonRowContent[k]} colCount ={colCount} id = {newID} key = {newID}/>
+            groupRows.push( //content = {props.content.comparisonRowContent[k]}
+                <ProductComparisonTableRow webStyle = {webStyle}  colCount ={colCount} id = {newID} key = {newID}/>
             )
             k++;
         }
@@ -172,14 +172,14 @@ export default function PlanComparison (props){
 
 
     return(
-        <div className={(webContext.webStyle.isMobile?" px-2 ":" px-5")} data-no-dnd="true">
-            <div className={' boxShadow pt-2 ' } style={{backgroundColor:webContext.webStyle.lightShade}}>
+        <div className={(webStyle.isMobile?" px-2 ":" px-5")} data-no-dnd="true">
+            <div className={' boxShadow pt-2 ' } style={{backgroundColor:webStyle.lightShade}}>
                 <ContentEditable
                 className='text-center'
                     spellCheck = "false"
                     innerRef={headerEditable}
                     html={header} // innerHTML of the editable div
-                    disabled={!webContext.webStyle.isEditMode}       // use true to disable editing
+                    disabled={!webStyle.isEditMode}       // use true to disable editing
                     onChange={(evt)=>{this.setState({header:evt.target.value})}} // handle innerHTML change
                     tagName='h1'/>
                 <div className={edit?"row mb-3":"hidden"}>
@@ -209,10 +209,10 @@ export default function PlanComparison (props){
                 <table className="table table-responsive text-center table-hover borderless" >
                 <ContentEditable
                     spellCheck = "false"
-                    className={webContext.webStyle.isMobile?" px-2 ":" px-3"}
+                    className={webStyle.isMobile?" px-2 ":" px-3"}
                     innerRef={captionEditable}
                     html={captionHtml} // innerHTML of the editable div
-                    disabled={!webContext.webStyle.isEditMode}       // use true to disable editing
+                    disabled={!webStyle.isEditMode}       // use true to disable editing
                     onChange={(evt)=>{setCaptionHtml(evt.target.value)}} // handle innerHTML change
                     tagName='caption'/>
                 {/* <caption>*All content from shoots, behind-the-scenes, IG lives, extra promtional stories...</caption> */}
@@ -221,7 +221,7 @@ export default function PlanComparison (props){
                     <th style={{width: "28%"}}></th>
                     {tableHeaders}
                     </tr>
-                    <div className={'relative-l'+((admin || edit) && webContext.webStyle.isEditMode ?"":" hidden")}>
+                    <div className={'relative-l'+((admin || edit) && webStyle.isEditMode ?"":" hidden")}>
                         <button onClick={()=>{setEdit(!edit)}} className='btn no-back ' >Dimensions <FontAwesomeIcon  icon={edit?faCheck:faPencilAlt}/></button>
                     </div>
                 </thead>
@@ -275,7 +275,7 @@ export default function PlanComparison (props){
 //             "\n"
 
 
-function PlanComparisonRow(props){
+function ProductComparisonTableRow(props){
     const [header, setHeader] = useState(`Feature`);
     const [rowChecks,setRowChecks] = useState([false,false,false,false])
     const contentEditable = React.createRef();
@@ -300,7 +300,7 @@ function PlanComparisonRow(props){
 
       useEffect(() => {
 
-        if (props.content){
+        if (Object.keys(props.content).length > 0){
             setHeader(props.content.header)
             setRowChecks(props.content.rowChecks)
           }

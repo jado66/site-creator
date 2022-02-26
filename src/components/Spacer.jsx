@@ -5,10 +5,16 @@ export default function Spacer(props) {
     const [isShowBar, showBar] = useState(false);
     const [isShowButtons, setShowButtons] = useState(false)
   
-    const webContext = useContext(WebContext);
+    const {componentOptions} = useContext(WebContext);
+
   
-    let options = webContext.componentOptions.map((option) => (
-      <button className="btn btn-outline-dark border-0 my-1 col me-1" key ={option} onClick = {()=>{alert("Add option")}}>{option}</button>
+    const insertComponent = (option)=>{
+        props.insertComponent(option, props.index)
+        showBar(false)
+    }
+
+    let options = componentOptions.map((option,index) => (
+      <button className="btn btn-outline-dark border-0 my-1 col me-1" key ={option} onClick = {(evt,option)=>{insertComponent(componentOptions[index])}}>{option}</button>
       ))
   
     const optionButtons = <div style={{whiteSpace:"nowrap"}} className="py-0 g-0 overflow-auto no-scroll">

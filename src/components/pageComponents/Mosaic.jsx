@@ -26,7 +26,7 @@ export default function Mosaic(props){
     const leftLinkBoxID = `${props.id}-Ll`
     const leftPictureFrameID = `${props.id}-Lp`
 
-    const webContext = useContext(WebContext);
+    const {webStyle, msgPort, appMethods} = useContext(WebContext)
 
     const setContent = (content) =>{
         //const \[(.+), .+ use.+
@@ -45,8 +45,8 @@ export default function Mosaic(props){
         setRHref(content.rHref)
       } 
     
-      const getContent = () =>{
-        //const \[(.+), .+ use.+
+    const getContent = () =>{
+    //const \[(.+), .+ use.+
         //content.$1 = $1
         let content = {}
         content.lImageUrl = lImageUrl
@@ -62,38 +62,38 @@ export default function Mosaic(props){
         content.rLinkText = rLinkText
         content.rHref = rHref
         return content
-      }
+    }
 
       
-        // Load content
-        useEffect(() => {
-            if (props.content){
-            setContent(props.content)
-            }
-        }, []);
-    
-      useEffect(() => {
-        if (webContext.msgPort == "save"){
-    
-          const componentData = { 
-            name: props.componentName,
-            id: props.id,
-            content: getContent()
-          }
-    
-          webContext.saveComponentData(props.pageName,props.index,componentData)
+    // Load content
+    useEffect(() => {
+        if (Object.keys(props.content).length > 0){
+        setContent(props.content)
         }
-      }, [webContext.msgPort]);
+    }, []);
 
-    if (webContext.webStyle.isMobile){
+    useEffect(() => {
+    if (msgPort == "save"){
+
+        const componentData = { 
+        name: props.componentName,
+        id: props.id,
+        content: getContent()
+        }
+
+        appMethods.saveComponentData(props.pageName,props.index,componentData)
+    }
+    }, [msgPort]);
+
+    if (webStyle.isMobile){
         return(
-        <div className = {"row "+(webContext.webStyle.isMobile?"px-2 ":"px-5")} data-no-dnd="true">
+        <div className = {"row "+(webStyle.isMobile?"px-2 ":"px-5")} data-no-dnd="true">
             <div className="col">
                 <div className = {"row g-0 mb-5" }>
                     <Fade>
                         <div className="row g-0 mb-5">
                             <PictureFrame  
-                                webStyle = {webContext.webStyle} key = {leftPictureFrameID} 
+                                 key = {leftPictureFrameID} 
                                 id = {leftPictureFrameID} imageUrl = {lImageUrl} setImageUrl = {setLImageUrl} isNested
                             />
                         </div>
@@ -110,7 +110,7 @@ export default function Mosaic(props){
                 <div className = {"row g-0"}>
                     <Fade>
                         <div className="row g-0 mb-5">
-                            <PictureFrame webStyle = {webContext.webStyle} key = {rightPictureFrameID} 
+                            <PictureFrame key = {rightPictureFrameID} 
                                           imageUrl = {rImageUrl} setImageUrl = {setRImageUrl} id = {rightPictureFrameID} isNested/>
                         </div>
                     </Fade>
@@ -131,7 +131,7 @@ export default function Mosaic(props){
                 <div className = {"col me-3"}>
                     <Fade>
                         <div className="row g-0 mb-5 w-100">
-                            <PictureFrame  webStyle = {webContext.webStyle}  key = {leftPictureFrameID}
+                            <PictureFrame  webStyle = {webStyle}  key = {leftPictureFrameID}
                                            imageUrl = {lImageUrl} setImageUrl = {setLImageUrl} id = {leftPictureFrameID} isNested/>
                         </div>
                         <LinkBox 
@@ -150,7 +150,7 @@ export default function Mosaic(props){
                             setTitle = {setRTitle} setSubTitle = {setRSubTitle} setLinkText = {setRLinkText} setHref = {setRHref}
                         />
                         </div>
-                            <PictureFrame webStyle = {webContext.webStyle} key = {rightPictureFrameID}
+                            <PictureFrame  key = {rightPictureFrameID}
                             imageUrl = {rImageUrl} setImageUrl = {setRImageUrl} id = {rightPictureFrameID} isNested/>
                     </Fade>
                 </div>  

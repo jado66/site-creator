@@ -8,7 +8,7 @@ export default function LinkBox(props){
   const contentEditable1 = React.createRef();
   const contentEditable2 = React.createRef();
   
-  const webContext = useContext(WebContext);
+    const { webStyle } = useContext(WebContext);
 
   const setTitle = evt => {
     props.setTitle(evt.target.value);
@@ -23,27 +23,27 @@ export default function LinkBox(props){
 
 
   return(
-    <div className={"p-3 boxShadow"} style={{backgroundColor: webContext.webStyle.lightShade}}>
+    <div className={"p-3 boxShadow"} style={{backgroundColor: webStyle.lightShade}}>
       <ContentEditable
-        style={{color: webContext.webStyle.darkShade}}
+        style={{color: webStyle.darkShade}}
         innerRef={contentEditable1}
         html={props.title} // innerHTML of the editable div
-        disabled={! webContext.webStyle.isEditMode}       // use true to disable editing
+        disabled={! webStyle.isEditMode}       // use true to disable editing
         onChange={setTitle} // handle innerHTML change
         tagName='h2' // Use a custom HTML tag (uses a div by default)
       />
       <ContentEditable
         className='apply-font-secondary'
-        style={{color: webContext.webStyle.darkShade}}
+        style={{color: webStyle.darkShade}}
         innerRef={contentEditable2}
         html={props.subTitle} // innerHTML of the editable div
-        disabled={! webContext.webStyle.isEditMode}       // use true to disable editing
+        disabled={! webStyle.isEditMode}       // use true to disable editing
         onChange={setSubTitle} // handle innerHTML change
         tagName='h3' // Use a custom HTML tag (uses a div by default)
       />
       <EditableLink 
         id = {props.id+"-link"} 
-        linkText = {props.lLinkText} href = {props.lHref} setLinkText = {props.setLinkText} setHref = {props.setHref}
+        linkText = {props.linkText} href = {props.href} setLinkText = {props.setLinkText} setHref = {props.setHref}
       />
       </div>)
   

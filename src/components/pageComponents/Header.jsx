@@ -7,12 +7,17 @@ export default function Header(props){
     const contentEditable = React.createRef();
     const [html, setHtml] = useState(`Header`);
     
-    const webContext = useContext(WebContext);
+    const {webStyle, msgPort, appMethods} = useContext(WebContext)
 
     const setContent = (content) =>{
       //const \[(.+), .+ use.+
       // set$1(content.$1)
-      setHtml(content.html)
+      if (Object.keys(content).length !== 0 && content){
+        setHtml(content.html)
+      }
+      else if (props.index === 0){
+        setHtml(props.pageName)
+      }
     } 
   
     const getContent = () =>{
@@ -26,25 +31,20 @@ export default function Header(props){
     
     // Load content
     useEffect(() => {
-      if (Object.keys(props.content).length !== 0){
-        setContent(props.content)
-      }
-      else if (props.index === 0){
-        setHtml(props.pageName)
-      }
+      setContent(props.content)
     }, []);
   
     // Save data
     useEffect(() => {
-      if (webContext.msgPort == "save"){
+      if (msgPort == "save"){
         const componentData = { 
           name: props.componentName,
           id: props.id,
           content: getContent()
         }
-        webContext.saveComponentData(props.pageName,props.index,componentData)
+        appMethods.saveComponentData(props.pageName,props.index,componentData)
       }
-    }, [webContext.msgPort]);
+    }, [msgPort]);
 
     const handleChange = (evt) => {
       setHtml(evt.target.value);
@@ -55,11 +55,11 @@ export default function Header(props){
       <div className="px-5 text-center " data-no-dnd="true">
         <ContentEditable
           className='apply-font-primary mb-0'
-          style={{color:webContext.webStyle.darkShade}}
+          style={{color:webStyle.darkShade}}
           spellCheck = "false"
           innerRef={contentEditable}
           html={html} // innerHTML of the editable div
-          disabled={!webContext.webStyle.isEditMode}      // use true to disable editing
+          disabled={!webStyle.isEditMode}      // use true to disable editing
           onChange={handleChange} // handle innerHTML change
           tagName='h1' // Use a custom HTML tag (uses a div by default)
           /> 

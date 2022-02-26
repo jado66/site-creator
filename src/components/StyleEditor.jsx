@@ -22,9 +22,8 @@ import {WebContext} from "../App"
 
 export default function WebsiteStyleEditor(props) {
     
-  const webContext = useContext(WebContext);
-
-  // const [webContext.webStyle, setWebStyles] = useState(webContext.webStyle)
+  const { webStyle, pages, socialMedias, appMethods, promoCodes } = useContext(WebContext);
+  // const [webStyle, setWebStyles] = useState(webStyle)
 
   const componentMapping = {
       Email: faEnvelope,
@@ -50,43 +49,44 @@ export default function WebsiteStyleEditor(props) {
   
 
   const handleFontChange = (name,font) =>{
-    // localStorage.setItem('webContext.webStyle-'+name,font.family);
-    webContext.setWebStyles(
+    // localStorage.setItem('webStyle-'+name,font.family);
+    appMethods.setWebStyle(
       {
-        ...webContext.webStyle,
+        ...webStyle,
         [name]: font.family
       }
     )
   } 
 
   const handleInputChange = (e) => {
-    // webContext.webStyle.lightShade = e.target.value;
-    // localStorage.setItem('webContext.webStyle-'+e.target.name,e.target.value);
-    webContext.setWebStyles(
+    // webStyle.lightShade = e.target.value;
+    // localStorage.setItem('webStyle-'+e.target.name,e.target.value);
+    appMethods.setWebStyle(
       {
-        ...webContext.webStyle,
+        ...webStyle,
         [e.target.name]: e.target.value
       }
     )
   }
 
+
   const handleCheckBox = (e,name) => {
-    webContext.setWebStyles(
+    appMethods.setWebStyle(
       {
-        ...webContext.webStyle,
-        [name]: !webContext.webStyle[name]
+        ...webStyle,
+        [name]: !webStyle[name]
       }
     )    
   }
 
   const invertColors = () =>{
-    webContext.setWebStyles(
+    appMethods.setWebStyle(
       {
-        ...webContext.webStyle,
-        lightShade: webContext.webStyle.darkShade,
-        lightAccent: webContext.webStyle.darkAccent,
-        darkAccent: webContext.webStyle.lightAccent,
-        darkShade: webContext.webStyle.lightShade
+        ...webStyle,
+        lightShade: webStyle.darkShade,
+        lightAccent: webStyle.darkAccent,
+        darkAccent: webStyle.lightAccent,
+        darkShade: webStyle.lightShade
       }
     )    
    
@@ -112,29 +112,29 @@ const socialMediaSelectOptions = [
   <option>Soundcloud</option>,
   <option>Snapchat</option>]
 
-  let pages = webContext.pages.map(({name, path},index)=> 
+  let pageMenus = pages.map(({name, path},index)=> 
   (
     <SubMenu label={name}>
-          <FocusableItem>Name: <input type={"text"} value={name} onChange = {(e)=>{webContext.handleNameChange(index,e.target.value)}} name = {"homePageName"} style = {{width:"90px", borderWidth:"0px 0px 1px 0px",background:"none"}} /></FocusableItem>
-          <FocusableItem>Path: <input type={"text"} value={path} onChange = {(e)=>{webContext.handlePathChange(index,e.target.value)}} name = {"homePageName"} style = {{width:"90px", borderWidth:"0px 0px 1px 0px",background:"none"}} /></FocusableItem>
+          <FocusableItem>Name: <input type={"text"} value={name} onChange = {(e)=>{appMethods.handleNameChange(index,e.target.value)}} name = {"homePageName"} style = {{width:"90px", borderWidth:"0px 0px 1px 0px",background:"none"}} /></FocusableItem>
+          <FocusableItem>Path: <input type={"text"} value={path} onChange = {(e)=>{appMethods.handlePathChange(index,e.target.value)}} name = {"homePageName"} style = {{width:"90px", borderWidth:"0px 0px 1px 0px",background:"none"}} /></FocusableItem>
           <MenuItem><Link to={path}>Visit Page</Link></MenuItem>
           <MenuDivider />
-          <MenuItem><a onClick={()=>{webContext.deletePage(name,index)}}>Delete Page</a></MenuItem>
+          <MenuItem><a onClick={()=>{appMethods.deletePage(name,index)}}>Delete Page</a></MenuItem>
     </SubMenu>
   ))
 
-  let socialMediaLinks = webContext.socialMedias.map(({location, link},index)=> 
+  let socialMediaLinks = socialMedias.map(({location, link},index)=> 
   (
     <SubMenu label={location}>
-          <FocusableItem>Site: <select onChange = {(e)=>{webContext.handleSocialSiteChange(index,e.target.value)}} value={location}>{socialMediaSelectOptions}</select></FocusableItem>
-          <FocusableItem>link: <input type={"text"} value={link} onChange = {(e)=>{webContext.handleSocialLinkChange(index,e.target.value)}} name = {"homePageName"} style = {{width:"90px", borderWidth:"0px 0px 1px 0px",background:"none"}} /></FocusableItem>
+          <FocusableItem>Site: <select onChange = {(e)=>{appMethods.handleSocialSiteChange(index,e.target.value)}} value={location}>{socialMediaSelectOptions}</select></FocusableItem>
+          <FocusableItem>link: <input type={"text"} value={link} onChange = {(e)=>{appMethods.handleSocialLinkChange(index,e.target.value)}} name = {"homePageName"} style = {{width:"90px", borderWidth:"0px 0px 1px 0px",background:"none"}} /></FocusableItem>
           <MenuItem><Link to={link}>Visit Link</Link></MenuItem>
           <MenuDivider />
-          <MenuItem><a onClick={()=>{webContext.deleteSocialMedia(location,index)}}>Delete Link</a></MenuItem>
+          <MenuItem><a onClick={()=>{appMethods.deleteSocialMedia(location,index)}}>Delete Link</a></MenuItem>
     </SubMenu>
   ))
 
-  let promoCodes = Object.keys(webContext.promoCodes).map((code,index)=>{
+  let promoCodeMenus = Object.keys(promoCodes).map((code,index)=>{
     
 
     return (
@@ -148,7 +148,7 @@ const socialMediaSelectOptions = [
         <FocusableItem>
           <div className="input-group">
             <span className="input-group-text">Type</span>
-            <select className="form-select" aria-label="Default select example" value={webContext.promoCodes[code].type}>
+            <select className="form-select" aria-label="Default select example" value={promoCodes[code].type}>
               <option selected style={{display:"none"}}>Pick A Type</option>
               <option>% Off</option>
               <option>$ Off</option>
@@ -156,11 +156,11 @@ const socialMediaSelectOptions = [
             </select>
           </div>
         </FocusableItem>
-        {webContext.promoCodes[code].value &&
+        {promoCodes[code].value &&
             <FocusableItem>
             <div className="input-group">
               <span className="input-group-text">Value</span>
-              <input type="number" className="form-control" value={webContext.promoCodes[code].value}/>
+              <input type="number" className="form-control" value={promoCodes[code].value}/>
             </div>
           </FocusableItem>
         }
@@ -171,21 +171,21 @@ const socialMediaSelectOptions = [
   // isEditMode: false,
   // isShowEditor: true,
   // : false,
-  let showRibbonClass = (webContext.webStyle.isAdmin && webContext.webStyle.isShowEditor? "" :"hidden")
+  let showRibbonClass = (webStyle.isAdmin && webStyle.isShowEditor? "" :"hidden")
 
-  if (webContext.isAdminPage){
-    showRibbonClass = ""
-  }
+  // if (webContext.isAdminPage){
+  //   showRibbonClass = ""
+  // }
 
   return (
     
-    <div className={"nav nav-fill container-fluid border-bottom border-dark g-0"+showRibbonClass} style={{position: "sticky",top: 0, alignSelf: "flex-start",zIndex:999,...webContext.style}} >
+    <div className={"nav nav-fill container-fluid border-bottom border-dark g-0 bg-light  "+showRibbonClass} style={{position: "sticky",top: 0, alignSelf: "flex-start",zIndex:999}} >
       {/* <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle"}><FontAwesomeIcon   icon={faFont} /></MenuButton>} transition>
           <MenuHeader>Text</MenuHeader>
           <MenuDivider />
           <SubMenu label={"Primary Font"}>
             <FontPickerDropDown label = {"Primary Front"} apiKey="AIzaSyAO8Spvo1FBck07lXRuKVmtoMs_MRI1HhQ" 
-                              activeFontFamily={webContext.webStyle.secondaryFont} pickerId="primary"
+                              activeFontFamily={webStyle.secondaryFont} pickerId="primary"
                               // onChange={(nextFont) => handleFontChange("primaryFont",nextFont)}
                               />
           </SubMenu>
@@ -193,7 +193,7 @@ const socialMediaSelectOptions = [
             <FocusableItem className={"apply-font-secondary"}>
               <FontPicker
                 apiKey="AIzaSyAO8Spvo1FBck07lXRuKVmtoMs_MRI1HhQ"
-                activeFontFamily={webContext.webStyle.secondaryFont}
+                activeFontFamily={webStyle.secondaryFont}
                 pickerId="secondary"
                 onChange={(nextFont) => handleFontChange("secondaryFont",nextFont)}
               />
@@ -202,42 +202,42 @@ const socialMediaSelectOptions = [
           
           <MenuItem>Font Base Size</MenuItem>
       </Menu> */}
-      <div className={"row m-auto w-100 "+(webContext.isAdminPage?"":" bg-light")} style={{zIndex:2}}>
-        <div className={"col text-center "+(webContext.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+      <div className={"row m-auto w-100 "} style={{zIndex:2}}>
+        <div className={"col text-center "+(webStyle.isMobile?"mx-1 g-0":"mx-4")}>
           <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon   icon={faPalette} /></MenuButton>} transition>
             <MenuHeader>Colors</MenuHeader>
             <MenuDivider />
-            <FocusableItem><input type={"color"} value ={webContext.webStyle.lightShade} name = {"lightShade"} onChange = {handleInputChange}
+            <FocusableItem><input type={"color"} value ={webStyle.lightShade} name = {"lightShade"} onChange = {handleInputChange}
             style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} />-  Background Color</FocusableItem>
-            <FocusableItem><input type={"color"} value ={webContext.webStyle.lightAccent} onChange = {handleInputChange} name = {"lightAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Primary Accent</FocusableItem>
-            <FocusableItem><input type={"color"} value ={webContext.webStyle.mainBrandColor} onChange = {handleInputChange} name = {"mainBrandColor"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Main Brand Color</FocusableItem>
-            <FocusableItem><input type={"color"} value ={webContext.webStyle.darkAccent} onChange = {handleInputChange} name = {"darkAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secoondary Accent</FocusableItem>
-            <FocusableItem><input type={"color"} value ={webContext.webStyle.darkShade} onChange = {handleInputChange} name = {"darkShade"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secondary Shade (Font) </FocusableItem>
+            <FocusableItem><input type={"color"} value ={webStyle.lightAccent} onChange = {handleInputChange} name = {"lightAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Primary Accent</FocusableItem>
+            <FocusableItem><input type={"color"} value ={webStyle.mainBrandColor} onChange = {handleInputChange} name = {"mainBrandColor"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> -  Main Brand Color</FocusableItem>
+            <FocusableItem><input type={"color"} value ={webStyle.darkAccent} onChange = {handleInputChange} name = {"darkAccent"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secoondary Accent</FocusableItem>
+            <FocusableItem><input type={"color"} value ={webStyle.darkShade} onChange = {handleInputChange} name = {"darkShade"} style = {{border:"none",background:"none",width:"50px",height:"40px",padding:"0"}} /> - Secondary Shade (Font) </FocusableItem>
             <FocusableItem><button onClick={invertColors}>Invert Color Scheme</button> </FocusableItem>
 
           </Menu>
         </div>
-        <div className={"col text-center "+(webContext.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+        <div className={"col text-center "+(webStyle.isMobile?"mx-1 g-0":"mx-4")}>
             {/* Admin Menu */}
           <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faUserCog} /></MenuButton>} transition>
             <FocusableItem className="form-check">
-            <input className="form-check-input me-2" type={"checkbox"} checked = {webContext.webStyle.isEditMode} onClick={(evt)=>{handleCheckBox(evt,"isEditMode")}} />
+            <input className="form-check-input me-2" type={"checkbox"} checked = {webStyle.isEditMode} onClick={(evt)=>{handleCheckBox(evt,"isEditMode")}} />
             <label className="form-check-label" >Admin Edit Mode</label> 
             </FocusableItem>
             <FocusableItem className="form-check">
-            <input className="form-check-input me-2" type={"checkbox"} checked = {webContext.webStyle.isShowEditor} onClick={(evt)=>{handleCheckBox(evt,"isShowEditor")}} />
+            <input className="form-check-input me-2" type={"checkbox"} checked = {webStyle.isShowEditor} onClick={(evt)=>{handleCheckBox(evt,"isShowEditor")}} />
             <label className="form-check-label" >Show Admin Editor</label> 
             </FocusableItem>
             <MenuItem><Link to={"/admin"}>Visit Admin Page</Link></MenuItem>
           </Menu>
         </div>
       
-        <div className={"col text-center "+(webContext.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+        <div className={"col text-center "+(webStyle.isMobile?"mx-1 g-0":"mx-4")}>
           {/* Pages Menu */}
           <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faFile} /></MenuButton>} transition>
             <MenuHeader>Your Website Pages</MenuHeader>
-            {pages}
-            <MenuButton className={"styleEditorSubmenuIcon "} onClick = {()=>webContext.addPage()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
+            {pageMenus}
+            <MenuButton className={"styleEditorSubmenuIcon "} onClick = {()=>appMethods.addPage()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
             <MenuDivider />
             <SubMenu label={"Checkout Page"}>
               <MenuItem><Link to={"/checkout"}>Visit Page</Link></MenuItem>
@@ -248,31 +248,32 @@ const socialMediaSelectOptions = [
 
           </Menu>
         </div>
-        <div className={"col text-center "+(webContext.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
-            {/* Shop Page */}
-          <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faShoppingBag} /></MenuButton>} transition>
-            <SubMenu label={"Promo Codes"}>
-            {promoCodes}
-            <MenuItem className = "justify-content-center"><a onClick={()=>{alert("Add Promo Code")}}><FontAwesomeIcon icon={faPlus}/></a></MenuItem>
-            </SubMenu>
-          </Menu>
-        </div>
-        <div className={"col text-center "+(webContext.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+        <div className={"col text-center "+(webStyle.isMobile?"mx-1 g-0":"mx-4")}>
           {/* Socials Pages */}
           <Menu className="nav-item dropdown " menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faTwitter} /></MenuButton>} transition>
             <MenuHeader>Your Social Media Links</MenuHeader>
             {socialMediaLinks}
-            <MenuButton className={"styleEditorSubmenuIcon"} onClick = {()=>webContext.addSocialMedia()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
+            <MenuButton className={"styleEditorSubmenuIcon"} onClick = {()=>appMethods.addSocialMedia()}><FontAwesomeIcon  icon={faPlus} /></MenuButton>
           </Menu>
         </div>
-        <div className={"col text-center "+(webContext.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+        <div className={"col text-center "+(webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+            {/* Shop Page */}
+          <Menu className="nav-item dropdown" menuButton={<MenuButton className={"styleEditorIcon dropdown-toggle font-shrink-md m-0"}><FontAwesomeIcon  icon={faShoppingBag} /></MenuButton>} transition>
+            <SubMenu label={"Promo Codes"}>
+            {promoCodeMenus}
+            <MenuItem className = "justify-content-center"><a onClick={()=>{alert("Add Promo Code")}}><FontAwesomeIcon icon={faPlus}/></a></MenuItem>
+            </SubMenu>
+          </Menu>
+        </div>
+        
+        <div className={"col text-center "+(webStyle.isMobile?"mx-1 g-0":"mx-4")}>
           {/* Socials Pages */}
-          <MenuButton className={"styleEditorIcon font-shrink-md m-0"} onClick = {()=>webContext.saveWebsite()}><FontAwesomeIcon  icon={faSave} /></MenuButton>
+          <MenuButton className={"styleEditorIcon font-shrink-md m-0"} onClick = {()=>appMethods.saveWebsite()}><FontAwesomeIcon  icon={faSave} /></MenuButton>
 
         </div>
-        <div className={"col text-center "+(webContext.webStyle.isMobile?"mx-1 g-0":"mx-4")}>
+        <div className={"col text-center "+(webStyle.isMobile?"mx-1 g-0":"mx-4")}>
           {/* Socials Pages */}
-          <MenuButton className={"styleEditorIcon font-shrink-md m-0"} onClick = {()=>{webContext.toggleStyleEditor()}}><FontAwesomeIcon  icon={faTimes} /></MenuButton>
+          <MenuButton className={"styleEditorIcon font-shrink-md m-0"} onClick = {()=>{appMethods.toggleStyleEditor()}}><FontAwesomeIcon  icon={faTimes} /></MenuButton>
 
         </div>
       </div>

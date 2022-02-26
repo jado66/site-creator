@@ -22,7 +22,7 @@ export default function SlideShow(props){
                     color: "white", fontWeight: "bold", fontSize: "x-large", borderRadius: "0 3px 3px 0", userSelect: "none", zIndex:1}
             
     return(
-        <div className="g-0 mb-5">
+        <div className="g-0 mb-5" data-no-dnd = "true">
             {pictureIndex >0 && 
                 <a style={{...arrow,left:15}} onClick = {()=>{nextSlide(-1)}}>&#10094;</a>}
             {pictureIndex < pictureCount - 1 && 
